@@ -44,8 +44,9 @@ Declaration Statements
 
 DEF FN must be followed by a character A-Z, so 26 user defined functions are possible. An expression between brackets can be added to transfer a parameter.  
 e.g.:  
-``` DEF FNA (SQROOT) = SQR(SQROOT): INPUT A PRINT FNA(A): REM prints square root of A
-    DEF FNB = SIN(X)+1: INPUT X: PRINT FNB ```
+    DEF FNA (SQROOT) = SQR(SQROOT): INPUT A PRINT FNA(A): REM prints square root of A
+    DEF FNB = SIN(X)+1: INPUT X: PRINT FNB
+
 
 Program Flow Control
 --------------------
@@ -61,6 +62,7 @@ Program Flow Control
     READ
     RESTORE
     RESTORE n 
+
 
 Numeric functions
 -----------------
@@ -111,7 +113,7 @@ String Functions
 
 String Concatenation with & (ampersand)  
 e.g.  
-```    VAR = TOP: VAR1 = TOP + 72 VAR1$ = "123456": VAR$ = RIGHT$(VAR1$,2)&CHR$(65)&"LT"&MID$(VAR1$,2,3): PRINT VAR$ ```
+    VAR = TOP: VAR1 = TOP + 72 VAR1$ = "123456": VAR$ = RIGHT$(VAR1$,2)&CHR$(65)&"LT"&MID$(VAR1$,2,3): PRINT VAR$
 
 String Comparison
 -----------------
