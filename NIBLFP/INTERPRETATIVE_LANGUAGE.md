@@ -17,16 +17,16 @@ Commands:
     the execution of the I.L. commands is continued at the specified address.
 
 `TSTVAR  high byte of address 1011 xxxx `
- -   The line buffer is tested for presence of a character. Is a letter exists, the next command is processed, otherwise the execution of the I.L. commands are continued at address with high byte 1101 xxxx ...
+ -   The line buffer is tested for presence of a character. If this character is a letter, the next command is processed, otherwise the execution of the I.L. commands are continued at address with high byte 1101 xxxx ...
 
 `TSTSTR  high byte of address 1001 xxxx `
  -   The line buffer is tested for a character matching the character following the TSTSTR command.`
 
 `GOTO    high byte address 0101 xxxx`
--    The I.L. commands are processed from address with high byte 1101 xxxx ... onwards.
+-    The I.L. commands are processed from address with high byte 1101 xxxx onwards.
 
 `ILCALL  high byte of address 0001 xxxx `
--    calls subroutines in I.L. Such subroutines are terminated with a zero byte 00.
+-    Will call a subroutines in I.L. Such subroutines are terminated with a zero byte 00.
 
 `END     one-byte command 000 0000 `
 -    see ILCALL
