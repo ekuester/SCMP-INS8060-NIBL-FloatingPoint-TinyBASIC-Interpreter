@@ -22,15 +22,15 @@ NIBL is an abbreviation for **N**ational **I**ndustrial **B**asic **L**anguage.
 The following three NIBL variants are reassembled using the macro assembler from Alfred Arnold [5]. The generated binary files are identical to the original ones.
 
 #### NIBL
-The source code published elsewhere [6] was newly assembled.
+The first NIBL was published in Dr. Dobb's Journal [6]. An excerpt is found in the belonging subdirectory.
 
 #### NIBLE
 NIBLE is practically indentical to the NIBL except that the program runs on page 1 of the SC/MP. Due to this several things had to be changed. I adapted the source for the mentioned macro assembler.
 
 #### NIBLFP
-This program was written by me in the years 1976 - 1986 as floating point extension for the above mentioned NIBL and NIBLE, it covers the address range from hex D000 to FFFF with a program entry point at hex DFC1. The floating-point routines were originally a convenient 1-to-1 translation of code for the 6502, released in 1976 [7]. In fact, Steve Wozniak (one of Apple's founders) was involved.
+This program was written by me in the years 1976 - 1986 as floating point extension for the above mentioned NIBL and NIBLE, it covers the address range from hex D000 to FFFF with a program entry point at hex DFC1. The floating-point routines were originally an adapted 1-to-1 translation from source code for the 6502, released in 1976 [7] and written by Steve Wozniak (one of Apple's founders). An excerpt is found in the belonging subdirectory.
 
-On his website [8] Ronald Dekker preserved my NIBLFP over the time, his listings, however, are for the 7.8 version. Kindly he translated my original german description into english. The version published in this repository is 7.9 and is my latest attempt in SC/MP programming dated from the eighties of the last century. The instruction set is found here.
+On his website [8] Ronald Dekker preserved my NIBLFP over the time, his listings, however, are for the 7.8 version. Kindly he translated my original german description into english. The version published in this repository is 7.9 and is my latest attempt in SC/MP programming dated from the eighties of the last century. The instruction set is found in the belonging subdirectory.
 
 ### Tools
 My hardware is lost but the program survived several moves as a hexdump listing in paper form. So I had to write my own tools for the resurrection of the original, they are gathered in this folder.
@@ -42,10 +42,10 @@ Special thanks go as usual to the people in the developer community at StackOver
 
 [1] Hein Pragt <https://www.heinpragt.com/english/software_development/ins8060_or_scmp_processor.html></br>
 [2] Elektor Magazin 5(1979), p. 50 "SC/MP-Mikrocomputer mit BASIC-Interpreter" in german</br>
-[3] C. Lorenz, SC/MP Microcomputer Handbuch, W. Hofacker Verlag, 1980 ISBN-13:978-3921682425
+[3] C. Lorenz, SC/MP Microcomputer Handbuch, W. Hofacker Verlag, 1980 ISBN-13:978-3921682425</br>
 [4] <https://en.wikipedia.org/wiki/MK14></br>
 [5] Alfred Arnold <http://john.ccac.rwth-aachen.de:8000/as/></br>
-[6] <https://github.com/andrew-jacobs/dev65/tree/master/examples/scmp></br>
+[6 ] Mark Alexander, Dr. Dobb's Journal of Calisthenics & Orthodontia, vol. 1(1976), p. 331-347</br>
 [7] Roy Rankin, Steve Wozniak, Dr. Dobb's Journal of Calisthenics & Orthodontia, vol. 1(1976), p. 207-209</br>
 [8] Ronald Dekker <https://www.dos4ever.com/SCMP/SCMP.html#fpoint></br>
 
