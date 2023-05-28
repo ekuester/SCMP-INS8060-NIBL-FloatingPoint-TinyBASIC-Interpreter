@@ -64,28 +64,4 @@ for label in labels:
 with open ('names_real.json', 'w') as json_f:
     json_f.write(json.dumps(names))
 print("Done!")
-'''
-if not re.match(r"^[A-Fa-f0-9]+$", line):
-    print('repeat^')
-print(labels, names)
-print(f"hexfile: {hexfile}")
-# first read hex file into a list and split at ; after address
-lines = []
-with open(hexfile) as hex_f:
-    first_line = hex_f.readline()
-    lines.append(first_line[5:-1])
-    # read rest of file
-    for line in hex_f:
-        pos = line.find(';') + 1
-        if pos > 0:
-            lines.append(line[pos:-1])
-    base = first_line[0:4]
-    binfile = base + ".bin"
-    print(f"binfile: {binfile}")
-    with open(binfile, "wb") as bin_f:
-        for line in lines:
-            chunk = binascii.unhexlify(line)
-            bin_f.write(chunk)
-
-'''
 

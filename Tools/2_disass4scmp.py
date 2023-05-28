@@ -14,7 +14,7 @@ def usage():
     print("rewritten for python > 3.9 March 18, 2023")
     print("enhanced for floating point NIBL by Erich Küster")
     print("Usage:   disass4scmp infile [ hex_start_address ] [ > outfile ]")
-    print("Example: disass4scmp binfile F20 > mylist.dsm")
+    print("Example: disass4scmp binfile DFC1 > mylist.dsm")
     quit()
 
 # output for feeding into macro assembler, set to False to get normal listing
@@ -144,7 +144,7 @@ while i in bytes_range:
         dest = ""
         if arg == 0x80:
             # take extension reg as displacement
-            # to do: is incorrect for jump instructions
+            # to do: is incorrect for pc related instructions, e.g. JMP
             ats = ats + "EREG"
             dest = dest + "EREG"
         else:
@@ -331,7 +331,7 @@ while i in bytes_range:
 real_labels = list(set(labels))
 real_labels.sort()
 
-# second pass: add labels and print lines, substitute by names if possible
+# second pass: add labels and replace by names if possible
 with open("symbol_table.json", "r") as name_f:
     names = json.load(name_f)
 
@@ -343,7 +343,7 @@ for line in lines:
     else:
         if label in real_labels:
             line[2] = f"${label}:  "
-# third pass
+# third pass: replace $ labels by name (if found) and print lines (if normal listing desired)
 for line in lines:
     llen = len(line)
     if llen > 4:
