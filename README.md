@@ -13,10 +13,10 @@ The first INS8060 or SC/MP chip was developed in P-MOS technology and needed a p
 
 In 1977 Elektor Magazine devoted a few issues to the SC/MP and the Elektor design came in two versions, a simple basic one and a version with a hexadecimal keyboard, 7-segment displays and a monitor program in ROM, cassette interface and the option to connect a visual display unit (the Elekterminal).
 
-Beside the Elektor design [2] there was a very similar system from Firma Homecomputer Vertriebs GmbH at Düsseldorf/Germany (not existent anymore) discussed extensively in a book [3], further a one board computer implementation called the MK14, developed by Science of Cambridge Ltd[4]. These are still sold on Ebay sometimes. For use inside the NDR small computer Michael Haardt developed a CPU board for the SC/MP [5]. Additionally there are also great emulators in software and hardware (e.g. with PIC microcontroller).
+Beside the Elektor design [2] there was a very similar system from Firma Homecomputer Vertriebs GmbH at Düsseldorf/Germany (not existent anymore) discussed extensively in a book [3], further a one board computer implementation called the MK14, developed by Science of Cambridge Ltd [4]. These are still sold on Ebay sometimes. For use inside the NDR small computer Michael Haardt developed a CPU board for the SC/MP [5]. Additionally there are also great emulators in software and hardware (e.g. with PIC microcontroller).
 
 ### SC/MP articles in Wikipedia
-<https://de.wikipedia.org/wiki/National_Semiconductor_SC/MP>
+<https://de.wikipedia.org/wiki/National_Semiconductor_SC/MP></br>
 <https://en.wikipedia.org/wiki/National_Semiconductor_SC/MP>
 
 ### Tiny BASIC NIBL
