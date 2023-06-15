@@ -32,7 +32,7 @@ The first NIBL was published in Dr. Dobb's Journal [7]. An excerpt is found in t
 NIBLE is practically indentical to the NIBL except that the program runs on page 1 of the SC/MP. Due to this several things had to be changed. I adapted the source for the mentioned macro assembler.
 
 #### NIBLFP
-This program was written by me in the years 1976 - 1986 as floating point extension for the above mentioned NIBL and NIBLE, it covers the address range from hex D000 to FFFF with a program entry point at hex DFC1. The floating-point routines were originally an adapted 1-to-1 translation from source code for the 6502, released in 1976 [8] and written by Roy Rankin and Steve Wozniak (one of Apple's founders). An excerpt is found in the belonging subdirectory.
+This program was written by me in the years 1976 - 1986 as floating point extension for the above mentioned NIBL and NIBLE, it covers the address range from hex D000 to FFFF with a program entry point at hex DFC1. The floating-point routines were originally an adapted 1-to-1 translation from source code for the 6502, released in 1976 [8] and written by Roy Rankin and Steve Wozniak. I leave some information extracted from the original article in the belonging subdirectory, especially an assembled listing and the binary code.
 
 On his website [9] Ronald Dekker preserved my NIBLFP over the time, his listings, however, are for the 7.8 version. Kindly he translated my original german description into english. The version published in this repository is 7.9 and is my latest attempt in SC/MP programming dated from the eighties of the last century. The instruction set is found in the belonging subdirectory.
 
