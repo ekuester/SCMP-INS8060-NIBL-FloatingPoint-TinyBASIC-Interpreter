@@ -58,7 +58,9 @@ P3      =  3
 EREG    =  -128               ;THE EXTENSION REGISTER
 
         ORG    0xD000
-L_D000: LDI    0x0C
+L_D000: LDPI   P1,(ENTRY-1)   ;START PROGRAM
+        XPPC   P1             ;WITH FAR JUMP TO ENTRY
+L_D007: LDI    0x0C
         CALL   P3,PUTASC
         LDI    0x1C           ;BASIC STACK AT 1C00
         ORI    0x01           ;NOW AT 1D00
@@ -6282,3 +6284,4 @@ USING:
         CALL    P3,L_D4C0
         JMP     -42(P3)
 
+	END	ENTRY
