@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 1 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 1 - 03.07.2023 17:58:01
 
 
        1/       0 :                     ;-----------------------------------------------------------------------------
@@ -61,7 +61,7 @@
       58/       0 :                     ;*       IN  STYLE.                                  *
       59/       0 :                     ;*                     - TOM STOPPARD                *
       60/       0 :                     ;*****************************************************
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 2 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 2 - 03.07.2023 17:58:01
 
 
       61/       0 :                      
@@ -124,7 +124,7 @@
      118/       0 :                      
      119/       0 : 08                            NOP
      120/       1 : (MACRO)                        LDPI    P2,VARS          ;POINT P2 AT VARIABLES
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 3 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 3 - 03.07.2023 17:58:01
 
 
      120/       1 : C4 10                      LDI     H(VARS)
@@ -187,7 +187,7 @@
      170/      64 : CA FD                         ST      LSTK(P2)         ; ARITHMETIC STACK,
      171/      66 : C4 7A                         LDI     L(DOSTAK)
      172/      68 : CA FF                         ST      DOPTR(P2)        ; DO/UNTIL STACK,
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 4 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 4 - 03.07.2023 17:58:01
 
 
      173/      6A : C4 6A                         LDI     L(SBRSTK)
@@ -250,7 +250,7 @@
      230/      B9 : C2 EA                         LD      TEMP(P2)        ;GET LOW BYTE OF NEW
      231/      BB : 33                            XPAL    P3              ;  I.L.  PC INTO P3 LOW
      232/      BC : CA F9                         ST      PCSTK(P2)       ;UPDATE I.L.  STACK POINTER
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 5 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 5 - 03.07.2023 17:58:01
 
 
      233/      BE : 40                            LDE                     ;GET HIGH BYTE OF NEW
@@ -313,7 +313,7 @@
      290/     108 : 90 41               EOA:     JMP      EO
      291/     10A :                      
      292/     10A :                     ;*************************************
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 6 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 6 - 03.07.2023 17:58:01
 
 
      293/     10A :                     ;*     SAVE GOSUB RETURN ADDRESS     *
@@ -376,7 +376,7 @@
      350/     157 : 94 06                        JP      RSTR2           ;  SUBROUTINE WAS CALLED
      351/     159 : C4 00                        LDI     0               ;  FROM EDIT MODE,
      352/     15B : CA F4                        ST      RUNMOD(P2)      ;  SO RETURN TO EDITING
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 7 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 7 - 03.07.2023 17:58:01
 
 
      353/     15D : 90 88               XI:      JMP     XO
@@ -439,7 +439,7 @@
      406/     199 : CB FE                         ST       -2(P3)          ;  DIVIDING  BY  IT  LATER)
      407/     19B : C4 00                         LDI      0     
      408/     19D : CB FF                         ST       -1(P3)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 8 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 8 - 03.07.2023 17:58:01
 
 
      409/     19F : C4 05                         LDI      5               ;SET CHRNUM TO POINT TO PLACE
@@ -502,7 +502,7 @@
      462/     1FE : 94 FB                         JP      LOOP3           ;REPEAT UNTIL = -1
      463/     200 : C4 50                         LDI     L(AESTK)
      464/     202 : CA FD                         ST      LSTK(P2)        ; CLEAR THE A. E.  STACK
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 9 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 9 - 03.07.2023 17:58:01
 
 
      465/     204 : C2 F5                         LD      LISTNG(P2)      ;PRINT A TRAILING SPACE
@@ -565,7 +565,7 @@
      510/     24C : (MACRO)                        LDPI    P1,MESGS         ;NO  - PRINT  ERROR
      510/     24C : C4 0F                      LDI     H(MESGS)
      510/     24E : 35                         XPAH    P1
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 10 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 10 - 03.07.2023 17:58:01
 
 
      510/     24F : C4 3B                      LDI     L(MESGS)
@@ -628,7 +628,7 @@
      566/     2AA :                      
      567/     2AA : C4 00               FIN:    LDI     0               ;*** FINISH EXECUTION ***
      568/     2AC : CA F4                       ST      RUNMOD(P2)      ; CLEAR RUN MODE
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 11 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 11 - 03.07.2023 17:58:01
 
 
      569/     2AE : C4 50                       LDI     L(AESTK)        ; CLEAR ARITHMETIC STACK
@@ -691,7 +691,7 @@
      620/     306 : C4 0F                      LDI     H(PUTC-1)
      620/     308 : 37                         XPAH    P3
      620/     309 : C4 C1                      LDI     L(PUTC-1)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 12 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 12 - 03.07.2023 17:58:01
 
 
      620/     30B : 33                         XPAL    P3
@@ -754,7 +754,7 @@
      677/     35B :                     ;*************************************
      678/     35B :                      
      679/     35B : C4 10               NEG:     LDI     H(AESTK)        ;SET P3  TO CURRENT
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 13 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 13 - 03.07.2023 17:58:01
 
 
      680/     35D : 37                           XPAH    P3              ;  STACK  LOCATION
@@ -817,7 +817,7 @@
      737/     3B9 : 94 11                       JP      MM3             ;IF NOT SET, DON'T DO ADD
      738/     3BB : 02                          CCL
      739/     3BC : C3 02                       LD      2(P3)           ;ADD MULTIPLICAND
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 14 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 14 - 03.07.2023 17:58:01
 
 
      740/     3BE : F3 FC                       ADD     -4(P3)          ;INTO WORKSPACE
@@ -880,7 +880,7 @@
      797/     41C : CA EA                       ST      TEMP(P2)        ;SAVE SIGN OF QUOTIENT
      798/     41E : C3 FD                       LD      -3(P3)          ; IS DIVIDEND POSITIVE?
      799/     420 : 94 11                       JP      QDPOS           ;YES - JUMP
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 15 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 15 - 03.07.2023 17:58:01
 
 
      800/     422 : C4 00                       LDI     0
@@ -943,7 +943,7 @@
      857/     48E : C3 01                       LD      1(P3)           ;    OF ACC BY ADDING DIVISOR
      858/     490 : F3 FE                       ADD     -2(P3)
      859/     492 : CB 01                       ST      1(P3)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 16 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 16 - 03.07.2023 17:58:01
 
 
      860/     494 : C3 00                       LD      (P3)
@@ -1006,7 +1006,7 @@
      912/     4E1 : C5 01               TSTVAR:  LD      @1(P1)
      913/     4E3 : E4 20                        XRI     ' '             ;SLEW OFF SPACES
      914/     4E5 : 98 FA                        JZ      TSTVAR 
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 17 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 17 - 03.07.2023 17:58:01
 
 
      915/     4E7 : C1 FF                        LD      -1(P1)          ;CHARACTER IN QUESTION
@@ -1069,7 +1069,7 @@
      972/     53B : F4 01                         ADI     1
      973/     53D : 01                            XAE                  
      974/     53E : C2 80                         LD      EREG(P2)        ;GET UPPER 8 BITS
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 18 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 18 - 03.07.2023 17:58:01
 
 
      975/     540 : CB FF                         ST      -1(P3)          ;SAVE ON STACK
@@ -1132,7 +1132,7 @@
     1032/     59C : 9C 04                        JNZ     LEQ1
     1033/     59E : C2 EA                        LD      TEMP(P2)         ;  LESS THAN IF (N XOR V)=l
     1034/     5A0 : 90 18                        JMP     CMP1
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 19 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 19 - 03.07.2023 17:58:01
 
 
     1035/     5A2 : BA EB               LEQ1:    DLD     NUM(P2)          ;TEST FOR <=
@@ -1195,7 +1195,7 @@
     1082/     5F0 : C4 03               NOTOP:  LDI     3
     1083/     5F2 : CA EB               AON1:   ST      NUM(P2)                                        
     1084/     5F4 : C4 10                       LDI     H(AESTK)        ;SET P3 -> ARITH. STACK
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 20 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 20 - 03.07.2023 17:58:01
 
 
     1085/     5F6 : 37                          XPAH    P3
@@ -1258,7 +1258,7 @@
     1140/     647 : 37                         XPAH   P3
     1140/     648 : C4 1E                      LDI    L(ERR2-1)
     1140/     64A : 33                         XPAL   P3
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 21 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 21 - 03.07.2023 17:58:01
 
 
     1140/     64B : 3F                         XPPC   P3
@@ -1321,7 +1321,7 @@
     1197/     6A6 : 9C 87                       JNZ     X12B            ;MORE THAN 0 CHARACTERS
     1198/     6A8 : C4 05                       LDI     5               ;ERROR IF THERE WERE NONE
     1199/     6AA : 90 97               E8B:    JMP     E8
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 22 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 22 - 03.07.2023 17:58:01
 
 
     1200/     6AC :                      
@@ -1384,7 +1384,7 @@
     1257/     6FB : 94 02                       JP      TNL2
     1258/     6FD : 90 CF                       JMP     TNRET
     1259/     6FF : 01                  TNL2:   XAE                      ;SAVE DIGIT
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 23 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 23 - 03.07.2023 17:58:01
 
 
     1260/     700 : C3 FF                       LD      -1(P3)           ;PUT RESULT IN SCRATCH SPACE
@@ -1447,7 +1447,7 @@
     1313/     75D : C4 00                       LDI     0              ;CLEAR NO.  OF CHAR
     1314/     75F : CA E7                       ST      CHRNUM(P2)
     1315/     761 : (MACRO)                      LDPI    P3,PUTC-1      ;POINT P3 AT PUTC ROUTINE
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 24 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 24 - 03.07.2023 17:58:01
 
 
     1315/     761 : C4 0F                      LDI     H(PUTC-1)
@@ -1510,7 +1510,7 @@
     1364/     7BB : CD 01                       ST      @1(P1)          ;PUT CHAR IN LBUF
     1365/     7BD : AA E7                       ILD     CHRNUM(P2)      ;INCREMENT CHRNUM
     1366/     7BF : E4 48                       XRI     72              ;IF=72, LINE FULL
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 25 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 25 - 03.07.2023 17:58:01
 
 
     1367/     7C1 : 9C B3                       JNZ     GETL1
@@ -1573,7 +1573,7 @@
     1424/     808 :                      
     1425/     808 :                     ;  THIS ROUTINE IMPLEMENTS THE STATEMENT:
     1426/     808 :                     ;      '@'  FACTOR  '='  REL-EXP
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 26 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 26 - 03.07.2023 17:58:01
 
 
     1427/     808 :                      
@@ -1636,7 +1636,7 @@
     1484/     84C : CA E7                       ST      CHRNUM(P2)
     1485/     84E : C2 E7               INSRT3: LD      CHRNUM(P2)      ;PUT NEW LINE LENGTH IN EX
     1486/     850 : 01                          XAE
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 27 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 27 - 03.07.2023 17:58:01
 
 
     1487/     851 : C2 F2                       LD      LABLHI(P2)       ; IS NEW LINE REPLACING OLD?
@@ -1699,7 +1699,7 @@
     1544/     8B7 : 02                          CCL                      ;VALUE OF P1, TO CHECK
     1545/     8B8 : 70                          ADE                      ;WHETHER WE'RE OUT OF
     1546/     8B9 : C4 00                       LDI     0                ;RAM FOR USER'S PROGRAM
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 28 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 28 - 03.07.2023 17:58:01
 
 
     1547/     8BB : F2 EE                       ADD     HI(P2)
@@ -1762,7 +1762,7 @@
     1599/     916 : BA FD               POPAE:  DLD     LSTK(P2)        ;THIS ROUTINE POP  THE  A. E.
     1600/     918 : BA FD                       DLD     LSTK(P2)        ;STACK, AND PUTS  THE  RESULT
     1601/     91A : 33                          XPAL    P3              ;INTO  LO(P2) AND  HI(P2)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 29 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 29 - 03.07.2023 17:58:01
 
 
     1602/     91B : C4 10                       LDI     H(AESTK)
@@ -1825,7 +1825,7 @@
     1659/     95B : AA FD                       ILD     LSTK(P2)
     1660/     95D : 33                          XPAL    P3
     1661/     95E : 06                          CSA
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 30 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 30 - 03.07.2023 17:58:01
 
 
     1662/     95F : CB FE                       ST      -2(P3)          ;STATUS REG IS, LOW BYTE
@@ -1888,7 +1888,7 @@
     1715/     997 : C2 E8                       LD      TEMP3(P2)
     1716/     999 : 33                          XPAL    P3
     1717/     99A : C3 00               TOP0:   LD      (P3)            ;HAVE WE HIT END OF TEXT?
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 31 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 31 - 03.07.2023 17:58:01
 
 
     1718/     99C : 94 02                       JP      TOP1            ;NO - SKIP TO NEXT LINE
@@ -1951,7 +1951,7 @@
     1775/     9E0 : 70                          ADE
     1776/     9E1 : 01                          XAE
     1777/     9E2 : C2 E4                       LD      RNDY(P2)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 32 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 32 - 03.07.2023 17:58:01
 
 
     1778/     9E4 : 02                          CCL
@@ -2014,7 +2014,7 @@
     1835/     A3E : CB FF                       ST      -1(P3)
     1836/     A40 : C4 01                       LDI     1
     1837/     A42 : CB FE                       ST      -2(P3)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 33 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 33 - 03.07.2023 17:58:01
 
 
     1838/     A44 : 90 EA                       JMP     X24
@@ -2077,7 +2077,7 @@
     1895/     A96 : CA F1                       ST       P1L0W(P2)      ;SAVE OLD P1
     1896/     A98 : C4 10                       LDI      H(FORSTK)
     1897/     A9A : 35                          XPAH     P1
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 34 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 34 - 03.07.2023 17:58:01
 
 
     1898/     A9B : CA F0                       ST       P1HIGH(P2) 
@@ -2140,7 +2140,7 @@
     1955/     AF9 : 3F                          XPPC    P3            ; RETURN TO I.L. INTERPRETER
     1956/     AFA : C2 FE               X_REDO: LD      FORPTR(P2)    ; POINT P3 AT FOR STACK
     1957/     AFC : 33                          XPAL    P3                                            
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 35 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 35 - 03.07.2023 17:58:01
 
 
     1958/     AFD : C4 10                       LDI     H(FORSTK)
@@ -2203,7 +2203,7 @@
     2011/     B36 :                     ;************************************
     2012/     B36 :                      
     2013/     B36 :                     ;  THIS ROUTINE IMPLEMENTS THE STATEMENT:
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 36 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 36 - 03.07.2023 17:58:01
 
 
     2014/     B36 :                     ;       '$'  FACTOR  '=' STRING
@@ -2266,7 +2266,7 @@
     2071/     B7B : AA FD               PUTPGE:  ILD     LSTK(P2)
     2072/     B7D : AA FD                        ILD     LSTK(P2)
     2073/     B7F : 33                           XPAL    P3
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 37 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 37 - 03.07.2023 17:58:01
 
 
     2074/     B80 : C4 10                        LDI     H(AESTK)
@@ -2329,7 +2329,7 @@
     2131/     BBE : C2 E9               CHPAGE: LD      TEMP2(P2)       ;PUT START OF PAGE
     2132/     BC0 : 35                          XPAH    P1              ;INTO P1. THIS ROUTINE
     2133/     BC1 : C2 E8                       LD      TEMP3(P2)       ;MUST BE CALLED RIGHT
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 38 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 38 - 03.07.2023 17:58:01
 
 
     2134/     BC3 : 31                          XPAL    P1              ;AFTER 'FNDPGE'
@@ -2392,7 +2392,7 @@
     2191/     BEF : C1 01                       LD      1(P1)           ;  BY SUBTRACTING
     2192/     BF1 : FA EF                       CAD     LO(P2)
     2193/     BF3 : C1 00                       LD      0(P1)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 39 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 39 - 03.07.2023 17:58:01
 
 
     2194/     BF5 : FA EE                       CAD     HI(P2)          ;IS TEXT LINE # >= LINE #?
@@ -2455,7 +2455,7 @@
     2251/     C1C :                              ENDM
     2252/     C1C :                      
     2253/     C1C :                     TSTN     MACRO   FAIL
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 40 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 40 - 03.07.2023 17:58:01
 
 
     2254/     C1C :                              DB      H((TSTNUM-1) & 0x0FFF)
@@ -2518,7 +2518,7 @@
     2287/     C20 : (MACRO)                      TSTCR    PRMPT1
     2287/     C20 : 2C                           DB      H(PRMPT1 & 0x0FFF | TSTBITH)
     2287/     C21 : 25                           DB      L(PRMPT1 & 0x0FFF | TSTBITH)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 41 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 41 - 03.07.2023 17:58:01
 
 
     2287/     C22 : 8D                           DB      0x0D|0x80
@@ -2581,7 +2581,7 @@
     2293/     C3A : D4                             DB    'T' |0x80
     2293/     C3B : [2293]                        ENDIF
     2294/     C3B : (MACRO)                      DO       FNDPGE
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 42 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 42 - 03.07.2023 17:58:01
 
 
     2294/     C3B : =>NOT BLANK                   IFNB    FNDPGE 
@@ -2644,7 +2644,7 @@
     2299/     C4B :  (MACRO-2)                    DO      
     2299/     C4B : =>BLANK                       IFNB     
     2299/     C4B :                              DB      H((-1) & 0x0FFF)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 43 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 43 - 03.07.2023 17:58:01
 
 
     2299/     C4B :                              DB      L((-1) & 0x0FFF)
@@ -2707,7 +2707,7 @@
     2305/     C5C : =>NOT BLANK                   IFNB    STRT 
     2305/     C5C : 02                           DB      H((STRT-1) & 0x0FFF)
     2305/     C5D : BF                           DB      L((STRT-1) & 0x0FFF)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 44 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 44 - 03.07.2023 17:58:01
 
 
     2305/     C5E :                              SHIFT
@@ -2770,7 +2770,7 @@
     2308/     C6F : 4E 45                          DB    "NE" 
     2308/     C71 : D7                             DB    'W' |0x80
     2308/     C72 : [2308]                        ENDIF
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 45 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 45 - 03.07.2023 17:58:01
 
 
     2309/     C72 : (MACRO)                      TSTN     DFAULT
@@ -2833,7 +2833,7 @@
     2312/     C86 : [2312]                        ENDIF
     2312/     C86 : [2312]                        ENDIF
     2312/     C86 : [2312]                        ENDIF
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 46 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 46 - 03.07.2023 17:58:01
 
 
     2312/     C86 : [2312]                        ENDIF
@@ -2896,7 +2896,7 @@
     2318/     C9B : AA                           DB      L((IF & 0x0FFF)| TSTBITH)
     2318/     C9C : =>BLANK                       IFB     
     2318/     C9C : C0                             DB    '@' |0x80 
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 47 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 47 - 03.07.2023 17:58:01
 
 
     2318/     C9D : =>FALSE                       ELSE
@@ -2959,7 +2959,7 @@
     2326/     CB0 : (MACRO)                      TSTR     IF1,"THE",'N'
     2326/     CB0 : 2C                           DB      H((IF1 & 0x0FFF)| TSTBITH)
     2326/     CB1 : B6                           DB      L((IF1 & 0x0FFF)| TSTBITH)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 48 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 48 - 03.07.2023 17:58:01
 
 
     2326/     CB2 : =>NOT BLANK                   IFB     'N'
@@ -3022,7 +3022,7 @@
     2333/     CC8 : 2F                           DB      L((DONE-1) & 0x0FFF)
     2333/     CC9 :                              SHIFT
     2333/     CC9 :  (MACRO-2)                    DO      POPAE,UNTIL,DETPGE,NXT
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 49 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 49 - 03.07.2023 17:58:01
 
 
     2333/     CC9 : =>NOT BLANK                   IFNB    POPAE 
@@ -3085,7 +3085,7 @@
     2336/     CDB : =>NOT BLANK                   IFNB    NXT 
     2336/     CDB : 02                           DB      H((NXT-1) & 0x0FFF)
     2336/     CDC : 83                           DB      L((NXT-1) & 0x0FFF)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 50 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 50 - 03.07.2023 17:58:01
 
 
     2336/     CDD :                              SHIFT
@@ -3148,7 +3148,7 @@
     2342/     CF0 : [2342]                        ENDIF
     2343/     CF0 : (MACRO)                      CALL     RELEXP
     2343/     CF0 : 8E                           DB      H(RELEXP & 0x0FFF  | CALBITH)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 51 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 51 - 03.07.2023 17:58:01
 
 
     2343/     CF1 : 35                           DB      L(RELEXP & 0x0FFF  | CALBITH)
@@ -3211,7 +3211,7 @@
     2346/     D00 :                      
     2347/     D00 : (MACRO)              RETURN: TSTR     NEXT,"RETUR",'N'
     2347/     D00 : 2D                           DB      H((NEXT & 0x0FFF)| TSTBITH)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 52 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 52 - 03.07.2023 17:58:01
 
 
     2347/     D01 : 10                           DB      L((NEXT & 0x0FFF)| TSTBITH)
@@ -3274,7 +3274,7 @@
     2350/     D18 :                              DO      
     2350/     D18 : [2350]                        ENDIF
     2350/     D18 : [2350]                        ENDIF
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 53 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 53 - 03.07.2023 17:58:01
 
 
     2351/     D18 : (MACRO)                      TSTV     SYNTAX
@@ -3337,7 +3337,7 @@
     2354/     D2A : [2354]                        ENDIF
     2355/     D2A :                      
     2356/     D2A : (MACRO)              FOR:    TSTR     STAT,"FO",'R'
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 54 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 54 - 03.07.2023 17:58:01
 
 
     2356/     D2A : 2D                           DB      H((STAT & 0x0FFF)| TSTBITH)
@@ -3400,7 +3400,7 @@
     2363/     D45 : D0                             DB    'P' |0x80
     2363/     D46 : [2363]                        ENDIF
     2364/     D46 : (MACRO)                      CALL     RELEXP
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 55 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 55 - 03.07.2023 17:58:01
 
 
     2364/     D46 : 8E                           DB      H(RELEXP & 0x0FFF  | CALBITH)
@@ -3463,7 +3463,7 @@
     2369/     D59 : D4                             DB    'T' |0x80
     2369/     D5A : [2369]                        ENDIF
     2370/     D5A : (MACRO)                      TSTR     SYNTAX,'='
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 56 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 56 - 03.07.2023 17:58:01
 
 
     2370/     D5A : 2E                           DB      H((SYNTAX & 0x0FFF)| TSTBITH)
@@ -3526,7 +3526,7 @@
     2375/     D6C : C5                             DB    'E' |0x80
     2375/     D6D : [2375]                        ENDIF
     2376/     D6D : (MACRO)                      TSTR     SYNTAX,'='
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 57 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 57 - 03.07.2023 17:58:01
 
 
     2376/     D6D : 2E                           DB      H((SYNTAX & 0x0FFF)| TSTBITH)
@@ -3589,7 +3589,7 @@
     2380/     D7F : 9E                           DB      L((PRINT & 0x0FFF)| TSTBITH)
     2380/     D80 : =>BLANK                       IFB     
     2380/     D80 : A4                             DB    '$' |0x80 
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 58 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 58 - 03.07.2023 17:58:01
 
 
     2380/     D81 : =>FALSE                       ELSE
@@ -3652,7 +3652,7 @@
     2387/     D92 : 8E                           DB      H(FACTOR & 0x0FFF  | CALBITH)
     2387/     D93 : AC                           DB      L(FACTOR & 0x0FFF  | CALBITH)
     2388/     D94 : (MACRO)                      DO       XCHGP1,MOVSTR,XCHGP1
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 59 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 59 - 03.07.2023 17:58:01
 
 
     2388/     D94 : =>NOT BLANK                   IFNB    XCHGP1 
@@ -3715,7 +3715,7 @@
     2392/     DA4 :                                DB    "IN" |0x80 
     2392/     DA4 : =>TRUE                        ELSE
     2392/     DA4 : 49 4E                          DB    "IN" 
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 60 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 60 - 03.07.2023 17:58:01
 
 
     2392/     DA6 : D4                             DB    'T' |0x80
@@ -3778,7 +3778,7 @@
     2398/     DBA : 30                           DB      L((XCHGP1-1) & 0x0FFF)
     2398/     DBB :                              SHIFT
     2398/     DBB :     (MACRO-5)                 DO      
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 61 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 61 - 03.07.2023 17:58:01
 
 
     2398/     DBB : =>BLANK                       IFNB     
@@ -3841,7 +3841,7 @@
     2407/     DCD : =>NOT BLANK                   IFNB    DONE 
     2407/     DCD : 01                           DB      H((DONE-1) & 0x0FFF)
     2407/     DCE : 2F                           DB      L((DONE-1) & 0x0FFF)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 62 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 62 - 03.07.2023 17:58:01
 
 
     2407/     DCF :                              SHIFT
@@ -3904,7 +3904,7 @@
     2411/     DE2 :                              DO      
     2411/     DE2 : [2411]                        ENDIF
     2411/     DE2 : [2411]                        ENDIF
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 63 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 63 - 03.07.2023 17:58:01
 
 
     2411/     DE2 : [2411]                        ENDIF
@@ -3967,7 +3967,7 @@
     2417/     DF4 :                                DB     |0x80
     2417/     DF4 : [2417]                        ENDIF
     2418/     DF4 : (MACRO)                      JUMP     IN1
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 64 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 64 - 03.07.2023 17:58:01
 
 
     2418/     DF4 : 4D                           DB      H(IN1 & 0x0FFF  | JMPBITH)
@@ -4030,7 +4030,7 @@
     2422/     E07 : =>NOT BLANK                   IFNB    NXT 
     2422/     E07 : 02                           DB      H((NXT-1) & 0x0FFF)
     2422/     E08 : 83                           DB      L((NXT-1) & 0x0FFF)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 65 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 65 - 03.07.2023 17:58:01
 
 
     2422/     E09 :                              SHIFT
@@ -4093,7 +4093,7 @@
     2429/     E1C :  (MACRO-2)                    DO      XCHGP1,POPAE,CALLML,XCHGP1,NXT
     2429/     E1C : =>NOT BLANK                   IFNB    XCHGP1 
     2429/     E1C : 06                           DB      H((XCHGP1-1) & 0x0FFF)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 66 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 66 - 03.07.2023 17:58:01
 
 
     2429/     E1D : 30                           DB      L((XCHGP1-1) & 0x0FFF)
@@ -4156,7 +4156,7 @@
     2432/     E2F :                              DB      H((-1) & 0x0FFF)
     2432/     E2F :                              DB      L((-1) & 0x0FFF)
     2432/     E2F :                              SHIFT
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 67 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 67 - 03.07.2023 17:58:01
 
 
     2432/     E2F :                              DO      
@@ -4219,7 +4219,7 @@
     2444/     E3E :                              SHIFT
     2444/     E3E :  (MACRO-2)                    DO      
     2444/     E3E : =>BLANK                       IFNB     
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 68 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 68 - 03.07.2023 17:58:01
 
 
     2444/     E3E :                              DB      H((-1) & 0x0FFF)
@@ -4282,7 +4282,7 @@
     2451/     E4F :  (MACRO-2)                    DO      
     2451/     E4F : =>BLANK                       IFNB     
     2451/     E4F :                              DB      H((-1) & 0x0FFF)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 69 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 69 - 03.07.2023 17:58:01
 
 
     2451/     E4F :                              DB      L((-1) & 0x0FFF)
@@ -4345,7 +4345,7 @@
     2458/     E5E : 61                           DB      L(EXPR & 0x0FFF  | CALBITH)
     2459/     E5F : (MACRO)              GTROP:  DO       GTR
     2459/     E5F : =>NOT BLANK                   IFNB    GTR 
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 70 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 70 - 03.07.2023 17:58:01
 
 
     2459/     E5F : 05                           DB      H((GTR-1) & 0x0FFF)
@@ -4408,7 +4408,7 @@
     2467/     E72 : =>FALSE                       ELSE
     2467/     E72 :                                DB    '+' 
     2467/     E72 :                                DB     |0x80
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 71 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 71 - 03.07.2023 17:58:01
 
 
     2467/     E72 : [2467]                        ENDIF
@@ -4471,7 +4471,7 @@
     2476/     E85 : (MACRO)                      CALL     TERM
     2476/     E85 : 8E                           DB      H(TERM & 0x0FFF  | CALBITH)
     2476/     E86 : 8D                           DB      L(TERM & 0x0FFF  | CALBITH)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 72 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 72 - 03.07.2023 17:58:01
 
 
     2477/     E87 : (MACRO)                      DO       OROP
@@ -4534,7 +4534,7 @@
     2484/     E96 : [2484]                        ENDIF
     2485/     E96 : (MACRO)                      JUMP     T1
     2485/     E96 : 4E                           DB      H(T1 & 0x0FFF  | JMPBITH)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 73 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 73 - 03.07.2023 17:58:01
 
 
     2485/     E97 : 8F                           DB      L(T1 & 0x0FFF  | JMPBITH)
@@ -4597,7 +4597,7 @@
     2494/     EAC :                      
     2495/     EAC : (MACRO)              FACTOR: TSTV     F1
     2495/     EAC : 04                           DB      H((TSTVAR-1) & 0x0FFF)
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 74 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 74 - 03.07.2023 17:58:01
 
 
     2495/     EAD : E0                           DB      L((TSTVAR-1) & 0x0FFF)
@@ -4660,7 +4660,7 @@
     2500/     EC0 : F5                           DB      L((RTN-1) & 0x0FFF)
     2500/     EC1 :                              SHIFT
     2500/     EC1 :   (MACRO-3)                   DO      
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 75 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 75 - 03.07.2023 17:58:01
 
 
     2500/     EC1 : =>BLANK                       IFNB     
@@ -4723,7 +4723,7 @@
     2507/     ED1 : E9                           DB      L((EVAL-1) & 0x0FFF)
     2507/     ED2 :                              SHIFT
     2507/     ED2 :  (MACRO-2)                    DO      RTN
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 76 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 76 - 03.07.2023 17:58:01
 
 
     2507/     ED2 : =>NOT BLANK                   IFNB    RTN 
@@ -4786,7 +4786,7 @@
     2512/     EE7 :                              SHIFT
     2512/     EE7 :  (MACRO-2)                    DO      RTN
     2512/     EE7 : =>NOT BLANK                   IFNB    RTN 
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 77 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 77 - 03.07.2023 17:58:01
 
 
     2512/     EE7 : 00                           DB      H((RTN-1) & 0x0FFF)
@@ -4849,7 +4849,7 @@
     2516/     EFA : 20                           DB      L(DOUBLE & 0x0FFF  | CALBITH)
     2517/     EFB : (MACRO)                      DO       DIV,MODULO,RTN
     2517/     EFB : =>NOT BLANK                   IFNB    DIV 
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 78 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 78 - 03.07.2023 17:58:01
 
 
     2517/     EFB : 04                           DB      H((DIV-1) & 0x0FFF)
@@ -4912,7 +4912,7 @@
     2520/     F10 : 09                           DB      H((MODULO-1) & 0x0FFF)
     2520/     F11 : BF                           DB      L((MODULO-1) & 0x0FFF)
     2520/     F12 :                              SHIFT
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 79 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 79 - 03.07.2023 17:58:01
 
 
     2520/     F12 :      (MACRO-6)                DO      ADD,RTN
@@ -4975,7 +4975,7 @@
     2524/     F22 : A8                             DB    '(' |0x80 
     2524/     F23 : =>FALSE                       ELSE
     2524/     F23 :                                DB    '(' 
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 80 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 80 - 03.07.2023 17:58:01
 
 
     2524/     F23 :                                DB     |0x80
@@ -5038,7 +5038,7 @@
     2531/     F33 : [2531]                        ENDIF
     2531/     F33 : [2531]                        ENDIF
     2532/     F33 : (MACRO)              PRNUM1: DO       DIV,PRN1,XCHGP1,RTN
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 81 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 81 - 03.07.2023 17:58:01
 
 
     2532/     F33 : =>NOT BLANK                   IFNB    DIV 
@@ -5101,7 +5101,7 @@
     2549/     F51 : 56 41 4C                      DB  "VAL"
     2549/     F54 : D5                            DB  'U' |0x80
     2550/     F55 : (MACRO)                      MESSAGE "END",'"'     ;  7
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 82 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 82 - 03.07.2023 17:58:01
 
 
     2550/     F55 : 45 4E 44                      DB  "END"
@@ -5130,7 +5130,7 @@
     2558/     F73 : (MACRO)                      MESSAGE "UNT",'L'     ;  15
     2558/     F73 : 55 4E 54                      DB  "UNT"
     2558/     F76 : CC                            DB  'L' |0x80
-    2559/     F77 :                             ;
+    2559/     F77 :                     
     2560/     F77 :                      
     2561/     F77 :                     ;*************************************
     2562/     F77 :                     ;*     GET CHARACTER AND ECHO IT     *
@@ -5144,8 +5144,8 @@
     2570/     F7F : 06                  GETCO1: CSA                     ;WAIT FOR START BIT
     2571/     F80 : D4 20                       ANI     0x20
     2572/     F82 : 9C FB                       JNZ     GETCO1          ;NOT FOUND
-    2573/     F84 : C4 57                       LDI     87              ;DELAY 1/2 BIT TIME
-    2574/     F86 : 8F 04                       DLY     4
+    2573/     F84 : C4 A7                       LDI     167              ;DELAY 1/2 BIT TIME
+    2574/     F86 : 8F 00                       DLY     0
     2575/     F88 : 06                          CSA                     ;IS START BIT STILL THERE?
     2576/     F89 : D4 20                       ANI     0x20
     2577/     F8B : 9C F2                       JNZ     GETCO1          ;NO
@@ -5153,8 +5153,8 @@
     2579/     F8E : D4 FD                       ANI     0xFD            ;RESET READER RELAY
     2580/     F90 : DC 01                       ORI     1
     2581/     F92 : 07                          CAS
-    2582/     F93 : C4 85               GETCO2: LDI     133             ;DELAY 1 BIT TIME
-    2583/     F95 : 8F 08                       DLY     8
+    2582/     F93 : C4 45               GETCO2: LDI     69              ;DELAY 1 BIT TIME
+    2583/     F95 : 8F 01                       DLY     1
     2584/     F97 : 06                          CSA                     ;GET BIT (SENSED)
     2585/     F98 : D4 20                       ANI     0x20
     2586/     F9A : 98 04                       JZ      GETCO3
@@ -5164,12 +5164,12 @@
     2590/     FA2 : 9C 00                       JNZ     GETCO4
     2591/     FA4 : CA EA               GETCO4: ST      TEMP(P2)        ;SAVE BIT VALUE (0 OR 1)
     2592/     FA6 : 1F                          RRL                     ;ROTATE INTO LINK
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 83 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 83 - 03.07.2023 17:58:01
 
 
     2593/     FA7 : 01                          XAE
-    2594/     FA8 : 1D                          SRL                     ; SHIFT INTO CHARACTER
-    2595/     FA9 : 01                          XAE                     ; RETURN CHAR TO E
+    2594/     FA8 : 1D                          SRL                     ;SHIFT INTO CHARACTER
+    2595/     FA9 : 01                          XAE                     ;RETURN CHAR TO E
     2596/     FAA : 06                          CSA                     ;ECHO BIT TO OUTPUT
     2597/     FAB : DC 01                       ORI     1
     2598/     FAD : E2 EA                       XOR     TEMP(P2)
@@ -5179,8 +5179,8 @@
     2602/     FB4 : 06                          CSA                     ;SET STOP BIT
     2603/     FB5 : D4 FE                       ANI     0xFE
     2604/     FB7 : 07                          CAS
-    2605/     FB8 : 8F 08                       DLY     8               ; DELAY APPROX. 1 BIT TIME
-    2606/     FBA : 40                          LDE                     ; AC HAS INPUT CHARACTER
+    2605/     FB8 : 8F 04                       DLY     4               ;DELAY APPROX. 1 BIT TIME
+    2606/     FBA : 40                          LDE                     ;AC HAS INPUT CHARACTER
     2607/     FBB : D4 7F                       ANI     0x7F
     2608/     FBD : 01                          XAE
     2609/     FBE : 40                          LDE
@@ -5192,15 +5192,15 @@
     2615/     FC2 :                     ;*************************************
     2616/     FC2 :                      
     2617/     FC2 : 01                  PUTC:   XAE
-    2618/     FC3 : C4 FF                       LDI     255              ; DELAY ALMOST
-    2619/     FC5 : 8F 17                       DLY     23               ; 3  BIT  TIMES
-    2620/     FC7 : 06                          CSA                      ;SET OUTPUT  BIT  TO  LOGIC  0
+    2618/     FC3 : C4 25                       LDI     37               ; DELAY ALMOST
+    2619/     FC5 : 8F 03                       DLY     3                ; 3  BIT  TIMES
+    2620/     FC7 : 06                          CSA                      ; SET OUTPUT  BIT  TO  LOGIC  0
     2621/     FC8 : DC 01                       ORI     1                ; FOR START  BIT
     2622/     FCA : 07                          CAS
     2623/     FCB : C4 09                       LDI     9                ; INITIALIZE BIT COUNT
     2624/     FCD : CA E8                       ST      TEMP3(P2)
-    2625/     FCF : C4 8A               PUTC1:  LDI     138              ; DELAY 1 BIT TIME
-    2626/     FD1 : 8F 08                       DLY     8    
+    2625/     FCF : C4 50               PUTC1:  LDI     80               ; DELAY 1 BIT TIME
+    2626/     FD1 : 8F 01                       DLY     1    
     2627/     FD3 : BA E8                       DLD     TEMP3(P2)        ; DECREMENT BIT COUNT
     2628/     FD5 : 98 10                       JZ      PUTC2
     2629/     FD7 : 40                          LDE                      ; PREPARE NEXT BIT
@@ -5221,7 +5221,7 @@
     2644/     FEC : 90 D4                       JMP    PUTC
     2645/     FEE :                     
     2646/     FEE :                          END   0
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 84 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 84 - 03.07.2023 17:58:01
 
 
   Symboltabelle (* = unbenutzt):
@@ -5244,7 +5244,7 @@
  CMP1 :                         5BA C |  CMP2 :                         5C2 C |
  CMPR :                         5D1 C |  COMMA :                        DC1 C |
 *COMPMODE :                       0 - | *CONSTPI :        3.141592653589793 - |
-*DATE :                "08.05.2023" - |  DETPGE :                       BC5 C |
+*DATE :                "03.07.2023" - |  DETPGE :                       BC5 C |
  DFAULT :                       C78 C |  DIV :                          408 C |
  DOLLAR :                       D7E C |  DOLR1 :                        D8F C |
  DOLR2 :                        D9A C |  DONE :                         130 C |
@@ -5284,7 +5284,7 @@
  FNDLBL :                       BE2 C |  FNDPGE :                       B98 C |
  FOR :                          D2A C |  FOR2 :                         D4C C |
  FORI :                         D4A C |  FORPTR :          FFFFFFFFFFFFFFFE - |
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 85 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 85 - 03.07.2023 17:58:01
 
 
  FORSTK :                      108A - |  FPGE1 :                        BA7 C |
@@ -5347,7 +5347,7 @@
  NEG :                          35B C |  NEQ :                          548 C |
  NEQ1 :                         591 C | *NESTMAX :                      100 - |
  NEW :                          C6D C |  NEW1 :                         C7A C |
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 86 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 86 - 03.07.2023 17:58:01
 
 
  NEWPGM :                       BD1 C |  NEXT :                         D10 C |
@@ -5408,9 +5408,9 @@
  T3 :                           EA1 C |  TBL001 :                       CF6 C |
  TEMP :            FFFFFFFFFFFFFFEA - |  TEMP2 :           FFFFFFFFFFFFFFE9 - |
  TEMP3 :           FFFFFFFFFFFFFFE8 - |  TERM :                         E8D C |
-*TIME :                  "15:13:29" - |  TNABRT :                       6BE C |
+*TIME :                  "17:58:01" - |  TNABRT :                       6BE C |
  TNERR :                        751 C |  TNL1 :                         6DF C |
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 87 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 87 - 03.07.2023 17:58:01
 
 
  TNL2 :                         6FF C |  TNRET :                        6CE C |
@@ -5446,7 +5446,7 @@
     411 Symbole
      21 unbenutzte Symbole
 
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 88 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 88 - 03.07.2023 17:58:01
 
 
   definierte Makros:
@@ -5460,7 +5460,7 @@ TSTR                                  | TSTV
 
      10 Makros
 
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 89 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 89 - 03.07.2023 17:58:01
 
 
   definierte Funktionen:
@@ -5468,7 +5468,7 @@ TSTR                                  | TSTV
 
 H                                     | L                                    
 
- AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 90 - 08.05.2023 15:13:29
+ AS V1.42 Beta [Bld 238] - Quelle nibl_19761217.asm - Seite 90 - 03.07.2023 17:58:01
 
 
   Zeichentabellen:

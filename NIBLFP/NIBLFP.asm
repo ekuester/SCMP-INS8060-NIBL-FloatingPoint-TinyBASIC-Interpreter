@@ -1,4 +1,5 @@
-; NIBLFP.ASM by Erich Küster, late seventies of last century
+; NIBLFP.ASM originally written by Erich Küster, late seventies of last century
+; some changes 40 years later by Fred N. van Kempen, Fort Wayne, Indiana / USA
 ; assembler listing
 ; some labels are fallen into oblivion and substituted by L_[hex address]
 ; rewritten 2023 for macro assembler asl
@@ -49,6 +50,12 @@ RTRN  MACRO  P,VAL            ;RETURN FROM SUBROUTINE
 ;*                     - ERICH KUESTER                *
 ;******************************************************
 
+; Select desired baud rate, or 0 for original default.
+BAUD	= 0
+
+; Set the desired load (12K total) address.
+BASE	= 0xD000
+
 JMPBIT  =  0x80
 TSTBIT  =  0x40               ;I.L. INSTRUCTION FLAGS
 CALBIT  =  0x20
@@ -57,7 +64,7 @@ P2      =  2
 P3      =  3
 EREG    =  -128               ;THE EXTENSION REGISTER
 
-        ORG    0xD000
+        ORG    BASE
 L_D000: LDI    0x0C
         CALL   P3,PUTASC
         LDI    0x1C           ;BASIC STACK AT 1C00
@@ -125,16 +132,16 @@ L_D05F: LD     1(P3)
         ST     -2(P2)
 L_D07D: LD     @-1(P3)
         LDE
-L_D080: XPPC   P3
-        XAE
+SPRVSR: XPPC   P3             ;SUPERVISOR FOR CALL AND RETURN
+        XAE                  ;
         LD     @1(P3)
         LD     (P3)
-        JZ     L_D0A7         ;to $D0A7
+        JZ     RTN            ;IS IT A RETURN?
         LD     -29(P2)
         XPAL   P2
-        LD     @2(P3)
+SUPRVS: LD     @2(P3)
         ST     -2(P2)
-        LD     -1(P3)
+CALL:   LD     -1(P3)         ;PREPARE CALL ADDRESS
         XPAL   P3
         ST     @-1(P2)
         LD     -1(P2)
@@ -147,11 +154,11 @@ L_D080: XPPC   P3
 L_D0A0: LDI    0x46
 L_D0A2: XAE
         LDI    0x1E
-        JMP    L_D0AB         ;to $D0AB
-L_D0A7: ILD    -29(P2)
+        JMP    RTN1           ;to $D0AB
+RTN:    ILD    -29(P2)
         ILD    -29(P2)
-L_D0AB: XPAL   P2
-        LD     -1(P2)
+RTN1:   XPAL   P2
+RTN2:   LD     -1(P2)
         XPAL   P3
         LD     -2(P2)
         XPAH   P3
@@ -232,7 +239,7 @@ L_D12D: SCL
         JNZ    L_D13C         ;to $D13C
         ILD    -24(P2)
         LD     @1(P1)
-        JMP    L_D12D         ;to $D12D
+        JMP    L_D12D         ;to $D12D 55/
 L_D13C: JP     L_D148         ;to $D148
 L_D13E: LD     -24(P2)
         JZ     L_D109         ;to $D109
@@ -337,7 +344,8 @@ L_D1F5: LD     @-1(P1)
         JNZ    L_D1D8         ;to $D1D8
         JMP    38(P3)
 
-        ORG    0xD400
+; LOOKS LIKE A "TAPE" ROUTINE.
+        ORG    BASE+0x400
 L_D400: LDI    0x01
         XAE
         SIO
@@ -354,7 +362,8 @@ L_D400: LDI    0x01
         CAD    @-01(P3)
         CAD    @-01(P3)
 
-        ORG    0xD45B
+; LOOKS LIKE A "TAPE" ROUTINE.
+        ORG    BASE+0x45B
 L_D45B: ST     -96(P2)
         LDI    0x0B
         ST     -21(P2)
@@ -413,7 +422,8 @@ L_D4B5: DLD    -95(P2)
         XPPC   P3
         JMP    L_D483         ;to $D483
 
-        ORG    0xD4C0
+; LOOKS LIKE A "TAPE" ROUTINE.
+        ORG    BASE+0x4C0
 L_D4C0: LDI    0x00
         ST     -95(P2)
         ST     -96(P2)
@@ -450,7 +460,7 @@ L_D4F6: LDI    0x63
 ;***************************
 ;*   PUT CHAR TO STDOUT    *
 ;***************************
-
+        ORG    BASE+0x500
 PUTASC: ANI    0x7F           ;MASK OFF PARITY BIT
         XAE                   ;SAVE IN EXT
         ST     -127(P2)       ;STORE IN RAM
@@ -494,7 +504,7 @@ PUTA3:  ANI    0x60
 ;*   GET CHAR FROM STDIN   *
 ;***************************
 
-        ORG    0xD5CE
+        ORG    BASE+0x5CE
 GETASC: LDI    0x08           ;SET COUNT
         ST     -21(P2)
 L_WAIT: CSA                   ;WAIT FOR START BIT
@@ -538,10 +548,6 @@ UPPERC: LDE
         LDI    0x7C
         JMP    -98(P3)
 
-        DB     "00000"
-        DB     "000000"
-        DB     "000000"
-
 ;***************************
 ;*       MESSAGES          *
 ;***************************
@@ -551,6 +557,7 @@ MESSAGE MACRO A,B
            DB  B|0x80
         ENDM
 
+        ORG     BASE+0x61C
 MESGS:  MESSAGE "DE",'F'      ; 1
         MESSAGE "ARE",'A'     ; 2
         MESSAGE "AR",'G'      ; 3
@@ -580,11 +587,6 @@ MESGS:  MESSAGE "DE",'F'      ; 1
         MESSAGE "ERRO",'R'    ; 27
         MESSAGE "READ",'Y'    ; 28
 
-        DB      "000000"
-        DB      "000000"
-        DB      "000000"
-        DB      "000"
-
 ;***************************
 ;*      TOKEN TABLE        *
 ;***************************
@@ -599,6 +601,7 @@ TOKEN   MACRO A,B,C
            DB  C|0x80
         ENDM
 
+        ORG     BASE+0x6A0
 TABLE:  TOKEN   0,"AUT",'O'     ; 0
         TOKEN   1,"BY",'E'      ; 1
         TOKEN   2,"CLEA",'R'    ; 2
@@ -1060,7 +1063,7 @@ US2:    DO      LINE
         DO      DNE
         DB      0
 
-        ORG     0xDB00
+        ORG     BASE+0xB00
 STREXP: ILCALL  STRF
 STREX1: TSTSTR  STREX2
         DB      '&'
@@ -1076,7 +1079,7 @@ STRF1:  TSTSTR  STRF2
         DO      FIX
         DO      CHRSTR
 STRF2:  TSTSTR  STRF4
-        DB      0xC6          ;'LEFT$'
+        DB      0xC6          ;'LEFT$'ORG
         TSTSTR  SYNTAX
         DB      '('
         TSTSTR  STRF3
@@ -1678,16 +1681,13 @@ USEX9:  DO      FNUM
         DO      PREND
         DB      0
 
-        ORG     0xDFC1
+        ORG     BASE+0xFC1
 ;**************************************
 ;*   NIBLFP - INITIALIZATION OF NIBL  *
 ;**************************************
 
 ENTRY:  DINT
-        LDI     0x80
-        XPAL    P3
-        LDI     0xD0
-        XPAH    P3
+        LDPI    P3, SPRVSR    ;POINT P3 TO SUPERVISOR
         LDI     0x1E
         XPAL    P2
         LD      -122(P3)

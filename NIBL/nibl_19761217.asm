@@ -2556,7 +2556,7 @@ MESGS:  MESSAGE " ERRO",'R'   ;  1
         MESSAGE "DIV",'0'     ;  13
         MESSAGE "BR" ,'K'     ;  14
         MESSAGE "UNT",'L'     ;  15
-        ;
+
  
 ;*************************************
 ;*     GET CHARACTER AND ECHO IT     *
@@ -2570,8 +2570,8 @@ GECO:   LDI     8               ;SET COUNT = 8
 GETCO1: CSA                     ;WAIT FOR START BIT
         ANI     0x20
         JNZ     GETCO1          ;NOT FOUND
-        LDI     87              ;DELAY 1/2 BIT TIME
-        DLY     4
+        LDI     167              ;DELAY 1/2 BIT TIME
+        DLY     0
         CSA                     ;IS START BIT STILL THERE?
         ANI     0x20
         JNZ     GETCO1          ;NO
@@ -2579,8 +2579,8 @@ GETCO1: CSA                     ;WAIT FOR START BIT
         ANI     0xFD            ;RESET READER RELAY
         ORI     1
         CAS
-GETCO2: LDI     133             ;DELAY 1 BIT TIME
-        DLY     8
+GETCO2: LDI     69              ;DELAY 1 BIT TIME
+        DLY     1
         CSA                     ;GET BIT (SENSED)
         ANI     0x20
         JZ      GETCO3
@@ -2591,8 +2591,8 @@ GETCO3: LDI     0
 GETCO4: ST      TEMP(P2)        ;SAVE BIT VALUE (0 OR 1)
         RRL                     ;ROTATE INTO LINK
         XAE
-        SRL                     ; SHIFT INTO CHARACTER
-        XAE                     ; RETURN CHAR TO E
+        SRL                     ;SHIFT INTO CHARACTER
+        XAE                     ;RETURN CHAR TO E
         CSA                     ;ECHO BIT TO OUTPUT
         ORI     1
         XOR     TEMP(P2)
@@ -2602,8 +2602,8 @@ GETCO4: ST      TEMP(P2)        ;SAVE BIT VALUE (0 OR 1)
         CSA                     ;SET STOP BIT
         ANI     0xFE
         CAS
-        DLY     8               ; DELAY APPROX. 1 BIT TIME
-        LDE                     ; AC HAS INPUT CHARACTER
+        DLY     4               ;DELAY APPROX. 1 BIT TIME
+        LDE                     ;AC HAS INPUT CHARACTER
         ANI     0x7F
         XAE
         LDE
@@ -2615,15 +2615,15 @@ GETCO4: ST      TEMP(P2)        ;SAVE BIT VALUE (0 OR 1)
 ;*************************************
  
 PUTC:   XAE
-        LDI     255              ; DELAY ALMOST
-        DLY     23               ; 3  BIT  TIMES
-        CSA                      ;SET OUTPUT  BIT  TO  LOGIC  0
+        LDI     37               ; DELAY ALMOST
+        DLY     3                ; 3  BIT  TIMES
+        CSA                      ; SET OUTPUT  BIT  TO  LOGIC  0
         ORI     1                ; FOR START  BIT
         CAS
         LDI     9                ; INITIALIZE BIT COUNT
         ST      TEMP3(P2)
-PUTC1:  LDI     138              ; DELAY 1 BIT TIME
-        DLY     8    
+PUTC1:  LDI     80               ; DELAY 1 BIT TIME
+        DLY     1    
         DLD     TEMP3(P2)        ; DECREMENT BIT COUNT
         JZ      PUTC2
         LDE                      ; PREPARE NEXT BIT

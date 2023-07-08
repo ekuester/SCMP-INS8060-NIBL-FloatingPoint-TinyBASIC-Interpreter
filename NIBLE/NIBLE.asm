@@ -2574,8 +2574,8 @@ GECO:   LDI     8             ;SET COUNT = 8
 GET1:   CSA                   ;WAIT FOR START BIT
         ANI     0x20
         JNZ     GET1          ;NOT FOUND
-        LDI     0x57          ;DELAY 1/2 BIT TIME
-        DLY     4
+        LDI     167           ;DELAY 1/2 BIT TIME
+        DLY     0
         CSA                   ;IS START BIT STILL THERE?
         ANI     0x20
         JNZ     GET1          ;NO
@@ -2583,8 +2583,8 @@ GET1:   CSA                   ;WAIT FOR START BIT
         ANI     0xFD          ;RESET READER RELAY
         ORI     1
         CAS
-GET2:   LDI     0x7E          ;DELAY 1 BIT TIME
-        DLY     8
+GET2:   LDI     69            ;DELAY 1 BIT TIME
+        DLY     1
         CSA                   ;GET BIT (SENSEB)
         ANI     0x20
         JZ      GET3
@@ -2606,7 +2606,7 @@ GET4:   ST      TEMP(P2)      ;SAVE BIT VALUE (0 OR 1)
         CSA                   ;SET STOP BIT
         ANI     0xFE
         CAS
-        DLY     8             ;DELAY APPROX. 1 BIT TIME
+        DLY     4             ;DELAY APPROX. 1 BIT TIME
         LDE                   ;AC HAS INPUT CHARACTER
         ANI     0x7F
         XAE
@@ -2620,15 +2620,15 @@ GET4:   ST      TEMP(P2)      ;SAVE BIT VALUE (0 OR 1)
 ;*************************************
  
 PUTC:   XAE
-        LDI     255           ;DELAY ALMOST
-        DLY     23            ;3 BIT TIMES
+        LDI     37            ;DELAY ALMOST
+        DLY     3             ;3 BIT TIMES
         CSA                   ;SET OUTPUT BIT TO LOGIC 0
         ORI     1             ; FOR START BIT (NOTE INVERSION)
         CAS
         LDI     9             ;INITIALIZE BIT COUNT
         ST      TEMP3(P2)
-PUTC1:  LDI     138           ;DELAY 1 BIT TIME
-        DLY     8    
+PUTC1:  LDI     80            ;DELAY 1 BIT TIME
+        DLY     1    
         DLD     TEMP3(P2)     ;DECREMENT BIT COUNT
         JZ      PUTC2
         LDE                   ;PREPARE NEXT BIT

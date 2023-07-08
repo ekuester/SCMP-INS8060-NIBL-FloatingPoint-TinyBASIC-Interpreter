@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 1 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 1 - 07.07.2023 12:00:44
 
 
        1/       0 :                     ; compare NIBL assembler listing by Roger Marin, January 2008
@@ -61,7 +61,7 @@
       58/       0 : =0xFFFFFFFFFFFFFFF0  P1HIGH  =  -16
       59/       0 : =0xFFFFFFFFFFFFFFEF  LO      =  -17
       60/       0 : =0xFFFFFFFFFFFFFFEE  HI      =  -18
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 2 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 2 - 07.07.2023 12:00:44
 
 
       61/       0 : =0xFFFFFFFFFFFFFFED  FAILLO  =  -19
@@ -124,7 +124,7 @@
      110/    102A : BA F6                       DLD     PAGE(P2)      ;IF NOT, PAGE = 1
      111/    102C : C4 FF               LOOP0:  LDI     -1            ;STORE -1 IN 2 CONSECUTIVE
      112/    102E : C9 00                       ST      (P1)          ;LOCATIONS AT START OF PAGE
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 3 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 3 - 07.07.2023 12:00:44
 
 
      113/    1030 : C9 01                       ST      1(P1)
@@ -187,7 +187,7 @@
      170/    108A : CA FA                       ST      PCHIGH(P2)
      171/    108C : 40                          LDE
      172/    108D : D4 E0                       ANI     0xE0          ;CHECK IF I.L. INSTRUCTION
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 4 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 4 - 07.07.2023 12:00:44
 
 
      173/    108F : E4 20                       XRI     TSTBIT        ;IS A 'TEST'
@@ -250,7 +250,7 @@
      230/    10DC : D4 7F                       ANI     0x7F          ;SCRUB OFF FLAG (IF ANY)
      231/    10DE : E5 01                       XOR     @1(P1)        ;IS CHAR EQUAL TO TEXT CHAR?
      232/    10E0 : 9C 07                       JNZ     NEQ0          ;NO - END TEST
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 5 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 5 - 07.07.2023 12:00:44
 
 
      233/    10E2 : 40                          LDE                   ;YES - BUT IS IT LAST CHAR?
@@ -313,7 +313,7 @@
      290/    112C : C4 0A               SAV2:   LDI     10            ;ERROR: MORE THAN
      291/    112E : 90 1B                       JMP     E0            ;EIGHT GOSUBS
      292/    1130 :                     
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 6 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 6 - 07.07.2023 12:00:44
 
 
      293/    1130 :                      
@@ -376,7 +376,7 @@
      350/    1176 :                     ;*************************************
      351/    1176 :                     ;*     PRINT STRING IN TEXT          *
      352/    1176 :                     ;*************************************
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 7 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 7 - 07.07.2023 12:00:44
 
 
      353/    1176 :                      
@@ -439,7 +439,7 @@
      406/    11C6 :                     ; THE DIVISION IS PERFORMED, THEN CONTROL IS TRANSFERRED
      407/    11C6 :                     ; TO PRN1, WHICH FOLLOWS.
      408/    11C6 :                      
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 8 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 8 - 07.07.2023 12:00:44
 
 
      409/    11C6 : AA FD               PRN1:   ILD     LSTK(P2)      ;POINT P1 AT A.E. STACK
@@ -502,7 +502,7 @@
      458/    121B :                                                                                   
      459/    121B :                      
      460/    121B :                     ;****************************
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 9 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 9 - 07.07.2023 12:00:44
 
 
      461/    121B :                     ;*      ERROR ROUTINE       *
@@ -565,7 +565,7 @@
      506/    1270 : CB FF                       ST      -1(P3)        ;PUT ON STACK
      507/    1272 : C2 F8                       LD      LOLINE(P2)    ;GET LOW BYTE OF LINE #
      508/    1274 : CB FE                       ST      -2(P3)        ;PUT ON STACK
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 10 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 10 - 07.07.2023 12:00:44
 
 
      509/    1276 : C4 31                       LDI     L(ERRNUM)     ;GO TO PRN
@@ -628,7 +628,7 @@
      566/    12D2 : CA FF                       ST      DOPTR(P2)     ; & DO/UNTIL STACK
      567/    12D4 : 3F                          XPPC    P3            ;RETURN
      568/    12D5 : 90 A7               X6:     JMP     X5A
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 11 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 11 - 07.07.2023 12:00:44
 
 
      569/    12D7 : 90 A9               E4:     JMP     E3A
@@ -691,7 +691,7 @@
      617/    132D :                      
      618/    132D :                      
      619/    132D :                     ;*************************************
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 12 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 12 - 07.07.2023 12:00:44
 
 
      620/    132D :                     ;*          ADD AND SUBTRACT         *
@@ -754,7 +754,7 @@
      677/    1374 : 37                          XPAH    P3            ;STACK LOCATION
      678/    1375 : C2 FD                       LD      LSTK(P2)
      679/    1377 : 33                          XPAL    P3            ;DETERMINE SIGN OF PRODUCT, 
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 13 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 13 - 07.07.2023 12:00:44
 
 
      680/    1378 : C3 FF                       LD      -1(P3)        ;SAVE IN TEMP(P2)
@@ -817,7 +817,7 @@
      737/    13DF : CB 00                       ST      0(P3)
      738/    13E1 : BA EB                       DLD     NUM(P2)       ;DECREMENT COUNTER
      739/    13E3 : 9C C9                       JNZ     LOOP5         ;LOOP IF NOT ZERO
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 14 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 14 - 07.07.2023 12:00:44
 
 
      740/    13E5 : 90 02                       JMP     MM4
@@ -880,7 +880,7 @@
      797/    1444 : CB FE                       ST      -2(P3)
      798/    1446 : C4 00                       LDI     0
      799/    1448 : FB FF                       CAD     -1(P3)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 15 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 15 - 07.07.2023 12:00:44
 
 
      800/    144A : CB FF                       ST      -1(P3)
@@ -943,7 +943,7 @@
      857/    14B7 : FB FD                       CAD     -3(P3)
      858/    14B9 : CB FD                       ST      -3(P3)
      859/    14BB : BA FD               QDEND:  DLD     LSTK(P2)      ;DECREMENT THE STACK POINTER,
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 16 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 16 - 07.07.2023 12:00:44
 
 
      860/    14BD : BA FD                       DLD     LSTK(P2)
@@ -1006,7 +1006,7 @@
      912/    1506 : C1 00                       LD      (P1)          ;CHECK FOLLOWING CHAR
      913/    1508 : 03                          SCL                   ;MUST NOT BE A LETTER
      914/    1509 : FC 5B                       CAI     'Z'+1         ;OTHERWISE WE'D BE LOOKING
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 17 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 17 - 07.07.2023 12:00:44
 
 
      915/    150B : 94 05                       JP      TVOK          ;AT A KEYWORD, NOT A VARIABLE
@@ -1069,7 +1069,7 @@
      972/    1558 : C4 06               GEQ:    LDI     6             ;WHETHER THE PARTICULAR
      973/    155A :                                                   ;RELATION IS SATISFIED OR NOT
      974/    155A : CA EB               CMP:    ST      NUM(P2)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 18 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 18 - 07.07.2023 12:00:44
 
 
      975/    155C : C4 20                       LDI     H(AESTK)      ;SET P3 -> ARITH STACK
@@ -1132,7 +1132,7 @@
     1032/    15C4 : C4 00                       LDI     0 
     1033/    15C6 : CB FF                       ST      -1(P3)
     1034/    15C8 : (MACRO)                      JS      P3,RTN         ;DO AN I.L. RETURN
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 19 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 19 - 07.07.2023 12:00:44
 
 
     1034/    15C8 : C4 10                      LDI  H(RTN-1)
@@ -1195,7 +1195,7 @@
     1082/    1616 : CB FF                       ST      -1(P3)
     1083/    1618 : C3 00                       LD      0(P3)
     1084/    161A : DB FE                       OR      -2(P3)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 20 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 20 - 07.07.2023 12:00:44
 
 
     1085/    161C : CB FE                       ST      -2(P3)
@@ -1258,7 +1258,7 @@
     1137/    165C : C5 01               HSKIP:  LD      @1(P1)        ;SKIP ANY SPACES
     1138/    165E : E4 20                       XRI     ' '
     1139/    1660 : 98 FA                       JZ      HSKIP
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 21 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 21 - 07.07.2023 12:00:44
 
 
     1140/    1662 : C5 FF                       LD      @-1(P1)
@@ -1321,7 +1321,7 @@
     1197/    16B2 : C5 FF                       LD      @-1(P1)       ;GET FIRST CHAR
     1198/    16B4 : 03                          SCL                   ;TEST FOR DIGIT
     1199/    16B5 : FC 3A                       CAI     '9'+1
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 22 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 22 - 07.07.2023 12:00:44
 
 
     1200/    16B7 : 94 05                       JP      TNABRT
@@ -1384,7 +1384,7 @@
     1257/    171D : BA EA                       DLD     TEMP(P2)
     1258/    171F : 9C EB                       JNZ     TNSHFT
     1259/    1721 : 02                          CCL                   ;THEN ADD OLD RESULT,
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 23 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 23 - 07.07.2023 12:00:44
 
 
     1260/    1722 : C3 FE                       LD       -2(P3)       ;SO WE HAVE RESULT * 5
@@ -1447,7 +1447,7 @@
     1308/    1776 : C4 1F                      LDI  H(GECO-1)
     1308/    1778 : 37                         XPAH P3
     1308/    1779 : C4 76                      LDI  L(GECO-1)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 24 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 24 - 07.07.2023 12:00:44
 
 
     1308/    177B : 33                         XPAL P3
@@ -1510,7 +1510,7 @@
     1364/    17D8 : C5 FF                       LD      @-1(P1)       ;BACKSPACE CURSOR
     1365/    17DA : 90 9A                       JMP     GETL1
     1366/    17DC : 40                  GETLCR: LDE
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 25 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 25 - 07.07.2023 12:00:44
 
 
     1367/    17DD : CD 01                       ST      @1(P1)        ;STORE CR IN LBUF
@@ -1573,7 +1573,7 @@
     1424/    181D : 40                          LDE
     1425/    181E : CB 00                       ST      0(P3)         ;MOVE THE  BYTE INTO MEMORY
     1426/    1820 : 90 C6               X17:    JMP     X16
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 26 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 26 - 07.07.2023 12:00:44
 
 
     1427/    1822 : 90 A6               Ell:    JMP     E10
@@ -1636,7 +1636,7 @@
     1484/    1868 : 40                          LDE
     1485/    1869 : 02                          CCL
     1486/    186A : F4 FF                       ADI     -1
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 27 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 27 - 07.07.2023 12:00:44
 
 
     1487/    186C : 01                          XAE
@@ -1699,7 +1699,7 @@
     1544/    18D4 : C1 00                       LD      0(P1)
     1545/    18D6 : 90 F0                       JMP     INSUP3
     1546/    18D8 : C2 EA               INSUP4: LD      TEMP(P2)      ;RESTORE THE FLAGGED LOCATION
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 28 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 28 - 07.07.2023 12:00:44
 
 
     1547/    18DA : C9 00                       ST      0(P1)         ;TO THEIR ORIGINAL VALUES
@@ -1762,7 +1762,7 @@
     1599/    1928 :                     ;   .LOCAL 
     1600/    1928 : C2 FF               UNTIL:  LD      DOPTR(P2)     ;CHECK FOR DO-STACK UNDERFLOW
     1601/    192A : 01                          XAE
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 29 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 29 - 07.07.2023 12:00:44
 
 
     1602/    192B : 40                          LDE 
@@ -1825,7 +1825,7 @@
     1659/    1967 :                      
     1660/    1967 : C2 EE               CALLML: LD      HI(P2)        ;GET HIGH BYTE OF ADDRESS
     1661/    1969 : 37                          XPAH    P3
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 30 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 30 - 07.07.2023 12:00:44
 
 
     1662/    196A : C2 EF                       LD      LO(P2)        ;GET LOW BYTE
@@ -1888,7 +1888,7 @@
     1715/    19AD : 33                          XPAL    P3            ;ON IT SOMEHOW
     1716/    19AE : 01                          XAE
     1717/    19AF : C4 20                       LDI     H(AESTK)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 31 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 31 - 07.07.2023 12:00:44
 
 
     1718/    19B1 : 37                          XPAH    P3
@@ -1951,7 +1951,7 @@
     1775/    19F1 : 01                          XAE
     1776/    19F2 : C2 E4                       LD      RNDY(P2)
     1777/    19F4 : 02                          CCL
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 32 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 32 - 07.07.2023 12:00:44
 
 
     1778/    19F5 : F4 07                       ADI     7
@@ -2014,7 +2014,7 @@
     1835/    1A46 : C2 FE               SAVFOR: LD      FORPTR(P2)    ;CHECK FOR FOR STACK
     1836/    1A48 : E4 A6                       XRI     L(PCSTAK)     ; OVERFLOW
     1837/    1A4A : 9C 04                       JNZ     SFOR1
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 33 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 33 - 07.07.2023 12:00:44
 
 
     1838/    1A4C : C4 0A                       LDI     10
@@ -2077,7 +2077,7 @@
     1895/    1AA5 : E1 F9                       XOR     -7(P1)        ;COMPARE WITH INDEX
     1896/    1AA7 : 98 04                       JZ      NXTV10        ;ON FOR STACK: ERROR
     1897/    1AA9 : C4 0C                       LDI     12            ;IF NOT EQUAL
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 34 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 34 - 07.07.2023 12:00:44
 
 
     1898/    1AAB : 90 A1               E18:    JMP     E17
@@ -2140,7 +2140,7 @@
     1955/    1B06 : 90 E4                       JMP     X26
     1956/    1B08 : 90 A1               E19:    JMP     E18
     1957/    1B0A :                     
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 35 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 35 - 07.07.2023 12:00:44
 
 
     1958/    1B0A :                     
@@ -2203,7 +2203,7 @@
     2011/    1B39 : C2 EE                       LD      HI(P2)
     2012/    1B3B : 37                          XPAH    P3
     2013/    1B3C : C5 01               LOOP11: LD      @1(P1)        ;GET A BYTE FROM STRING
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 36 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 36 - 07.07.2023 12:00:44
 
 
     2014/    1B3E : E4 22                       XRI     '"'           ;CHECK FOR END OF STRING
@@ -2266,7 +2266,7 @@
     2071/    1B85 : CB FE                       ST      -2(P3)
     2072/    1B87 : C4 00                       LDI     0
     2073/    1B89 : CB FF                       ST      -1(P3)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 37 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 37 - 07.07.2023 12:00:44
 
 
     2074/    1B8B : 90 A7                       JMP     X27
@@ -2329,7 +2329,7 @@
     2131/    1BC4 : 3F                          XPPC    P3            ;RETURN
     2132/    1BC5 :                      
     2133/    1BC5 :                      
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 38 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 38 - 07.07.2023 12:00:44
 
 
     2134/    1BC5 :                     ;************************************
@@ -2392,7 +2392,7 @@
     2191/    1BF5 : FA EE                       CAD     HI(P2)        ;IS TEXT LINE # >= LINE #?
     2192/    1BF7 : 94 07                       JP      FNLBL2        ;YES - STOP LOOKING.
     2193/    1BF9 : C1 02                       LD      2(P1)         ;NO - TRY NEXT LINE IN TEXT
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 39 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 39 - 07.07.2023 12:00:44
 
 
     2194/    1BFB : 01                          XAE
@@ -2455,7 +2455,7 @@
     2251/    1C1C :                      
     2252/    1C1C :                     TSTN     MACRO   FAIL
     2253/    1C1C :                              DB      H((TSTNUM-1) & 0x1FFF)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 40 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 40 - 07.07.2023 12:00:44
 
 
     2254/    1C1C :                              DB      L((TSTNUM-1) & 0x1FFF)
@@ -2518,7 +2518,7 @@
     2284/    1C22 : 8D                           DB      0x0D|0x80
     2285/    1C23 : (MACRO)                      JUMP     PROMPT
     2285/    1C23 : 4C                           DB      H(PROMPT & 0x0FFF | JMPBITH)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 41 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 41 - 07.07.2023 12:00:44
 
 
     2285/    1C24 : 1E                           DB      L(PROMPT & 0x0FFF | JMPBITH)
@@ -2581,7 +2581,7 @@
     2291/    1C3B : =>NOT BLANK                   IFNB    FNDPGE 
     2291/    1C3B : 1B                           DB      H(FNDPGE-1)
     2291/    1C3C : 97                           DB      L(FNDPGE-1)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 42 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 42 - 07.07.2023 12:00:44
 
 
     2291/    1C3D :                              SHIFT
@@ -2644,7 +2644,7 @@
     2296/    1C4B :                              DB      L(-1)
     2296/    1C4B :                              SHIFT
     2296/    1C4B :                              DO      
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 43 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 43 - 07.07.2023 12:00:44
 
 
     2296/    1C4B : [2296]                        ENDIF
@@ -2707,7 +2707,7 @@
     2303/    1C5D : BF                           DB      L(STRT-1)
     2303/    1C5E :                              SHIFT
     2303/    1C5E :    (MACRO-4)                  DO      NXT
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 44 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 44 - 07.07.2023 12:00:44
 
 
     2303/    1C5E : =>NOT BLANK                   IFNB    NXT 
@@ -2770,7 +2770,7 @@
     2308/    1C6F : 4E 45                          DB    "NE" 
     2308/    1C71 : D7                             DB    'W'|0x80
     2308/    1C72 : [2308]                        ENDIF
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 45 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 45 - 07.07.2023 12:00:44
 
 
     2309/    1C72 : (MACRO)                      TSTN     DFAULT
@@ -2833,7 +2833,7 @@
     2312/    1C86 : [2312]                        ENDIF
     2312/    1C86 : [2312]                        ENDIF
     2312/    1C86 : [2312]                        ENDIF
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 46 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 46 - 07.07.2023 12:00:44
 
 
     2312/    1C86 : [2312]                        ENDIF
@@ -2896,7 +2896,7 @@
     2319/    1C9A : 2C                           DB      H((IF & 0x0FFF) | TSTBITH)
     2319/    1C9B : AA                           DB      L((IF & 0x0FFF) | TSTBITH)
     2319/    1C9C : =>BLANK                       IFB     
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 47 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 47 - 07.07.2023 12:00:44
 
 
     2319/    1C9C : C0                             DB    '@'|0x80 
@@ -2959,7 +2959,7 @@
     2326/    1CAF : 35                           DB      L(RELEXP & 0x0FFF | CALBITH)
     2327/    1CB0 : (MACRO)                      TSTR     IF1,"THE",'N'
     2327/    1CB0 : 2C                           DB      H((IF1 & 0x0FFF) | TSTBITH)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 48 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 48 - 07.07.2023 12:00:44
 
 
     2327/    1CB1 : B6                           DB      L((IF1 & 0x0FFF) | TSTBITH)
@@ -3022,7 +3022,7 @@
     2333/    1CC8 : 2F                           DB      L(DONE-1)
     2333/    1CC9 :                              SHIFT
     2333/    1CC9 :  (MACRO-2)                    DO      POPAE,UNTIL,DETPGE,NXT
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 49 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 49 - 07.07.2023 12:00:44
 
 
     2333/    1CC9 : =>NOT BLANK                   IFNB    POPAE 
@@ -3085,7 +3085,7 @@
     2336/    1CDB : =>NOT BLANK                   IFNB    NXT 
     2336/    1CDB : 12                           DB      H(NXT-1)
     2336/    1CDC : 83                           DB      L(NXT-1)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 50 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 50 - 07.07.2023 12:00:44
 
 
     2336/    1CDD :                              SHIFT
@@ -3148,7 +3148,7 @@
     2342/    1CF0 : [2342]                        ENDIF
     2343/    1CF0 : (MACRO)                      CALL     RELEXP
     2343/    1CF0 : 8E                           DB      H(RELEXP & 0x0FFF | CALBITH)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 51 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 51 - 07.07.2023 12:00:44
 
 
     2343/    1CF1 : 35                           DB      L(RELEXP & 0x0FFF | CALBITH)
@@ -3211,7 +3211,7 @@
     2346/    1D00 :                      
     2347/    1D00 : (MACRO)              RETURN: TSTR     NEXT,"RETUR",'N'
     2347/    1D00 : 2D                           DB      H((NEXT & 0x0FFF) | TSTBITH)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 52 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 52 - 07.07.2023 12:00:44
 
 
     2347/    1D01 : 10                           DB      L((NEXT & 0x0FFF) | TSTBITH)
@@ -3274,7 +3274,7 @@
     2351/    1D18 :                              SHIFT
     2351/    1D18 :                              DO      
     2351/    1D18 : [2351]                        ENDIF
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 53 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 53 - 07.07.2023 12:00:44
 
 
     2351/    1D18 : [2351]                        ENDIF
@@ -3337,7 +3337,7 @@
     2355/    1D2A : [2355]                        ENDIF
     2355/    1D2A : [2355]                        ENDIF
     2356/    1D2A :                      
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 54 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 54 - 07.07.2023 12:00:44
 
 
     2357/    1D2A : (MACRO)              FOR:    TSTR     STAT,"FO",'R'
@@ -3400,7 +3400,7 @@
     2364/    1D42 : 53 54 45                       DB    "STE" 
     2364/    1D45 : D0                             DB    'P'|0x80
     2364/    1D46 : [2364]                        ENDIF
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 55 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 55 - 07.07.2023 12:00:44
 
 
     2365/    1D46 : (MACRO)                      CALL     RELEXP
@@ -3463,7 +3463,7 @@
     2370/    1D56 : 53 54 41                       DB    "STA" 
     2370/    1D59 : D4                             DB    'T'|0x80
     2370/    1D5A : [2370]                        ENDIF
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 56 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 56 - 07.07.2023 12:00:44
 
 
     2371/    1D5A : (MACRO)                      TSTR     SYNTAX,'='
@@ -3526,7 +3526,7 @@
     2376/    1D69 : 50 41 47                       DB    "PAG" 
     2376/    1D6C : C5                             DB    'E'|0x80
     2376/    1D6D : [2376]                        ENDIF
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 57 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 57 - 07.07.2023 12:00:44
 
 
     2377/    1D6D : (MACRO)                      TSTR     SYNTAX,'='
@@ -3589,7 +3589,7 @@
     2381/    1D7E : 2D                           DB      H((PRINT & 0x0FFF) | TSTBITH)
     2381/    1D7F : 9E                           DB      L((PRINT & 0x0FFF) | TSTBITH)
     2381/    1D80 : =>BLANK                       IFB     
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 58 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 58 - 07.07.2023 12:00:44
 
 
     2381/    1D80 : A4                             DB    '$'|0x80 
@@ -3652,7 +3652,7 @@
     2388/    1D92 : (MACRO)                      CALL     FACTOR
     2388/    1D92 : 8E                           DB      H(FACTOR & 0x0FFF | CALBITH)
     2388/    1D93 : AC                           DB      L(FACTOR & 0x0FFF | CALBITH)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 59 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 59 - 07.07.2023 12:00:44
 
 
     2389/    1D94 : (MACRO)                      DO       XCHGP1,MOVSTR,XCHGP1
@@ -3715,7 +3715,7 @@
     2393/    1DA4 : =>NOT BLANK                   IFB     'T'
     2393/    1DA4 :                                DB    "IN"|0x80 
     2393/    1DA4 : =>TRUE                        ELSE
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 60 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 60 - 07.07.2023 12:00:44
 
 
     2393/    1DA4 : 49 4E                          DB    "IN" 
@@ -3778,7 +3778,7 @@
     2399/    1DB9 : 16                           DB      H(XCHGP1-1)
     2399/    1DBA : 30                           DB      L(XCHGP1-1)
     2399/    1DBB :                              SHIFT
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 61 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 61 - 07.07.2023 12:00:44
 
 
     2399/    1DBB :     (MACRO-5)                 DO      
@@ -3841,7 +3841,7 @@
     2408/    1DCD : (MACRO)              PR6:    DO       DONE,NXT
     2408/    1DCD : =>NOT BLANK                   IFNB    DONE 
     2408/    1DCD : 11                           DB      H(DONE-1)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 62 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 62 - 07.07.2023 12:00:44
 
 
     2408/    1DCE : 2F                           DB      L(DONE-1)
@@ -3904,7 +3904,7 @@
     2413/    1DE2 :                              DB      L(-1)
     2413/    1DE2 :                              SHIFT
     2413/    1DE2 :                              DO      
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 63 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 63 - 07.07.2023 12:00:44
 
 
     2413/    1DE2 : [2413]                        ENDIF
@@ -3967,7 +3967,7 @@
     2419/    1DF4 : =>FALSE                       ELSE
     2419/    1DF4 :                                DB    ',' 
     2419/    1DF4 :                                DB    |0x80
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 64 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 64 - 07.07.2023 12:00:44
 
 
     2419/    1DF4 : [2419]                        ENDIF
@@ -4030,7 +4030,7 @@
     2424/    1E07 :                              SHIFT
     2424/    1E07 :  (MACRO-2)                    DO      NXT
     2424/    1E07 : =>NOT BLANK                   IFNB    NXT 
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 65 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 65 - 07.07.2023 12:00:44
 
 
     2424/    1E07 : 12                           DB      H(NXT-1)
@@ -4093,7 +4093,7 @@
     2431/    1E1B : 2F                           DB      L(DONE-1)
     2431/    1E1C :                              SHIFT
     2431/    1E1C :  (MACRO-2)                    DO      XCHGP1,POPAE,CALLML,XCHGP1,NXT
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 66 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 66 - 07.07.2023 12:00:44
 
 
     2431/    1E1C : =>NOT BLANK                   IFNB    XCHGP1 
@@ -4156,7 +4156,7 @@
     2434/    1E2F :   (MACRO-3)                   DO      
     2434/    1E2F : =>BLANK                       IFNB     
     2434/    1E2F :                              DB      H(-1)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 67 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 67 - 07.07.2023 12:00:44
 
 
     2434/    1E2F :                              DB      L(-1)
@@ -4219,7 +4219,7 @@
     2445/    1E3D : 43                           DB      L(EQ-1)
     2445/    1E3E :                              SHIFT
     2445/    1E3E :  (MACRO-2)                    DO      
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 68 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 68 - 07.07.2023 12:00:44
 
 
     2445/    1E3E : =>BLANK                       IFNB     
@@ -4282,7 +4282,7 @@
     2452/    1E4F :                              SHIFT
     2452/    1E4F :  (MACRO-2)                    DO      
     2452/    1E4F : =>BLANK                       IFNB     
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 69 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 69 - 07.07.2023 12:00:44
 
 
     2452/    1E4F :                              DB      H(-1)
@@ -4345,7 +4345,7 @@
     2459/    1E5D : 8E                           DB      H(EXPR & 0x0FFF | CALBITH)
     2459/    1E5E : 61                           DB      L(EXPR & 0x0FFF | CALBITH)
     2460/    1E5F : (MACRO)              GTROP:  DO       GTR
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 70 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 70 - 07.07.2023 12:00:44
 
 
     2460/    1E5F : =>NOT BLANK                   IFNB    GTR 
@@ -4408,7 +4408,7 @@
     2468/    1E71 : AB                             DB    '+'|0x80 
     2468/    1E72 : =>FALSE                       ELSE
     2468/    1E72 :                                DB    '+' 
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 71 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 71 - 07.07.2023 12:00:44
 
 
     2468/    1E72 :                                DB    |0x80
@@ -4471,7 +4471,7 @@
     2476/    1E85 : [2476]                        ENDIF
     2477/    1E85 : (MACRO)                      CALL     TERM
     2477/    1E85 : 8E                           DB      H(TERM & 0x0FFF | CALBITH)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 72 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 72 - 07.07.2023 12:00:44
 
 
     2477/    1E86 : 8D                           DB      L(TERM & 0x0FFF | CALBITH)
@@ -4534,7 +4534,7 @@
     2485/    1E96 : [2485]                        ENDIF
     2485/    1E96 : [2485]                        ENDIF
     2486/    1E96 : (MACRO)                      JUMP     T1
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 73 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 73 - 07.07.2023 12:00:44
 
 
     2486/    1E96 : 4E                           DB      H(T1 & 0x0FFF | JMPBITH)
@@ -4597,7 +4597,7 @@
     2494/    1EAB : 8F                           DB      L(T1 & 0x0FFF | JMPBITH)
     2495/    1EAC :                      
     2496/    1EAC : (MACRO)              FACTOR: TSTV     F1
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 74 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 74 - 07.07.2023 12:00:44
 
 
     2496/    1EAC : 14                           DB      H((TSTVAR-1) & 0x1FFF)
@@ -4660,7 +4660,7 @@
     2501/    1EBF : 10                           DB      H(RTN-1)
     2501/    1EC0 : F5                           DB      L(RTN-1)
     2501/    1EC1 :                              SHIFT
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 75 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 75 - 07.07.2023 12:00:44
 
 
     2501/    1EC1 :   (MACRO-3)                   DO      
@@ -4723,7 +4723,7 @@
     2508/    1ED0 : 17                           DB      H(EVAL-1)
     2508/    1ED1 : E9                           DB      L(EVAL-1)
     2508/    1ED2 :                              SHIFT
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 76 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 76 - 07.07.2023 12:00:44
 
 
     2508/    1ED2 :  (MACRO-2)                    DO      RTN
@@ -4786,7 +4786,7 @@
     2513/    1EE6 : 55                           DB      L(STATUS-1)
     2513/    1EE7 :                              SHIFT
     2513/    1EE7 :  (MACRO-2)                    DO      RTN
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 77 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 77 - 07.07.2023 12:00:44
 
 
     2513/    1EE7 : =>NOT BLANK                   IFNB    RTN 
@@ -4849,7 +4849,7 @@
     2517/    1EF9 : 8F                           DB      H(DOUBLE & 0x0FFF | CALBITH)
     2517/    1EFA : 20                           DB      L(DOUBLE & 0x0FFF | CALBITH)
     2518/    1EFB : (MACRO)                      DO       DIV,MODULO,RTN
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 78 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 78 - 07.07.2023 12:00:44
 
 
     2518/    1EFB : =>NOT BLANK                   IFNB    DIV 
@@ -4912,7 +4912,7 @@
     2521/    1F10 : =>NOT BLANK                   IFNB    MODULO 
     2521/    1F10 : 19                           DB      H(MODULO-1)
     2521/    1F11 : BF                           DB      L(MODULO-1)
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 79 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 79 - 07.07.2023 12:00:44
 
 
     2521/    1F12 :                              SHIFT
@@ -4975,7 +4975,7 @@
     2525/    1F22 : =>BLANK                       IFB     
     2525/    1F22 : A8                             DB    '('|0x80 
     2525/    1F23 : =>FALSE                       ELSE
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 80 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 80 - 07.07.2023 12:00:44
 
 
     2525/    1F23 :                                DB    '(' 
@@ -5038,7 +5038,7 @@
     2532/    1F33 : [2532]                        ENDIF
     2532/    1F33 : [2532]                        ENDIF
     2532/    1F33 : [2532]                        ENDIF
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 81 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 81 - 07.07.2023 12:00:44
 
 
     2533/    1F33 : (MACRO)              PRNUM1: DO       DIV,PRN1,XCHGP1,RTN
@@ -5101,7 +5101,7 @@
     2550/    1F50 : D8                            DB  'X'|0x80
     2551/    1F51 : (MACRO)                      MESSAGE "VAL",'U'       ; 6
     2551/    1F51 : 56 41 4C                      DB  "VAL"
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 82 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 82 - 07.07.2023 12:00:44
 
 
     2551/    1F54 : D5                            DB  'U'|0x80
@@ -5148,8 +5148,8 @@
     2574/    1F7F : 06                  GET1:   CSA                   ;WAIT FOR START BIT
     2575/    1F80 : D4 20                       ANI     0x20
     2576/    1F82 : 9C FB                       JNZ     GET1          ;NOT FOUND
-    2577/    1F84 : C4 57                       LDI     0x57          ;DELAY 1/2 BIT TIME
-    2578/    1F86 : 8F 04                       DLY     4
+    2577/    1F84 : C4 A7                       LDI     167           ;DELAY 1/2 BIT TIME
+    2578/    1F86 : 8F 00                       DLY     0
     2579/    1F88 : 06                          CSA                   ;IS START BIT STILL THERE?
     2580/    1F89 : D4 20                       ANI     0x20
     2581/    1F8B : 9C F2                       JNZ     GET1          ;NO
@@ -5157,14 +5157,14 @@
     2583/    1F8E : D4 FD                       ANI     0xFD          ;RESET READER RELAY
     2584/    1F90 : DC 01                       ORI     1
     2585/    1F92 : 07                          CAS
-    2586/    1F93 : C4 7E               GET2:   LDI     0x7E          ;DELAY 1 BIT TIME
-    2587/    1F95 : 8F 08                       DLY     8
+    2586/    1F93 : C4 45               GET2:   LDI     69            ;DELAY 1 BIT TIME
+    2587/    1F95 : 8F 01                       DLY     1
     2588/    1F97 : 06                          CSA                   ;GET BIT (SENSEB)
     2589/    1F98 : D4 20                       ANI     0x20
     2590/    1F9A : 98 04                       JZ      GET3
     2591/    1F9C : C4 01                       LDI     1
     2592/    1F9E : 90 04                       JMP     GET4
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 83 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 83 - 07.07.2023 12:00:44
 
 
     2593/    1FA0 : C4 00               GET3:   LDI     0
@@ -5183,7 +5183,7 @@
     2606/    1FB4 : 06                          CSA                   ;SET STOP BIT
     2607/    1FB5 : D4 FE                       ANI     0xFE
     2608/    1FB7 : 07                          CAS
-    2609/    1FB8 : 8F 08                       DLY     8             ;DELAY APPROX. 1 BIT TIME
+    2609/    1FB8 : 8F 04                       DLY     4             ;DELAY APPROX. 1 BIT TIME
     2610/    1FBA : 40                          LDE                   ;AC HAS INPUT CHARACTER
     2611/    1FBB : D4 7F                       ANI     0x7F
     2612/    1FBD : 01                          XAE
@@ -5197,15 +5197,15 @@
     2620/    1FC2 :                     ;*************************************
     2621/    1FC2 :                      
     2622/    1FC2 : 01                  PUTC:   XAE
-    2623/    1FC3 : C4 FF                       LDI     255           ;DELAY ALMOST
-    2624/    1FC5 : 8F 17                       DLY     23            ;3 BIT TIMES
+    2623/    1FC3 : C4 25                       LDI     37            ;DELAY ALMOST
+    2624/    1FC5 : 8F 03                       DLY     3             ;3 BIT TIMES
     2625/    1FC7 : 06                          CSA                   ;SET OUTPUT BIT TO LOGIC 0
     2626/    1FC8 : DC 01                       ORI     1             ; FOR START BIT (NOTE INVERSION)
     2627/    1FCA : 07                          CAS
     2628/    1FCB : C4 09                       LDI     9             ;INITIALIZE BIT COUNT
     2629/    1FCD : CA E8                       ST      TEMP3(P2)
-    2630/    1FCF : C4 8A               PUTC1:  LDI     138           ;DELAY 1 BIT TIME
-    2631/    1FD1 : 8F 08                       DLY     8    
+    2630/    1FCF : C4 50               PUTC1:  LDI     80            ;DELAY 1 BIT TIME
+    2631/    1FD1 : 8F 01                       DLY     1    
     2632/    1FD3 : BA E8                       DLD     TEMP3(P2)     ;DECREMENT BIT COUNT
     2633/    1FD5 : 98 10                       JZ      PUTC2
     2634/    1FD7 : 40                          LDE                   ;PREPARE NEXT BIT
@@ -5227,7 +5227,7 @@
     2650/    1FEE : 00                          HALT
     2651/    1FEF : 00                          HALT
     2652/    1FF0 : (MACRO)                      JS      P3,REST       ;RETURN FROM ELBUG USING RU1FF0RU
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 84 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 84 - 07.07.2023 12:00:44
 
 
     2652/    1FF0 : C4 19                      LDI  H(REST-1)
@@ -5237,7 +5237,7 @@
     2652/    1FF6 : 3F                         XPPC P3
     2653/    1FF7 :                     
     2654/    1FF7 :                         END   0
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 85 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 85 - 07.07.2023 12:00:44
 
 
   Symboltabelle (* = unbenutzt):
@@ -5259,7 +5259,7 @@
  CMP1 :                        15BA C |  CMP2 :                        15C2 C |
  CMPR :                        15D1 C |  COMMA :                       1DC1 C |
 *COMPMODE :                       0 - | *CONSTPI :        3.141592653589793 - |
-*DATE :                "13.05.2023" - |  DETPGE :                      1BC5 C |
+*DATE :                "07.07.2023" - |  DETPGE :                      1BC5 C |
  DFAULT :                      1C78 C |  DIV :                         1408 C |
  DOLLAR :                      1D7E C |  DOLR1 :                       1D8F C |
  DOLR2 :                       1D9A C |  DONE :                        1130 C |
@@ -5300,7 +5300,7 @@
  FNLBL2 :                      1C00 C |  FNLBL3 :                      1C15 C |
  FOR :                         1D2A C |  FOR1 :                        1D4A C |
  FOR2 :                        1D4C C |  FORPTR :          FFFFFFFFFFFFFFFE - |
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 86 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 86 - 07.07.2023 12:00:44
 
 
  FORSTK :                      208A - |  FPGE1 :                       1BA7 C |
@@ -5363,7 +5363,7 @@
  MSG0 :                        123F C |  MUL :                         1372 C |
  NEG :                         135B C |  NEQ :                         1548 C |
  NEQ0 :                        10E9 C |  NEQ1 :                        1591 C |
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 87 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 87 - 07.07.2023 12:00:44
 
 
 *NESTMAX :                      100 - |  NEW :                         1C6D C |
@@ -5424,9 +5424,9 @@
  T1 :                          1E8F C |  T2 :                          1E98 C |
  T3 :                          1EA1 C |  TEMP :            FFFFFFFFFFFFFFEA - |
  TEMP2 :           FFFFFFFFFFFFFFE9 - |  TEMP3 :           FFFFFFFFFFFFFFE8 - |
- TERM :                        1E8D C | *TIME :                  "19:18:35" - |
+ TERM :                        1E8D C | *TIME :                  "12:00:44" - |
  TN1 :                         16DF C |  TN2 :                         16FF C |
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 88 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 88 - 07.07.2023 12:00:44
 
 
  TNABRT :                      16BE C |  TNERR :                       1751 C |
@@ -5462,7 +5462,7 @@
     411 Symbole
      21 unbenutzte Symbole
 
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 89 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 89 - 07.07.2023 12:00:44
 
 
   definierte Makros:
@@ -5476,7 +5476,7 @@ TSTR                                  | TSTV
 
      10 Makros
 
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 90 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 90 - 07.07.2023 12:00:44
 
 
   definierte Funktionen:
@@ -5484,7 +5484,7 @@ TSTR                                  | TSTV
 
 H                                     | L                                    
 
- AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 91 - 13.05.2023 19:18:35
+ AS V1.42 Beta [Bld 238] - Quelle NIBLE.asm - Seite 91 - 07.07.2023 12:00:44
 
 
   Zeichentabellen:
@@ -5494,7 +5494,7 @@ STANDARD (0 veränderte Zeichen)
 
 1 Zeichentabelle
 
-0.05 Sekunden Assemblierzeit
+0.04 Sekunden Assemblierzeit
 
    2656 Zeilen Quelltext
    4989 Zeilen inkl. Makroexpansionen
