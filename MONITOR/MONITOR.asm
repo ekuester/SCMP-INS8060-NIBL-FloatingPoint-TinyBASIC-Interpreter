@@ -11,39 +11,44 @@
 ; Krefeld / Germany June 20, 2023
 ;
 
-; Select desired baud rate, or 0 for original default.
+; SELECT DESIRED BAUD RATE, 0 FOR ORIGINAL DEFAULT
 BAUD	=  0
-; Set the desired load (12K total) address.
+; SET BASE ADDRESS
 BASE	=  0xC000
+; Set stack pointer
+STACK   =  0x1F80
 
+; ILLEGAL OPCODES
+WRITECH = 0x20
+READCHR = 0x21
 
 L FUNCTION VAL16, (VAL16 & 0xFF)
 H FUNCTION VAL16, ((VAL16 >> 8) & 0xFF)
 
 JS    MACRO  P,VAL            ;JUMP TO SUBROUTINE
-        LDI  H(VAL-1)
-        XPAH P
-        LDI  L(VAL-1)
-        XPAL P
-        XPPC P
+        LDI     H(VAL-1)
+        XPAH    P
+        LDI     L(VAL-1)
+        XPAL    P
+        XPPC    P
       ENDM
 
 LDPI  MACRO  P,VAL            ;LOAD POINTER
-        LDI  L(VAL)
-        XPAL P
-        LDI  H(VAL)
-        XPAH P
+        LDI     L(VAL)
+        XPAL    P
+        LDI     H(VAL)
+        XPAH    P
       ENDM
 
 CALL  MACRO  P,VAL            ;CALL SUBROUTINE
-        XPPC P
-        DB   H(VAL)
-        DB   L(VAL)
+        XPPC    P
+        DB      H(VAL)
+        DB      L(VAL)
       ENDM
 
-RTRN  MACRO  P,VAL            ;RETURN FROM SUBROUTINE
-        XPPC P
-        DB   0
+RTRN  MACRO     P,VAL            ;RETURN FROM SUBROUTINE
+        XPPC    P
+        DB      0
       ENDM
 
 JMPBIT  =  0x80
@@ -62,8 +67,10 @@ P3      =  3
 EREG    =  -128
 
 ; DISPLACEMENTS FOR STACK USED BY MONITOR
+P3LOW   =  -1
+P3HIGH  =  -2
 
-TSTSTR  MACRO   FAIL,A,B
+TSTSTR  MACRO  FAIL,A,B
         DB      H(FAIL - TSTBITH)
         DB      L(FAIL)
         IFB     B
@@ -74,20 +81,22 @@ TSTSTR  MACRO   FAIL,A,B
         ENDIF
         ENDM
 
-MESSAGE MACRO A,B
-           DB  A
-           DB  B|0x80
+MESSAGE MACRO  A,B
+        DB      A
+        DB      B|0x80
         ENDM
 
-GOTO    MACRO   ADR
+GOTO    MACRO  ADR
         DB      H(ADR - JMPBITH)
         DB      L(ADR)
         ENDM
  
-DO      MACRO   ADR
+DO      MACRO  ADR
         IFNB    ADR 
         DB      H(ADR)
         DB      L(ADR)
+;READCHR = 0x21
+
         SHIFT
         DO      ALLARGS
         ENDIF
@@ -96,10 +105,7 @@ DO      MACRO   ADR
         ORG     BASE
 START:  NOP
         DINT
-        LDI     0x80
-        XPAL    P2
-        LDI     0x0F
-        XPAH    P2      ; P2 = 0x0F80
+        LDPI    P2,STACK
         LDI     0x20
         ST      -29(P2)
         LDPI    P3, SPRVSR-1 ;POINT P3 AT SUPERVISOR
@@ -113,27 +119,27 @@ NEU:    LDI     0x1E
         ST      -12(P2)    
         LDI     0x04
         ST      +00(P2)    
-        LDI     0xD9
-        ST      -01(P2)    
-        LD      -98(P2)
-        ST      -02(P2)    
+        LDI     L(BEGIN) ; LOAD LOW OF BEGIN   
+        ST      P3LOW(P2)    
+        LD      -98(P2)  ; LOAD PAGE (HIGH OF BEGIN)
+        ST      P3HIGH(P2)    
         
         CALL    P3,ASCOUT
-        DB      0x0D,0x0A,'*',0xA0
-XCT:    LD      -01(P2)
+        DB      13,10,'*',0xA0
+XCT:    LD      P3LOW(P2)
         XPAL    P3
-        LD      -02(P2)
-        ORI     0xC0
+        LD      P3HIGH(P2) ; LOAD P3 FROM STACK
+        ORI     0xC0    ; SET TWO HIGH BITS
         XPAH    P3
-NXT:    LD      +00(P3)
-        JZ      XCUTE   ; to $C07E
-        JP      GTO     ; to $C050
-        ANI     0x40
-        JNZ     SUPRVS  ; to $C08C
+NXT:    LD      +00(P3) ; LOAD BYTE AFTER 3F INSTRUCTION
+        JZ      XCUTE   ; IF ZERO RETURN
+        JP      GTO     ; GOTO COMMAND
+        ANI     0x40    ; IS TSTSTR COMMAND?
+        JNZ     SUPRVS  ; YES, JUMP TO SUPERVISOR
 GTO:    LD      +01(P3)
-        ST      -01(P2)    
+        ST      P3LOW(P2)    
         LD      @+02(P3)    
-        ST      -02(P2)    
+        ST      P3HIGH(P2)
         JP      XCT     ; to $C03E
         LD      +00(P3)
         XRE
@@ -141,7 +147,7 @@ GTO:    LD      +01(P3)
         LDI     0x69
         XPAL    P3
         XPAL    P1
-        LD      -102(P2)
+        LD      -98(P2)
         XPAH    P3
         XPAH    P1
         JMP     NXT     ; to $C046
@@ -152,9 +158,9 @@ GTO:    LD      +01(P3)
 RTRN:   ILD     -29(P2)
         ILD     -29(P2)
 RTN1:   XPAL    P2
-RTN2:   LD      -01(P2)
+RTN2:   LD      P3LOW(P2)
         XPAL    P3
-        LD      -02(P2)
+        LD      P3HIGH(P2)
         XPAH    P3
         LDI     0x80
         XPAL    P2
@@ -168,13 +174,13 @@ SPRVSR: ST      -96(P2)
         LD      -29(P2)
         XPAL    P2
 SUPRVS: LD      @+02(P3)    
-        ST      -02(P2)    
+        ST      P3HIGH(P2)    
 CALL:   LD      -01(P3)
         XPAL    P3
-        ST      -01(P2)    
-        LD      -02(P2)
+        ST      P3LOW(P2)    
+        LD      P3HIGH(P2)
         XPAH    P3
-        ST      -02(P2)    
+        ST      P3HIGH(P2)    
         LDI     0x80
         XPAL    P2
         DLD     -29(P2)
@@ -243,11 +249,11 @@ BYTES:
         CALL    P3,GETASC
 LIST2:  
         CALL    P3,ASCOUT
-        DB      13,10   ; CARRIAGE RETURN, LINE FEED
+        DB      13,0x8A ; CARRIAGE RETURN, LINE FEED
         DLD     -17(P2)
         JP      LINE
         LDE
-        XRI     13      ; CARRIAGE RETURN?
+        XRI     13      ; IS CARRIAGE RETURN?
         JZ      LIST0   ; to $C0F3
         XRI     0x07
         JNZ     +52(P3)  
@@ -315,18 +321,18 @@ GETHEX:
         XRI     0x0D
         JNZ     +48(P3)  
         RTRN P3
-PRTXT:  LD      -01(P2)
+PRTXT:  LD      P3LOW(P2)
         XPAL    P1
-        LD      -02(P2)
+        LD      P3HIGH(P2)
         XPAH    P1
 TXTOUT: LD      @+01(P1)    
         
         CALL    P3,PUTASC
         JP      TXTOUT  ; to $C1C4
         XPAL    P1
-        ST      -01(P2)    
+        ST      P3LOW(P2)    
         XPAH    P1
-        ST      -02(P2)    
+        ST      P3HIGH(P2)    
 BLNK:   LDI     0x20
         
         CALL    P3,PUTASC
@@ -476,7 +482,7 @@ TRNSF2: CALL    P3,ASCOUT
 TRNSF3: CALL    P3,ASCOUT
         MESSAGE "NEWAD=",' '
         RTRN    P3
-TRNSFR: TSTSTR  0xC3C6,"BLOC",'K' ; LABEL CASS
+TRNSFR: TSTSTR  CASS,"BLOC",'K'
         DO      TRNSF1,TRNSF3,GETHEX
         DB      0
         SCL
@@ -531,6 +537,11 @@ DOWN:   LDI     0x5C
         JP      DOWN    ; to $C347
         RTRN P3
 
+        ORG     BASE+0x3C6
+; CASSETTE ROUTINES EXISTENT, TO BE ENTERED LATER
+CASS:	TSTSTR  CLRS,"CASSETT",'E'
+        DB      0,0
+
         ORG     BASE+0x500
 GETLIN: LDI     0x9D
         XPAL    P1
@@ -549,7 +560,7 @@ GETLIN: LDI     0x9D
         
         CALL    P3,PUTASC
 GETL:   LD      +00(P2)
-        ST      -89(P2)    
+        ST      -25(P2)    
 CLRBUF: XAE
         LDI     0x20
         ST      EREG(P1)    
@@ -563,7 +574,7 @@ INP:
         LDE
         XRI     0x08
         JNZ     HT      ; to $C542
-        LD      -89(P2)
+        LD      -25(P2)
         JZ      INP     ; to $C528
         DLD     -25(P2)
         LDE
@@ -585,7 +596,7 @@ CR:     XRI     0x01
         JNZ     INP     ; to $C528
 EX:     LDI     0x0D
         XAE
-STORE:  LD      -89(P2)
+STORE:  LD      -25(P2)
         XAE
         ST      EREG(P1)    
         XAE
@@ -607,7 +618,8 @@ EXT:    LDI     0x0A
 ;*   GET CHAR FROM STDIN   *
 ;***************************
 
-        ORG    BASE+0x580
+        ORG    BASE+0x580 
+; GET CHARACTER AND ECHO IT
 GETASC: LDI    0x08
         ST     -21(P2)
 GWAIT:  CSA
@@ -673,7 +685,7 @@ HEX:    DLD     -03(P2)
         LDI     0x00
         ST      +01(P2)    
         ST      +00(P2)    
-        ST      -01(P2)    
+        ST      P3LOW(P2)    
 HEX0:   XAE
         LD      +00(P1)
         SCL
@@ -701,7 +713,7 @@ OK:     CCL
         ADI     0x0A
 ENTR:   XAE
         LDI     0x04
-        ST      -02(P2)    
+        ST      P3HIGH(P2)    
 SHIFT:  CCL
         LD      +01(P2)
         ADD     +01(P2)
@@ -709,13 +721,13 @@ SHIFT:  CCL
         LD      +00(P2)
         ADD     +00(P2)
         ST      +00(P2)    
-        DLD     -02(P2)
+        DLD     P3HIGH(P2)
         JNZ     SHIFT   ; to $C63B
         LD      +01(P2)
         ORE
         ST      +01(P2)    
         LD      @+01(P1)    
-        ILD     -01(P2)
+        ILD     P3LOW(P2)
         JMP     HEX0    ; to $C60D
 VALUE:  LDI     0x79
         JMP     +58(P3)
@@ -813,11 +825,18 @@ PUTA3:  XRI    6
 PUTA4:  LD     -96(P2)
         RTRN   P3
 
+OPCODE  MACRO A,B,C
+          DB  A
+          DB  B
+          DB  C|0x80
+          DB  0,0
+        ENDM
+
         ORG     BASE+0x985
 DASMBL: TSTSTR  BEGIN,"DISASSEMBL",'E'
         DO      GETHEX
 NXTD:   DO      PRTXT
-        DB      0x0D
+        DB      0x8D
         DO      PRHEX,GETBYT,P2HEX2,DSMB,DSASMB,DSMBL,GETDSP
         DO      PRTXT
         DB      0x8A
@@ -866,11 +885,11 @@ BYTE1:  CALL    P3,ASCOUT
         DB      "    ", 0xA0
         RTRN P3
 DSASMB: SCL
-        LDI     0x96
+        LDI     L(TAB4) ; LOAD LOW OF TAB4
         XPAL    P1
-        LD      -98(P2)
+        LD      -98(P2) ; LOAD PAGE
         ORI     0x0A
-        XPAH    P1
+        XPAH    P1      ; SET P1 TO TAB4
 DSM1:   LD      @+01(P1)    
         XRE
         JZ      FOUND   ; to $CA12
@@ -880,7 +899,7 @@ DSM1:   LD      @+01(P1)
 DSM2:   LD      @+01(P1)    
         JP      DSM2    ; to $CA09
         LD      @+02(P1)    
-        JMP     DSM1    ; to $C9FF
+        JMP     DSM1    ; to $C9FFHAL
 NOTFND: CCL
 FOUND:  LD      @+01(P1)    
         
@@ -958,7 +977,53 @@ BRKR:   CSA
         ANI     0x20
         JNZ     BRKR
         RTRN P3
-TAB4:   DB      0
-        MESSAGE "HAL",'T'
-
+TAB4:   OPCODE 0, "HAL",'T'
+        OPCODE 1, "XA",'E'
+        OPCODE 2, "CC",'L'
+        OPCODE 3, "SC",'L'
+        OPCODE 4, "DIN",'T'
+        OPCODE 5, "IE",'N'
+        OPCODE 6, "CS",'A'
+        OPCODE 7, "CA",'S'
+        OPCODE 8, "NO",'P'
+        OPCODE 0x19, "SI",'O'
+        OPCODE 0x1C, "S",'R'
+        OPCODE 0x1D, "SR",'L'
+        OPCODE 0x1E, "R",'R'
+        OPCODE 0x1F, "RR",'L'
+        OPCODE 0x30, "XPA",'L'
+        OPCODE 0x34, "XPA",'H'
+        OPCODE 0x3C, "XPP",'C'
+        OPCODE 0x40, "LD",'E'
+        OPCODE 0x50, "AN",'E'
+        OPCODE 0x55, ".BYT",'E'
+        OPCODE 0x58, "OR",'E'
+        OPCODE 0x60, "XR",'E'
+        OPCODE 0x68, "DA",'E'
+        OPCODE 0x70, "AD",'E'
+        OPCODE 0x78, "CA",'E'
+        OPCODE 0x8F, "DL",'Y'
+        OPCODE 0x90, "JM",'P'
+        OPCODE 0x94, "J",'P'
+        OPCODE 0x98, "J",'Z'
+        OPCODE 0x9C, "JN",'Z'
+        OPCODE 0xA8, "IL",'D'
+        OPCODE 0xB8, "DL",'D'
+        OPCODE 0xC0, "L",'D'
+        OPCODE 0xC4, "LD",'I'
+        OPCODE 0xC8, "S",'T'
+        OPCODE 0xD0, "AN",'D'
+        OPCODE 0xD4, "AN",'I'
+        OPCODE 0xD8, "O",'R'
+        OPCODE 0xDC, "OR",'I'
+        OPCODE 0xE0, "XO",'R'
+        OPCODE 0xE4, "XR",'I'
+        OPCODE 0xE8, "DA",'D'
+        OPCODE 0xEC, "DA",'I'
+        OPCODE 0xF0, "AD",'D'
+        OPCODE 0xF4, "AD",'I'
+        OPCODE 0xF8, "CA",'D'
+        OPCODE 0xFC, "CA",'I'
+        OPCODE 0xFF, "?",'?'
+        DB     0
 
