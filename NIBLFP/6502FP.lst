@@ -1,0 +1,562 @@
+ AS V1.42 Beta [Bld 238] - Quelle 6502FP.asm - Seite 1 - 15.06.2023 11:07:26
+
+
+       1/       0 :                     ;*
+       2/       0 :                     ;*       JULY 5, 1976
+       3/       0 :                     ;* BASIC FLOATING POINT ROUTINES
+       4/       0 :                     ;*   FOR 6502 MICROPROCESSOR
+       5/       0 :                     ;*   BY R. RANKIN AND S. WOZNIAK
+       6/       0 :                     ;*
+       7/       0 :                     ;* CONSISTING OF:
+       8/       0 :                     ;*    NATURAL LOG
+       9/       0 :                     ;*    COMMON LOG
+      10/       0 :                     ;*    EXPONENTIAL (E**x)
+      11/       0 :                     ;*    FLOAT FIX
+      12/       0 :                     ;*    FADD FSUB
+      13/       0 :                     ;*    FMUL FDIV
+      14/       0 :                     ;*
+      15/       0 :                     ;*
+      16/       0 :                     ;* FLOATING POINT REPRESENTATION (4-BYTES)
+      17/       0 :                     ;*    EXPONENT BYTE  1
+      18/       0 :                     ;*    MANTISSA BYTES 2-4
+      19/       0 :                     ;*
+      20/       0 :                     ;* MANTISSA:  TWO’S COMPLIMENT  REPRESENTATION WITH SIGN IN
+      21/       0 :                     ;*   MSB OF HIGH-ORDER BYTE. MANTISSA IS NORMALIZED WITH AN
+      22/       0 :                     ;*   ASSUMED DECIMAL POINT BETWEEN BITS 5 AND 6 OF THE HIGH-ORDER
+      23/       0 :                     ;*   BYTE. THUS THE MANTISSA IS IN THE RANGE 1. TO 2. EXCEPT
+      24/       0 :                     ;*   WHEN THE NUMBER IS LESS THAN 2**(-128).
+      25/       0 :                     ;*
+      26/       0 :                     ;* EXPONENT: THE EXPONENT REPRESENTS POWERS OF TWO. THE
+      27/       0 :                     ;*   REPRESENTATION IS 2'S COMPLEMENT EXCEPT THAT THE SIGN
+      28/       0 :                     ;*   BIT (BIT 7) 1S COMPLEMENTED. THIS ALLOWS DIRECT COMPARISON
+      29/       0 :                     ;*   OF EXPONENTS FOR SIZE SINCE THEY ARE STORED IN INCREASING
+      30/       0 :                     ;*   NUMERICAL SEQUENCE RANGING FROM $00 (-128) TO $FF (+127)
+      31/       0 :                     ;*   ($ MEANS NUMBER IS HEXADECIMAL).
+      32/       0 :                     ;*
+      33/       0 :                     ;* REPRESENTATION OF DECIMAL NUMBERS: THE PRESENT FLOATING
+      34/       0 :                     ;*   POINT REPRESENTATION ALLOWS DECIMAL NUMBERS IN THE APPROMIMATE
+      35/       0 :                     ;*   RANGE OF 10**(-38) THROUGH 10**(38) WITH 6 TO 7 SIGNIFICANT
+      36/       0 :                     ;*   DIGITS.
+      37/       0 :                     ;*
+      38/       0 :                     ;  LISTING REVISED: JUNE 14, 2023 ERICH KUESTER, KREFELD / GERMANY
+      39/       0 :                     ;  the macro-assembler used here is a free tool by Alfred Arnold
+      40/       0 :                     ;           http://john.ccac.rwth-aachen.de:8000/as/
+      41/       0 :                     ;  assemble under Linux with $ ./build_6502.sh
+      42/       0 :                     ;
+      43/       0 :                     
+      44/       0 :                     ; ALLOCATION OF RAM FOR VARIABLES
+      45/       0 :                     
+      46/       0 : =$3                  SIGN   = $3          ;BASE PAGE ADRESS
+      47/       0 : =$4                  X2     = SIGN +1     ;EXPONENT 2
+      48/       0 : =$5                  M2     = X2   +1     ;MANTISSA 2
+      49/       0 : =$8                  X1     = X2   +4     ;EXPONENT 1
+      50/       0 : =$9                  M1     = X1   +1     ;MANTISSA 2
+      51/       0 : =$C                  E      = X1   +4     ;SCRATCH
+      52/       0 : =$10                 Z      = E    +4
+      53/       0 : =$14                 T      = Z    +4
+      54/       0 : =$18                 SEXP   = T    +4
+      55/       0 : =$1C                 INT    = SEXP +4
+      56/       0 :                     
+      57/       0 :                     ;* NATURAL LOG OF MANT/EXP1 WITH RESULT IN MANT/EXP1
+      58/    1D00 :                            ORG $1D00     ;STARTING LOCATION FOR LOG
+      59/    1D00 : A5 09               LOG    LDA M1
+      60/    1D02 : F0 02                      BEQ ERROR
+ AS V1.42 Beta [Bld 238] - Quelle 6502FP.asm - Seite 2 - 15.06.2023 11:07:26
+
+
+      61/    1D04 : 10 01                      BPL CONT      ;IF ARG>® OK
+      62/    1D06 : 00                  ERROR  BRK           ;ERROR ARG<=B
+      63/    1D07 :                     
+      64/    1D07 : 20 1C 1F            CONT   JSR SWAP      ;MOVE ARG TO EXP/MANT2
+      65/    1D0A : A5 04                      LDA X2        ;HOLD EXPONENT
+      66/    1D0C : A0 80                      LDY #$80
+      67/    1D0E : 84 04                      STY X2        ;SET EXPONENT 2 TO 0 ($80)
+      68/    1D10 : 49 80                      EOR #$80      ;COMPLEMENT SIGN BIT OF ORIGINAL EXPONENT
+      69/    1D12 : 85 0A                      STA M1+1      ;SET EXPONENT INTO MANTISSA 1 FOR FLOAT
+      70/    1D14 : A9 00                      LDA #0 
+      71/    1D16 : 85 09                      STA M1        ;CLEAR MSB OF MANTISSA 1 
+      72/    1D18 : 20 2C 1F                   JSR FLOAT     ;CONVERT TO FLOATING POINT 
+      73/    1D1B : A2 03                      LDX #3        ;4 BYTE TRANSFERS
+      74/    1D1D : B5 04               SEXP1  LDA X2,X
+      75/    1D1F : 95 10                      STA Z,X       ;COPY MANTISSA TO Z
+      76/    1D21 : B5 08                      LDA X1,X
+      77/    1D23 : 95 18                      STA SEXP,X    ;SAVE EXPONENT IN SEXP
+      78/    1D25 : BD D1 1D                   LDA R22,X     ;LOAD EXP/MANT1 WITH SQRT(2)
+      79/    1D28 : 95 08                      STA X1,X
+      80/    1D2A : CA                         DEX
+      81/    1D2B : 10 F0                      BPL SEXP1
+      82/    1D2D : 20 4A 1F                   JSR FSUB      ;Z-SORT(2)
+      83/    1D30 : A2 03                      LDX #3        ;4 BYTE TRANSFER
+      84/    1D32 : B5 08               SAVET  LDA X1,X      ;SAVE EXP/MANTI AS T
+      85/    1D34 : 95 14                      STA T,X
+      86/    1D36 : B5 10                      LDA Z,X       ;LOAD EXP/MANTI WITH Z
+      87/    1D38 : 95 08                      STA X1,X
+      88/    1D3A : BD D1 1D                   LDA R22,X     ;LOAD EXP/MANT2 WITH SQRT(2)
+      89/    1D3D : 95 04                      STA X2,X
+      90/    1D3F : CA                         DEX
+      91/    1D40 : 10 F0                      BPL SAVET
+      92/    1D42 : 20 50 1F                   JSR FADD      ;Z+SQRT(2)
+      93/    1D45 : A2 03                      LDX #3        ;4 BYTE TRANSFER
+      94/    1D47 : B5 14               TM2    LDA T,X
+      95/    1D49 : 95 04                      STA X2,X      ;LOAD T INTO EXP/MANT2
+      96/    1D4B : CA                         DEX
+      97/    1D4C : 10 F9                      BPL TM2
+      98/    1D4E : 20 9D 1F                   JSR FDIV      ;T*(Z-SORT(2)/(Z+SORT(2))
+      99/    1D51 : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     100/    1D53 : B5 08               MIT    LDA X1,X
+     101/    1D55 : 95 14                      STA T,X       ;COPY EXP/MANTI TO T AND
+     102/    1D57 : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH T
+     103/    1D59 : CA                         DEX
+     104/    1D5A : 10 F7                      BPL MIT
+     105/    1D5C : 20 77 1F                   JSR FMUL      ;T*T
+     106/    1D5F : 20 1C 1F                   JSR SWAP      ;MOVE T*T TO EXP/MANT2
+     107/    1D62 : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     108/    1D64 : BD E1 1D            MIC    LDA C,X
+     109/    1D67 : 95 08                      STA X1,X      ;LOAD EXP/MANTI WITH C
+     110/    1D69 : CA                         DEX
+     111/    1D6A : 10 F8                      BPL MIC
+     112/    1D6C : 20 4A 1F                   JSR FSUB      ;T*T-C
+     113/    1D6F : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     114/    1D71 : BD DD 1D            M2MB   LDA MB,X
+     115/    1D74 : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH MB
+     116/    1D76 : CA                         DEX
+     117/    1D77 : 10 F8                      BPL M2MB
+     118/    1D79 : 20 9D 1F                   JSR FDIV      ;MB/(T*T-C)
+     119/    1D7C : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     120/    1D7E : BD D9 1D            M2A1   LDA A1,X
+ AS V1.42 Beta [Bld 238] - Quelle 6502FP.asm - Seite 3 - 15.06.2023 11:07:26
+
+
+     121/    1D81 : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH A1
+     122/    1D83 : CA                         DEX
+     123/    1D84 : 10 F8                      BPL M2A1
+     124/    1D86 : 20 50 1F                   JSR FADD      ;MB/(T*T-C)+A1
+     125/    1D89 : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     126/    1D8B : B5 14               M2T    LDA T,X
+     127/    1D8D : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH T
+     128/    1D8F : CA                         DEX
+     129/    1D90 : 10 F9                      BPL M2T
+     130/    1D92 : 20 77 1F                   JSR FMUL      ;(MB/(T*T-C)+A1)*T
+     131/    1D95 : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     132/    1D97 : BD E5 1D            M2MHL  LDA MHLF,X
+     133/    1D9A : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH MHLF (.5)
+     134/    1D9C : CA                         DEX
+     135/    1D9D : 10 F8                      BPL M2MHL
+     136/    1D9F : 20 50 1F                   JSR FADD      ;+.5
+     137/    1DA2 : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     138/    1DA4 : B5 18               LDEXP  LDA SEXP,X
+     139/    1DA6 : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH ORIGINAL EXPONENT
+     140/    1DA8 : CA                         DEX
+     141/    1DA9 : 10 F9                      BPL LDEXP
+     142/    1DAB : 20 50 1F                   JSR FADD      ;+EXPN
+     143/    1DAE : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     144/    1DB0 : BD D5 1D            MLE2   LDA LE2,X
+     145/    1DB3 : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH LN(2)
+     146/    1DB5 : CA                         DEX
+     147/    1DB6 : 10 F8                      BPL MLE2
+     148/    1DB8 : 20 77 1F                   JSR FMUL                       ;*LN(2)
+     149/    1DBB : 60                         RTS           ;RETURN RESULT IN MANT/EXP1
+     150/    1DBC :                     
+     151/    1DBC :                     ;* COMMON LOG OF MANT/EXP1 RESULT IN MANT/EXP1
+     152/    1DBC :                     
+     153/    1DBC : 20 00 1D            LOG10  JSR LOG       ;COMPUTE NATURAL LOG
+     154/    1DBF : A2 03                      LDX #3 
+     155/    1DC1 : BD CD 1D            L10    LDA LN10,X
+     156/    1DC4 : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH 1/LN(10)
+     157/    1DC6 : CA                         DEX
+     158/    1DC7 : 10 F8                      BPL L10
+     159/    1DC9 : 20 77 1F                   JSR FMUL      ;LOG10(X)*LN(X)/LN(10)
+     160/    1DCC : 60                         RTS
+     161/    1DCD :                     
+     162/    1DCD : 7E 6F 2D ED         LN10   DCM 0.4342945
+     163/    1DD1 : 80 5A 82 7A         R22    DCM 1.4142136  ;SQRT(2)
+     164/    1DD5 : 7F 58 B9 0C         LE2    DCM 0.69314718 ;LOG BASE E OF 2
+     165/    1DD9 : 80 52 B0 40         A1     DCM 1.2920074
+     166/    1DDD : 81 AB 86 49         MB     DCM -2.6398577
+     167/    1DE1 : 80 6A 08 66         C      DCM 1.6567626
+     168/    1DE5 : 7F 40 00 00         MHLF   DCM 0.5
+     169/    1DE9 : 81 64 87 ED         PI     DCM 3.14159265 ;CIRCULAR NUMBER
+     170/    1DED :                     
+     171/    1DED :                     ;* EXP OF MANT/EXP1 RESULT IN MANT/EX ;P1
+     172/    1DED :                     
+     173/    1E00 :                            ORG $1E00    ;STARTING LOCATION FOR EXP
+     174/    1E00 : A2 03               EXP    LDX #3        ;4 BYTE TRANSFER
+     175/    1E02 : BD D8 1E                   LDA L2E,X
+     176/    1E05 : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH LOG BASE 2 OF E
+     177/    1E07 : CA                         DEX
+     178/    1E08 : 10 F8                      BPL EXP+2
+     179/    1E0A : 20 77 1F                   JSR FMUL      ;LOG2(E)*X
+     180/    1E0D : A2 03                      LDX #3        ;4 BYTE TRANSFER
+ AS V1.42 Beta [Bld 238] - Quelle 6502FP.asm - Seite 4 - 15.06.2023 11:07:26
+
+
+     181/    1E0F : B5 08               FSA    LDA X1,X
+     182/    1E11 : 95 10                      STA Z,X       ;STORE EXP/MANT1 IN Z
+     183/    1E13 : CA                         DEX
+     184/    1E14 : 10 F9                      BPL FSA       ;SAVE Z=LN(2)*X
+     185/    1E16 : 20 E8 1F                   JSR FIX       ;CONVERT CONTENTS OF EXP/MANT1 TO AN INTEGER
+     186/    1E19 : A5 0A                      LDA M1+1
+     187/    1E1B : 85 1C                      STA INT       ;SAVE RESULT AS INT
+     188/    1E1D : 38                         SEC           ;SET CARRY FOR SUBTRACTION
+     189/    1E1E : E9 7C                      SBC #124      ;INT-124
+     190/    1E20 : A5 09                      LDA M1
+     191/    1E22 : E9 00                      SBC #0 
+     192/    1E24 : 10 15                      BPL OVFLW     ;OVERFLOW INT>=124
+     193/    1E26 : 18                         CLC           ;CLEAR CARRY FOR ADD
+     194/    1E27 : A5 0A                      LDA M1+1
+     195/    1E29 : 69 78                      ADC #120      ;ADD 120 TO INT
+     196/    1E2B : A5 09                      LDA M1
+     197/    1E2D : 69 00                      ADC #0 
+     198/    1E2F : 10 0B                      BPL CONTIN    ;IF RESULT POSITIVE CONTINUE
+     199/    1E31 : A9 00                      LDA #0        ;INT<-120 SET RESULT TO ZERO AND RETURN
+     200/    1E33 : A2 03                      LDX #3        ;4 BYTE MOVE
+     201/    1E35 : 95 08               ZERO   STA X1,X      ;SET EXP/MANT1 TO ZERO
+     202/    1E37 : CA                         DEX
+     203/    1E38 : 10 FB                      BPL ZERO
+     204/    1E3A : 60                         RTS           ;RETURN
+     205/    1E3B :                     
+     206/    1E3B : 00                  OVFLW  BRK           ;OVERFLOW
+     207/    1E3C :                     
+     208/    1E3C : 20 2C 1F            CONTIN JSR FLOAT     ;FLOAT INT
+     209/    1E3F : A2 03                      LDX #3 
+     210/    1E41 : B5 10               ENTD   LDA Z,X
+     211/    1E43 : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH Z
+     212/    1E45 : CA                         DEX
+     213/    1E46 : 10 F9                      BPL ENTD
+     214/    1E48 : 20 4A 1F                   JSR FSUB      ;Z*ZFLOAT(INT)
+     215/    1E4B : A2 03                      LDX #3        ;4 BYTE MOVE
+     216/    1E4D : B5 08               ZSAV   LDA X1,X
+     217/    1E4F : 95 10                      STA Z,X       ;SAVE EXP/MANT1 IN Z
+     218/    1E51 : 95 04                      STA X2,X      ;COPY EXP/MANT1 TO EXP/MANT2
+     219/    1E53 : CA                         DEX
+     220/    1E54 : 10 F7                      BPL ZSAV
+     221/    1E56 : 20 77 1F                   JSR FMUL      ;Z*Z
+     222/    1E59 : A2 03                      LDX #3        ;4 BYTE MOVE
+     223/    1E5B : BD DC 1E            LA2    LDA A2,X
+     224/    1E5E : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH A2
+     225/    1E60 : B5 08                      LDA X1,X
+     226/    1E62 : 95 18                      STA SEXP,X    ;SAVE EXP/MANT1 AS SEXP
+     227/    1E64 : CA                         DEX
+     228/    1E65 : 10 F4                      BPL LA2
+     229/    1E67 : 20 50 1F                   JSR FADD      ;Z*Z*A2
+     230/    1E6A : A2 03                      LDX #3        ;4 BYTE MOVE
+     231/    1E6C : BD E0 1E            LB2    LDA B2,X
+     232/    1E6F : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH B2
+     233/    1E71 : CA                         DEX
+     234/    1E72 : 10 F8                      BPL LB2
+     235/    1E74 : 20 9D 1F                   JSR FDIV      ;T=B2/(Z*Z+A2)
+     236/    1E77 : A2 03                      LDX #3        ;4 BYTE MOVE
+     237/    1E79 : B5 08               DLOAD  LDA X1,X
+     238/    1E7B : 95 14                      STA T,X       ;SAVE EXP/MANTI AS T
+     239/    1E7D : BD E4 1E                   LDA C2,X
+     240/    1E80 : 95 08                      STA X1,X      ;LOAD EXP/MANTI WITH C2
+ AS V1.42 Beta [Bld 238] - Quelle 6502FP.asm - Seite 5 - 15.06.2023 11:07:26
+
+
+     241/    1E82 : B5 18                      LDA SEXP,X
+     242/    1E84 : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH SEXP
+     243/    1E86 : CA                         DEX
+     244/    1E87 : 10 F0                      BPL DLOAD
+     245/    1E89 : 20 77 1F                   JSR FMUL      ;Z*Z*C2
+     246/    1E8C : 20 1C 1F                   JSR SWAP      ;MOVE EXP/MANTI TO EXP/MANT2
+     247/    1E8F : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     248/    1E91 : B5 14               LTMP   LDA T,X
+     249/    1E93 : 95 08                      STA X1,X      ;LOAD EXP/MANTI WITH T
+     250/    1E95 : CA                         DEX
+     251/    1E96 : 10 F9                      BPL LTMP
+     252/    1E98 : 20 4A 1F                   JSR FSUB      ;C2*Z*Z-B2/(Z*Z+A2)
+     253/    1E9B : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     254/    1E9D : BD E8 1E            LDD    LDA D,X
+     255/    1EA0 : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH D
+     256/    1EA2 : CA                         DEX
+     257/    1EA3 : 10 F8                      BPL LDD
+     258/    1EA5 : 20 50 1F                   JSR FADD      ;D+C2*Z*Z-B2/(Z*Z+A2)
+     259/    1EA8 : 20 1C 1F                   JSR SWAP      ;MOVE EXP/MANTI TO EXP/MANT2
+     260/    1EAB : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     261/    1EAD : B5 10               LFA    LDA Z,X
+     262/    1EAF : 95 08                      STA X1,X      ;LOAD EXP/MANT1 WITH Z
+     263/    1EB1 : CA                         DEX
+     264/    1EB2 : 10 F9                      BPL LFA
+     265/    1EB4 : 20 4A 1F                   JSR FSUB      ;-Z+D+C2*Z*Z-B2/(Z*Z+A2)
+     266/    1EB7 : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     267/    1EB9 : B5 10               LF3    LDA Z,X
+     268/    1EBB : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH Z
+     269/    1EBD : CA                         DEX
+     270/    1EBE : 10 F9                      BPL LF3
+     271/    1EC0 : 20 9D 1F                   JSR FDIV      ;Z/(**** )
+     272/    1EC3 : A2 03                      LDX #3        ;4 BYTE TRANSFER
+     273/    1EC5 : BD E5 1D            LD12   LDA MHLF,X
+     274/    1EC8 : 95 04                      STA X2,X      ;LOAD EXP/MANT2 WITH .5
+     275/    1ECA : CA                         DEX
+     276/    1ECB : 10 F8                      BPL LD12
+     277/    1ECD : 20 50 1F                   JSR FADD      ;+Z/(****)+.5
+     278/    1ED0 : 38                         SEC           ;ADD INT TO EXPONENT WITH CARRY SET
+     279/    1ED1 : A5 1C                      LDA INT       ;TO MULTIPLY BY
+     280/    1ED3 : 65 08                      ADC X1        ;2**(INT+1)
+     281/    1ED5 : 85 08                      STA X1        ;RETURN RESULT TO EXPONENT
+     282/    1ED7 : 60                         RTS           ;RETURN ANS*(.5+Z/(-Z+D+C2*Z*Z-B2/(...)
+     283/    1ED8 :                     
+     284/    1ED8 : 80 5C 55 1E         L2E DCM 1.4426950409 ;LOG BASE 2 OF E
+     285/    1EDC : 86 57 6A E1         A2  DCM 87.417497202
+     286/    1EE0 : 89 4D 3F 1D         B2  DCM 617.9722695
+     287/    1EE4 : 7B 46 FA 70         C2  DCM .03465735903
+     288/    1EE8 : 83 4F A3 03         D   DCM 9.9545957821
+     289/    1EEC :                     
+     290/    1EEC :                     ;*
+     291/    1EEC :                     ;*
+     292/    1EEC :                     ;* BASIC FLOATING POINT ROUTINES
+     293/    1EEC :                     ;*
+     294/    1F00 :                            ORG $1F00     ;START OF BASIC FLOATING POINT ROUTINES
+     295/    1F00 : 18                  ADD    CLC           ;CLEAR CARRY
+     296/    1F01 : A2 02                      LDX #$2       ;INDEX FOR 3-BYTE ADD
+     297/    1F03 : B5 09               ADD1   LDA M1,X
+     298/    1F05 : 75 05                      ADC M2,X      ;ADD A BYTE OF MANT2 TO MANTI
+     299/    1F07 : 95 09                      STA M1,X
+     300/    1F09 : CA                         DEX           ;ADVANCE INDEX TO NEXT MORE SIGNIF.BYTE
+ AS V1.42 Beta [Bld 238] - Quelle 6502FP.asm - Seite 6 - 15.06.2023 11:07:26
+
+
+     301/    1F0A : 10 F7                      BPL ADD1      ;LOOP UNTIL DONE
+     302/    1F0C : 60                         RTS           ;RETURN
+     303/    1F0D :                     ;*
+     304/    1F0D : 06 03               MD1    ASL SIGN      ;CLEAR LSB OF SIGN
+     305/    1F0F : 20 12 1F                   JSR ABSWAP    ;ABS VAL OF MANT1, THEN SWAP MANT2
+     306/    1F12 : 24 09               ABSWAP BIT M1        ;MANT1 NEG?
+     307/    1F14 : 10 05                      BPL ABSWP1    ;NO,SWAP WITH MANT2 AND RETURN
+     308/    1F16 : 20 8F 1F                   JSR FCOMPL    ;YES, COMPLEMENT IT.
+     309/    1F19 : E6 03                      INC SIGN      ;INCR SIGN. COMPLEMENTING LSB
+     310/    1F1B : 38                  ABSWP1 SEC           ;SET CARRY FOR RETURN TO MUL/DIV
+     311/    1F1C :                     ;*
+     312/    1F1C :                     ;* SUAP EXP/MANT1 WITH EXP/MANT2
+     313/    1F1C :                     ;*
+     314/    1F1C : A2 04               SWAP   LDX #$4      ;INDEX FOR 4-BYTE SUAP
+     315/    1F1E : 94 0B               SWAP1  STY E-1,X
+     316/    1F20 : B5 07                      LDA X1-1,X    ;SWAP A BYTE OF EXP/MANT1 WITH
+     317/    1F22 : B4 03                      LDY X2-1,X    ;EXP/MANT2 AND LEAVE A COPY OF
+     318/    1F24 : 94 07                      STY X1-1,X    ;MANT1 IN E(3BYTES), E+3 USED 
+     319/    1F26 : 95 03                      STA X2-1,X
+     320/    1F28 : CA                         DEX           ;ADVANCE INDEX TO NEXT BYTE
+     321/    1F29 : D0 F3                      BNE SWAP1     ;LOOP UNTIL DONE.
+     322/    1F2B : 60                         RTS
+     323/    1F2C :                     ;*
+     324/    1F2C :                     ;*
+     325/    1F2C :                     ;*
+     326/    1F2C :                     ;* CONVERT 16 BIT INTEGER IN M1(HIGH) AND Mi+1(LOW) TO
+     327/    1F2C :                     ;* RESULT IN EXP/MANT1. EXP/MANT2 UNEFFECTED F.P.
+     328/    1F2C :                     ;*
+     329/    1F2C :                     ;*
+     330/    1F2C : A9 8E               FLOAT  LDA #$8E
+     331/    1F2E : 85 08                      STA X1        ;SET EXPN TO 14 DEC
+     332/    1F30 : A9 00                      LDA #$0       ;CLEAR LOW ORDER BYTE
+     333/    1F32 : 85 0B                      STA M1+2
+     334/    1F34 : F0 08                      BEQ NORM      ;NORMALIZE RESULT
+     335/    1F36 : C6 08               NORM1  DEC X1        ;DECREMENT EXP1
+     336/    1F38 : 06 0B                      ASL M1+2
+     337/    1F3A : 26 0A                      ROL M1+1      ;SHIFT MANT1 (3 BYTES) LEFT
+     338/    1F3C : 26 09                      ROL M1
+     339/    1F3E : A5 09               NORM   LDA M1        ;HIGH ORDER MANT1 BYTE
+     340/    1F40 : 0A                         ASL A         ;UPPER TWO BITS UNEQUAL?
+     341/    1F41 : 45 09                      EOR M1
+     342/    1F43 : 30 04                      BMI RTS1      ;YES,RETURN WITH MANT1 NORMALIZED
+     343/    1F45 : A5 08                      LDA X1        ;EXPI ZERO?
+     344/    1F47 : D0 ED                      BNE NORM1     ;NO,CONTINUE NORMALIZING
+     345/    1F49 : 60                  RTS1   RTS           ;RETURN
+     346/    1F4A :                     ;*
+     347/    1F4A :                     ;*
+     348/    1F4A :                     ;* EXP/MANT2-EXP/MANT1, RESULT IN EXP/MANT1
+     349/    1F4A :                     ;*
+     350/    1F4A : 20 8F 1F            FSUB   JSR FCOMPL    ;COMPL MANT1, CLEARS CARRY UNLESS ZERO
+     351/    1F4D : 20 5D 1F            SWPALG JSR ALGNSW    ;RIGHT SHIFT MANT1 OR SWAP WITH MANT2 ON CARRY
+     352/    1F50 :                     ;* 
+     353/    1F50 :                     ;* ADD EXP/MANT1 AND EXP/MANT2, RESULT IN EXP/MANT1
+     354/    1F50 :                     ;*
+     355/    1F50 : A5 04               FADD   LDA X2
+     356/    1F52 : C5 08                      CMP X1        ;COMPARE EXP1 WITH EXP2
+     357/    1F54 : D0 F7                      BNE SWPALG    ;IF UNEQUAL,SWAP ADDENDS OR ALIGN MANTISSAS
+     358/    1F56 : 20 00 1F                   JSR ADD       ;ADD ALIGNED MANTISSAS
+     359/    1F59 : 50 E3               ADDEND BVC NORM      ;NO OVERFLOW,NOMALIZE RESULTS
+     360/    1F5B : 70 05                      BVS RTLOG     ;OV:SHIFT MANT1 RIGHT. NOTE CARRY IS CORRECT SIGN
+ AS V1.42 Beta [Bld 238] - Quelle 6502FP.asm - Seite 7 - 15.06.2023 11:07:26
+
+
+     361/    1F5D : 90 BD               ALGNSW BCC SWAP      ;SWAP IF CARRY CLEAR, ELSE SHIFT RIGHT ARITH.
+     362/    1F5F : A5 09               RTAR   LDA M1        ;SIGN OF MANT1 INTO CARRY FOR
+     363/    1F61 : 0A                         ASL A         ;RIGHT ARITH. SHIFT
+     364/    1F62 : E6 08               RTLOG  INC X1        ;INCR EXP1 TO COMPENSATE FOR RT SHIFT
+     365/    1F64 : F0 7E                      BEQ OVFL      ;EXP1 OUT OF RANGE
+     366/    1F66 : A2 FA               RTLOG1 LDX #$FA      ;INDEX FOR 6 BYTE RIGHT SHIFT
+     367/    1F68 : A9 80               ROR1   LDA #$80      ;)
+     368/    1F6A : B0 01                      BCS ROR2      ;)
+     369/    1F6C : 0A                         ASL A         ;)
+     370/    1F6D : 56 0F               ROR2   LSR E+3,X     ;) SIMULATE ROR E+3,X
+     371/    1F6F : 15 0F                      ORA E+3,X     ;)
+     372/    1F71 : 95 0F                      STA E+3,X     ;)
+     373/    1F73 : E8                         INX           ;NEXT BYTE OF SHIFT
+     374/    1F74 : D0 F2                      BNE ROR1      ;LOOP UNTIL DONE
+     375/    1F76 : 60                         RTS           ;RETURN
+     376/    1F77 :                     ;*
+     377/    1F77 :                     ;*
+     378/    1F77 :                     ;* EXP/MANT1 X EXP/MANT2 RESULT IN EXP/MANT1
+     379/    1F77 :                     ;*
+     380/    1F77 : 20 0D 1F            FMUL   JSR MD1       ;ABS. VAL OF THE MANT1, MANT2
+     381/    1F7A : 65 08                      ADC X1        ;ADD EXP1 TO EXP2 FOR PRODUCT EXPONENT
+     382/    1F7C : 20 CD 1F                   JSR MD2       ;CHECK PRODUCT EXP AND PREPARE FOR MUL
+     383/    1F7F : 18                         CLC           ;CLEAR CARRY
+     384/    1F80 : 20 66 1F            MUL1   JSR RTLOG1    ;MANT1 AND E RIGHT,(PRODUCT AND MPLIER)
+     385/    1F83 : 90 03                      BCC MUL2      ;IF CARRY CLEAR, SKIP PARTIAL PRODUCT
+     386/    1F85 : 20 00 1F                   JSR ADD       ;ADD MULTIPLICAND TO PRODUCT
+     387/    1F88 : 88                  MUL2   DEY           ;NEXT MUL ITERATION
+     388/    1F89 : 10 F5                      BPL MUL1      ;LOOP UNTIL DONE
+     389/    1F8B : 46 03               MDEND  LSR SIGN      ;TEST SIGN EVEN,ODD?
+     390/    1F8D : 90 AF               NORMX  BCC NORM      ;IF EVEN, NORMALIZE PRODUCT. ELSE COMPLEMENT
+     391/    1F8F : 38                  FCOMPL SEC           ;SET CARRY FOR SUBTRACT
+     392/    1F90 : A2 03                      LDX #3        ;INDEX FOR 3-BYTE SUBTRACTION
+     393/    1F92 : A9 00               COMPL1 LDA #$0       ;CLEAR A
+     394/    1F94 : F5 08                      SBC X1,X      ;SUBTRACT BYTE OF EXP1
+     395/    1F96 : 95 08                      STA X1,X      ;RESTORE IT
+     396/    1F98 : CA                         DEX           ;NEXT MORE SIGNFICANT BYTE
+     397/    1F99 : D0 F7                      BNE COMPL1    ;LOOP UNTIL DONE
+     398/    1F9B : F0 BC                      BEQ ADDEND    ;NORMALIZE (OR SHIFT RIGHT IF OVERFLOW)
+     399/    1F9D :                     ;*
+     400/    1F9D :                     ;*
+     401/    1F9D :                     ;* EXP/MANT2 7 EXP/MANTI RESULT IN EXP/MANTI
+     402/    1F9D :                     ;*
+     403/    1F9D : 20 0D 1F            FDIV   JSR MD1       ;TAKE ABS VAL OF MANT1, MANT2
+     404/    1FA0 : E5 08                      SBC X1        ;SUBTRACT EXP1 FROM EXP2
+     405/    1FA2 : 20 CD 1F                   JSR MD2       ;SAVE AS QUOTIENT EXP
+     406/    1FA5 : 38                  DIV1   SEC           ;SET CARRY FOR SUBTRACT
+     407/    1FA6 : A2 02                      LDX #$2       ;INDEX FOR 3-BYTE INSTRUCTION
+     408/    1FA8 : B5 05               DIV2   LDA M2,X
+     409/    1FAA : F5 0C                      SBC E,X       ;SUBTRACT A BYTE OF E FROM MANT2
+     410/    1FAC : 48                         PHA           ;SAVE ON STACK
+     411/    1FAD : CA                         DEX           ;NEXT MORE SIGNIFANT BYTE
+     412/    1FAE : 10 F8                      BPL DIV2      ;LOOP UNTIL DONE
+     413/    1FB0 : A2 FD                      LDX #$FD      ;INDEX FOR 3-BYTE CONDITIONAL MOVE
+     414/    1FB2 : 68                  DIV3   PLA           ;PULL A BYTE OF DIFFERENCE OFF STACK
+     415/    1FB3 : 90 02                      BCC DIV4      ;IF MANT2<E THEN DONT RESTORE MANT2
+     416/    1FB5 : 95 08                      STA M2+3,X
+     417/    1FB7 : E8                  DIV4   INX           ;NEXT LESS SIGNIF BYTE
+     418/    1FB8 : D0 F8                      BNE DIV3      ;LOOP UNTIL DONE
+     419/    1FBA : 26 0B                      ROL M1+2
+     420/    1FBC : 26 0A                      ROL M1+1      ;ROLL QUOTIENT LEFT, CARRY INTO LSB
+ AS V1.42 Beta [Bld 238] - Quelle 6502FP.asm - Seite 8 - 15.06.2023 11:07:26
+
+
+     421/    1FBE : 26 09                      ROL M1
+     422/    1FC0 : 06 07                      ASL M2+2
+     423/    1FC2 : 26 06                      ROL M2+1      ;SHIFT DIVIDEND LEFT
+     424/    1FC4 : 26 05                      ROL M2
+     425/    1FC6 : B0 1C                      BCS OVFL      ;OVERFLOW IS DUE TO UNNORMALIZED DIVISOR
+     426/    1FC8 : 88                         DEY           ;NEXT DIVIDE ITERATION
+     427/    1FC9 : D0 DA                      BNE DIV1      ;LOOP UNTIL DONE 23 ITERATIONS
+     428/    1FCB : F0 BE                      BEQ MDEND     ;NORMALIZE QUOTIENT AND CORRECT SIGN
+     429/    1FCD : 86 0B               MD2    STX M1+2
+     430/    1FCF : 86 0A                      STX M1+1      ;CLR MANT1 (3 BYTES) FOR MUL/DIV
+     431/    1FD1 : 86 09                      STX M1
+     432/    1FD3 : B0 0D                      BCS OVCHK     ;IF EXP CALC SET CARRY. CHECK FOR OVFL
+     433/    1FD5 : 30 04                      BMI MD3       ;IF NEG NO UNDERFLOW
+     434/    1FD7 : 68                         PLA           ;POP ONE
+     435/    1FD8 : 68                         PLA           ;RETURN LEVEL
+     436/    1FD9 : 90 B2                      BCC NORMX     ;CLEAR X1 AND RETURN
+     437/    1FDB : 49 80               MD3    EOR #$80      ;COMPLEMENT SIGN BIT OF EXP
+     438/    1FDD : 85 08                      STA X1        ;STORE IT
+     439/    1FDF : A0 17                      LDY #$17      ;COUNT FOR 24 MUL OR 23 DIV ITERATIONS
+     440/    1FE1 : 60                         RTS           ;RETURN
+     441/    1FE2 : 10 F7               OVCHK  BPL MD3       ;IF POS. EXP THEN NO OVERFLOW
+     442/    1FE4 : 00                  OVFL   BRK
+     443/    1FE5 :                     ;*
+     444/    1FE5 :                     ;*
+     445/    1FE5 :                     ;* CONVERT EXP/MANT1 TO INTEGER IN M1 ;(HIGH) AND M1+1(LOW)
+     446/    1FE5 :                     ;* EXP/MANT2 UNEFFECTED
+     447/    1FE5 :                     ;*
+     448/    1FE5 : 20 5F 1F                   JSR RTAR      ;SHIFT MANT1 RIGHT AND INCREMENT EXPNT
+     449/    1FE8 : A5 08               FIX    LDA X1        ;CHECK EXPONENT
+     450/    1FEA : C9 8E                      CMP #$8E      ;IS EXPONENT 14?
+     451/    1FEC : D0 F7                      BNE FIX-3     ;NO, SHIFT
+     452/    1FEE : 60                  RTRN   RTS           ;RETURN
+     453/    1FEF :                     
+     454/    1FEF :                     
+ AS V1.42 Beta [Bld 238] - Quelle 6502FP.asm - Seite 9 - 15.06.2023 11:07:26
+
+
+  Symboltabelle (* = unbenutzt):
+  ----------------------------
+
+ A1 :                          1DD9 C |  A2 :                          1EDC C |
+ ABSWAP :                      1F12 C |  ABSWP1 :                      1F1B C |
+ ADD :                         1F00 C |  ADD1 :                        1F03 C |
+ ADDEND :                      1F59 C |  ALGNSW :                      1F5D C |
+*ARCHITECTURE :                                      "x86_64-unknown-linux" - |
+ B2 :                          1EE0 C |  C :                           1DE1 C |
+ C2 :                          1EE4 C | *CASESENSITIVE :                  0 - |
+ COMPL1 :                      1F92 C | *COMPMODE :                       0 - |
+*CONSTPI :        3.141592653589793 - |  CONT :                        1D07 C |
+ CONTIN :                      1E3C C |  D :                           1EE8 C |
+*DATE :                "15.06.2023" - |  DIV1 :                        1FA5 C |
+ DIV2 :                        1FA8 C |  DIV3 :                        1FB2 C |
+ DIV4 :                        1FB7 C |  DLOAD :                       1E79 C |
+ E :                              C - |  ENTD :                        1E41 C |
+ ERROR :                       1D06 C |  EXP :                         1E00 C |
+ FADD :                        1F50 C | *FALSE :                          0 - |
+ FCOMPL :                      1F8F C |  FDIV :                        1F9D C |
+ FIX :                         1FE8 C |  FLOAT :                       1F2C C |
+ FMUL :                        1F77 C |  FSA :                         1E0F C |
+ FSUB :                        1F4A C | *HAS64 :                          1 - |
+ INT :                           1C - |  L10 :                         1DC1 C |
+ L2E :                         1ED8 C |  LA2 :                         1E5B C |
+ LB2 :                         1E6C C |  LD12 :                        1EC5 C |
+ LDD :                         1E9D C |  LDEXP :                       1DA4 C |
+ LE2 :                         1DD5 C |  LF3 :                         1EB9 C |
+ LFA :                         1EAD C | *LISTON :                         1 - |
+ LN10 :                        1DCD C |  LOG :                         1D00 C |
+*LOG10 :                       1DBC C |  LTMP :                        1E91 C |
+ M1 :                             9 - |  M2 :                             5 - |
+ M2A1 :                        1D7E C |  M2MB :                        1D71 C |
+ M2MHL :                       1D97 C |  M2T :                         1D8B C |
+*MACEXP :                         7 - |  MB :                          1DDD C |
+ MD1 :                         1F0D C |  MD2 :                         1FCD C |
+ MD3 :                         1FDB C |  MDEND :                       1F8B C |
+ MHLF :                        1DE5 C |  MIC :                         1D64 C |
+ MIT :                         1D53 C |  MLE2 :                        1DB0 C |
+*MOMCPU :                      6502 - | *MOMCPUNAME :                "6502" - |
+ MUL1 :                        1F80 C |  MUL2 :                        1F88 C |
+*NESTMAX :                      100 - |  NORM :                        1F3E C |
+ NORM1 :                       1F36 C |  NORMX :                       1F8D C |
+ OVCHK :                       1FE2 C |  OVFL :                        1FE4 C |
+ OVFLW :                       1E3B C | *PI :                          1DE9 C |
+ R22 :                         1DD1 C | *RELAXED :                        0 - |
+ ROR1 :                        1F68 C |  ROR2 :                        1F6D C |
+ RTAR :                        1F5F C |  RTLOG :                       1F62 C |
+ RTLOG1 :                      1F66 C | *RTRN :                        1FEE C |
+ RTS1 :                        1F49 C |  SAVET :                       1D32 C |
+ SEXP :                          18 - |  SEXP1 :                       1D1D C |
+ SIGN :                           3 - |  SWAP :                        1F1C C |
+ SWAP1 :                       1F1E C |  SWPALG :                      1F4D C |
+ T :                             14 - | *TIME :                  "11:07:26" - |
+ TM2 :                         1D47 C | *TRUE :                           1 - |
+*VERSION :                     142F - |  X1 :                             8 - |
+ X2 :                             4 - |  Z :                             10 - |
+ ZERO :                        1E35 C |  ZSAV :                        1E4D C |
+
+    109 Symbole
+ AS V1.42 Beta [Bld 238] - Quelle 6502FP.asm - Seite 10 - 15.06.2023 11:07:26
+
+
+     19 unbenutzte Symbole
+
+ AS V1.42 Beta [Bld 238] - Quelle 6502FP.asm - Seite 11 - 15.06.2023 11:07:26
+
+
+  Zeichentabellen:
+  ----------------
+
+STANDARD (0 veränderte Zeichen)
+
+1 Zeichentabelle
+
+0.04 Sekunden Assemblierzeit
+
+    454 Zeilen Quelltext
+      2 Durchläufe
+      0 Fehler
+      0 Warnungen
