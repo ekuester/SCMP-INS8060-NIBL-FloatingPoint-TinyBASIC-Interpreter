@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # curses example: <https://gist.github.com/claymcleod/b670285f334acd56ad1c>
+# NOTICE: add breakpoints at line 265
 
 import curses, binascii, os, re, sys
 from scmp import CScmp
@@ -68,9 +69,13 @@ def emulate(stdscr, debug):
         cursor_y = max(0, cursor_y)
         cursor_y = min(height-1, cursor_y)
 
+        # some special cases
+        bs = False
+        ht = False
+        cr = False
+
         opcode = s.FetchCode()
         if opcode == "20":
-            cr = False
             # char is in acc
             c = s.m_acc & 0x7f
             #stdscr.addstr(height -4, 2, f"WRITECH: {c:02X}")
@@ -78,6 +83,9 @@ def emulate(stdscr, debug):
                 # backspace, use Control-H >> not backspace key
                 if cursor_x > 1:
                     cursor_x -= 1
+            elif c == 9:
+                # horizontal tab, use Control-I >> not tab key
+                cursor_x += 1
             elif c == 10:
                 cursor_x = 1
                 cursor_y +=1
@@ -87,12 +95,10 @@ def emulate(stdscr, debug):
             elif c == 12:
                 cursor_x += 2
             elif c == 13:
-                cr = True
-            else:
+                cursor_x = 1
+            elif c > 31:
                 stdscr.addch(cursor_y, cursor_x, chr(c))
                 cursor_x += 1
-            # update cursor
-            #stdscr.move(cursor_y, cursor_x)
         elif opcode == "21":
             stdscr.attron(curses.color_pair(2))
             stdscr.addstr(height-2, 0, " READCHAR ")
@@ -134,7 +140,8 @@ def emulate(stdscr, debug):
                     stdscr.addstr(height - 3, 2, f"                ")
         RenderStatus(stdscr, opcode, s)
         # restore cursor
-        stdscr.addch(cursor_y, cursor_x, ' ')
+        #if not bs:
+        #    stdscr.addch(cursor_y, cursor_x, ' ')
         stdscr.move(cursor_y, cursor_x)
         # refresh screen
         stdscr.refresh()
@@ -254,8 +261,8 @@ while not inp_len:
         inp_len = 0
 # define breakpoint list
 brkpnt_lst = []
-# add break points with .extend() when desired
-# brkpnt_lst.extend([0])
+# add break points as list when desired
+brkpnt_lst.extend([0])
 # use curses
 curses.wrapper(emulate, debug)
 
