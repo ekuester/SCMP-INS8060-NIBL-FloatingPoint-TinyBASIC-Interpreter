@@ -44,11 +44,11 @@ The emulator in Python is based on a program written in C++ around 2000 by Sipke
 To start an emulator session with the provided files, use either
 ```
 $ ./scmp_curses.py MONITOR C000
-```
-or alternatively
-```
+$ ./scmp_curses.py NIBL 0000
+$ ./scmp_curses.py NIBLE 1000
 $ ./scmp_curses.py NIBLFP D000 DFC0
 ```
+To load an existing BASIC program from ancient times open the file in an editor, choose 'Edit' 'Select All' and 'Copy' to get the whole program into the clipboard. Start the desired BASIC and paste the content of the clipboard with Ctrl-V. The code will be accepted. For NIBL respective NIBLE a calendar program is included.
 
 ### Tools
 The hardware built-in a 19" rack was lost but the program survived several moves as a hexdump listing in paper form. So own tools had to be written for the resurrection of the original, they are gathered in this folder.

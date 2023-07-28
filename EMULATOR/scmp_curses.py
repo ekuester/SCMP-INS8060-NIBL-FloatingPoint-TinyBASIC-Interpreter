@@ -81,10 +81,10 @@ def emulate(stdscr, debug):
             #stdscr.addstr(height -4, 2, f"WRITECH: {c:02X}")
             if c == 8:
                 # backspace, use Control-H >> not backspace key
-                if cursor_x > 1:
+                if cursor_x > 2:
                     cursor_x -= 1
             elif c == 9:
-                # horizontal tab, use Control-I >> not tab key
+                # horizontal tab, use Control-I or tab key
                 cursor_x += 1
             elif c == 10:
                 cursor_x = 1
@@ -114,7 +114,6 @@ def emulate(stdscr, debug):
                 # change to uppercase
                 c = c & 0x5f
             s.m_acc = s.m_ext = c
-            RenderStatus(stdscr, opcode, s)
             stdscr.addstr(height-2, 0, "          ")
         else:
             result = s.Decode()
@@ -138,10 +137,8 @@ def emulate(stdscr, debug):
                 else:
                     debug = False
                     stdscr.addstr(height - 3, 2, f"                ")
-        RenderStatus(stdscr, opcode, s)
-        # restore cursor
-        #if not bs:
-        #    stdscr.addch(cursor_y, cursor_x, ' ')
+        if not turbo:
+            RenderStatus(stdscr, opcode, s)
         stdscr.move(cursor_y, cursor_x)
         # refresh screen
         stdscr.refresh()
@@ -210,27 +207,27 @@ inp_len = 0
 s_bytes = bytearray()
 h_lines = []
 while not inp_len:
-   prompt = 'read from [b]inary or [h]ex file? '
-   choice = input(prompt).lower()
-   if not re.match(r"^[bh]+$", choice):
-       continue
-   inp_len = len(choice)
-   if choice[0] == "b":
-       file_bin = base + ".bin"
-       file_stats = os.stat(file_bin)
-       print(f'Will read file {file_bin} with {file_stats.st_size} Bytes')
-       with open(file_bin, "rb") as bin_f:
-           s_bytes = bytearray(bin_f.read())
-       break
-   if choice[0] == "h":
-       file_hex = base + ".hex"
-       file_stats = os.stat(file_hex)
-       print(f'Will read file {file_hex} with {file_stats.st_size} Bytes')
-       with open(file_hex, "r") as hex_f:
-           for h_line in hex_f:
-               h_lines.append(h_line)
-       load, s_bytes = decode(h_lines)
-       break
+    prompt = 'read from [b]inary or [h]ex file? '
+    choice = input(prompt).lower()
+    if not re.match(r"^[bh]+$", choice):
+        continue
+    inp_len = len(choice)
+    if choice[0] == "b":
+        file_bin = base + ".bin"
+        file_stats = os.stat(file_bin)
+        print(f'Will read file {file_bin} with {file_stats.st_size} Bytes')
+        with open(file_bin, "rb") as bin_f:
+            s_bytes = bytearray(bin_f.read())
+        break
+    if choice[0] == "h":
+        file_hex = base + ".hex"
+        file_stats = os.stat(file_hex)
+        print(f'Will read file {file_hex} with {file_stats.st_size} Bytes')
+        with open(file_hex, "r") as hex_f:
+            for h_line in hex_f:
+                h_lines.append(h_line)
+        load, s_bytes = decode(h_lines)
+        break
 
 # reserve 64 kByte memory as work space
 s_memory = bytearray(0x10000)
@@ -244,14 +241,28 @@ print(f'{i} bytes copied')
 inp_len = 0
 debug = False
 snapshot = False
+turbo = False
 while not inp_len:
-    prompt = '[d]ebug, [g]o, [q]uit, [s]napshot: '
+    prompt = '[d]ebug, [g]o, [q]uit, [r]ead, [s]napshot, [t]urbo: '
     choice = input(prompt).lower()
-    if not re.match(r"^[dgqs]+$", choice):
+    if not re.match(r"^[dgqrst]+$", choice):
         continue
     inp_len = len(choice)
     if choice[0] == "q":
         quit()
+    if choice[0] == "r":
+        # read BASIC program into page 1
+        file_snap = base + ".snap"
+        file_stats = os.stat(file_snap)
+        print(f'Will read file {file_snap} with {file_stats.st_size} Bytes')
+        with open(file_snap, "rb") as snap_f:
+            snap_bytes = bytearray(snap_f.read())
+            # read in page 1
+            s_bytes = snap_bytes[4096:8192]
+            for i, byte in enumerate(s_bytes):
+                s_memory[4096 + i] = byte
+            print(f'{i} bytes copied')
+        break
     elif choice[0] == "d":
         debug = True
         break
@@ -259,6 +270,10 @@ while not inp_len:
         snapshot = True
         print("will make a snapshot at exit")
         inp_len = 0
+    elif choice[0] == "t":
+        # accelerate, no status bar
+        turbo = True
+        break
 # define breakpoint list
 brkpnt_lst = []
 # add break points as list when desired

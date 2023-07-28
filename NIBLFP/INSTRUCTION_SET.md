@@ -1,6 +1,8 @@
-## NIBLFP
+NIBLFP
+------
 
-### Instruction set
+Instruction set
+---------------
 
 Constant
 --------
@@ -26,8 +28,8 @@ Program entry
     AUTO n,m generates line numbers starting at n with increment m (ctrl c to quit)
     BYE quit floating point basic
     EDIT n
-    allows editing of line n. Characters may be inserted with cntrl Q and deleted with cntrl X, cntrl C will exit EDIT
-    LINK x (link to user routine at hex x)
+    allows editing of line n. Characters may be inserted with ctrl Q and deleted with ctrl X, ctrl C will exit
+    LINK #C000 (link to user routine at hex C000)
     LIST
     LIST n
     LIST n-m
@@ -133,6 +135,10 @@ Input/Output
     INPUT ...
     PRINT, PRINT USING
     PR, PR USING
+```
+ > PR USING "####,##" 12.3, 12.34, PI
+    12,30  12,34   3,14
+```
     TAB(x)
     SPC(x)
     VERT(x)
@@ -141,3 +147,4 @@ Input/Output
     POKE
     #DFC1 (hexadecimal number)
 
+**Attention:** The PRINT USING statement uses as separator the decimal comma (standard in continental Europe)

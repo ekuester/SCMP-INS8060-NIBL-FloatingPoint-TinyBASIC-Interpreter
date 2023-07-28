@@ -15,15 +15,15 @@ Although these routines are for the 6502, it would appear that one could generat
 
 These floating point routines allow 6502 users to perform most of the more popular and desired floating point and transcendental functions, namely:
 ```
-Natural Log - LOG
-Common Log - LOG10
-Exponential - EXP
-Floating Add - FADD
-Floating Subtract - FSUB
-Floating Multiply - FMUL
-Floating Divide - FDIV
-Convert Floating to Fixed - FIX
-Convert Fixed to Floating - FLOAT
+ LOG   - Natural Log
+ LOG10 - Common Log
+ EXP   - Exponential
+ FADD  - Floating Add
+ FSUB  - Floating Subtract
+ FMUL  - Floating Multiply
+ FDIV  - Floating Divide
+ FIX   - Convert Floating to Fixed
+ FLOAT - Convert Fixed to Floating
 ```
 They presume a four-byte floating point operand consisting of a one-byte exponent ranging from -218 through +127, and a 24-bit two’s complement mantissa between 1.0 and 2.0.
 
@@ -34,7 +34,7 @@ The transcendental functions were patterned after those offered by Hewlett-Packa
 There are three error traps; two for overflow, and one for prohibited logarithm argument.</br>
 `ERROR (1DO6)` is the error exit used in event of a non-positive log argument.</br>
 `OVFLW (1E3B)` is the error exit for overflow occuring during calculation of e to some power.</br>
-`OVFL (1FE4)` is the error exit for overflow in all of the floating point routines.</br>
+`OVFL  (1FE4)` is the error exit for overflow in all of the floating point routines.</br>
 There is no trap for underflow; in such cases, the result is set to 0.0.
 
 All routines are called and exited in a uniform manner:</br>
@@ -46,6 +46,6 @@ JCW, Jr.</br>
 August, 1976 Dr. Dobb’s Journal of Computer Calisthenics & Orthodontia, Box 310, Menlo Park CA 94025</br>
 pages 207 - 209</br>
 
-Note by Erich Kuester 2023:</br>
-The original listings were scanned and OCR'd, then prepared for feeding into Alfred Arnold's macro assembler. I added constant PI, besides that the binary code is unaltered compared to the original one.</br>
-My floating point routines for the SC/MP base on this excellent work.
+Note by Erich Küster 2023:</br>
+The original listings were scanned and OCR'd, then prepared for feeding into Alfred Arnold's macro assembler. Constant PI was added, besides that the binary code is unaltered compared to the original one.</br>
+The floating point routines for the SC/MP are based on this excellent work.
