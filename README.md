@@ -48,7 +48,8 @@ $ ./scmp_curses.py NIBL 0000
 $ ./scmp_curses.py NIBLE 1000
 $ ./scmp_curses.py NIBLFP D000 DFC0
 ```
-To load an existing BASIC program from ancient times open the file in an editor, choose 'Edit' 'Select All' and 'Copy' to get the whole program into the clipboard. Start the desired BASIC and paste the content of the clipboard with Ctrl-V. The code will be accepted. For NIBL respective NIBLE a calendar program is included.
+To load an existing BASIC program from ancient times open the file in an editor, choose 'Edit' 'Select All' and 'Copy' to get the whole program into the clipboard. Start the desired BASIC and paste the content of the clipboard with Ctrl-Shift-V (console under Linux). The code will be accepted. Besides that use of a snapshot file is possible, since the NIBLs detect if there is still a program from earlier sessions. This will be a method to exchange BASIC programs from one computer to another.</br>
+For NIBL respective NIBLE a calendar program is included. NIBLFP enthusiasts use KALENDA.BAS for the same purpose.
 
 ### Tools
 The hardware built-in a 19" rack was lost but the program survived several moves as a hexdump listing in paper form. So own tools had to be written for the resurrection of the original, they are gathered in this folder.
