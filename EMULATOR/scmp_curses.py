@@ -262,7 +262,7 @@ while not inp_len:
             for i, byte in enumerate(s_bytes):
                 s_memory[4096 + i] = byte
             print(f'{i} bytes copied')
-        break
+        inp_len = 0
     elif choice[0] == "d":
         debug = True
         break

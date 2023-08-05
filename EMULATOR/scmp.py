@@ -243,36 +243,46 @@ class CScmp:
                 return "UNKNOWN"
         return "OK"
 
-    def BinAdd(self, val):
+    def BinAdd(self, binary):
         # add on two binaries, CY/L is included
-        sum = self.m_acc + val + ((self.m_stat >> 7) & 1)
-        if (((self.m_acc & 0x80) == (val & 0x80)) and ((self.m_acc & 0x80) != (sum & 0x80))):
+        carry = (self.m_stat >> 7) & 1
+        total = self.m_acc + binary + carry
+        if (((self.m_acc & 0x80) == (binary & 0x80)) and ((self.m_acc & 0x80) != (total & 0x80))):
             ov = 0x40
         else:
             ov = 0x00
-        # clear CY/L and OV flag
+        # clear cy/l and ov flag
         self.m_stat &= 0x3f
         # set CY/L
-        if sum & 0x100:
+        if total & 0x100:
             self.m_stat |= 0x80
         else:
             self.m_stat |= 0x00
         self.m_stat |= ov
-        return (sum & 0xff)
+        return (total & 0xff)
 
-    def DecAdd(self, val):
-        # add on two bcd coded bytes. CY/L is included
+    def DecAdd(self, decm):
+        # add two bcd coded bytes. CY/L is included
         # the resulting carry is updated in status
-        sum = self.m_acc + val + ((self.m_stat >> 7) & 1)
-        if ((sum & 0x0f) > 9):
-            sum +=6
-        # clear CY/L flag
+        carry = (self.m_stat >> 7) & 1
+        acc = self.m_acc
+        acc_lo = acc & 0x0f
+        decm_lo = decm & 0x0f
+        nibble_r = acc_lo + decm_lo + carry
+        if nibble_r > 9:
+            nibble_r += 6
+        new_carry = nibble_r & 0xf0
+        acc_hi = acc & 0xf0
+        decm_hi = decm & 0xf0
+        nibble_l = acc_hi + decm_hi
+        total = nibble_l + nibble_r
+        if total > 0x99:
+            total += 0x60
+        # clear cy/l flag
         self.m_stat &= 0x7f
-        if sum > 0x99:
+        if total > 0x99:
             self.m_stat |= 0x80
-        else:
-            self.m_stat |= 0x00
-        return (sum % 0xa0)
+        return (total & 0xff)
 
     def CalcPC(self, idx):
         # avoid coding over page limit (address space only 12 bit)
