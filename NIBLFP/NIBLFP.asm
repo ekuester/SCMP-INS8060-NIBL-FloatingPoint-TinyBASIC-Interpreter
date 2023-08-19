@@ -60,8 +60,11 @@ BAUD    = 0
 ; SET THE DESIRED LOAD (3 x 4096 BYTES) ADDRESS
 BASE    = 0xD000
 
-; SET STACK POINTER
+; SET STACKPOINTER
 STACKP  = 0x7C00
+
+; STORAGE FOR STACKPOINTER HIGH
+STKPHI  = SETSTK -SPRVSR +1
 
 JMPBIT  =  0x80
 TSTBIT  =  0x40               ;I.L. INSTRUCTION FLAGS
@@ -147,7 +150,7 @@ ENTRY:  DINT
         LDPI    P3, SPRVSR    ;POINT P3 TO SUPERVISOR
         LDI     0x1E
         XPAL    P2
-        LD      -122(P3)      ;STACKP HI FROM SPRVSR-0x86
+        LD      STKPHI(P3)    ;SET STACKPOINTER HI
         XPAH    P2            ;LOAD P2 WITH STACKP+0x1E
         LDI     0x00
         ST      1(P2)
@@ -183,7 +186,7 @@ ISCR:   XPAH    P1
 LETSGO: NOP
         LDI     0x0C
         CALL    P3,PUTASC
-        LDI     H(STACKP)     ;BASIC STACK
+SETSTK: LDI     H(STACKP)     ;BASIC STACK
         ORI     0x01
         XPAH    P1
         LDI     L(STACKP)
@@ -235,8 +238,8 @@ L_D05F: LD      1(P3)
         LD      @2(P3)
         JZ      L_D0C8        ;to $D0C8
         ST      -2(P2)
-        ANI     0xE0
-        JZ      L_D0B7        ;to $D0B7
+        ANI     0xE0          ;ONLY BIT7,BIT6,BIT5
+        JZ      L_D0B7        ;NO BIT SET
         JP      L_D057        ;to $D057
         XRI     0xE0
         JNZ     L_D0DC        ;to $D0DC
@@ -302,13 +305,13 @@ L_D0C8: ILD     -7(P2)
         LDI     0x80
         XPAL    P2
 L_D0D6: JMP     L_D05F        ;to $D05F
-        LDI     0x6F
+VALERR: LDI     0x6F          ;VALUE ERROR
         JMP     L_D0A2        ;to $D0A2
 L_D0DC: LD      @1(P1)
         XRI     0x20
         JZ      L_D0DC        ;to $D0DC
         LD      -2(P2)
-        ANI     0x60          ;BIT6, BIT5
+        ANI     0x60          ;ONLY BIT6,BIT5
         JNZ     L_D0F2        ;to $D0F2
         LD      -1(P1)
         XOR     @1(P3)
@@ -316,7 +319,7 @@ L_D0DC: LD      @1(P1)
         LD      @-1(P1)
         JMP     L_D0C6        ;to $D0C6
 L_D0F2: XRI     0x40          ;TSTBIT(BIT6)=0?
-        JZ      L_D229        ;to $D229
+        JZ      TESTN         ;TEST IF NUMBER
         LD      -1(P1)
         XAE
         SCL
@@ -346,23 +349,23 @@ L_D123: LDE
         ORI     0x80
         XAE
 L_D127: JMP     L_D0D6        ;to $D0D6
-L_D229: ST      -24(P2)
+TESTN:  ST      -24(P2)
         LD      -1(P1)
-L_D12D: SCL
+NUM:    SCL
         CAI     0x3A
-        JP      L_D13E        ;to $D13E
+        JP      NUM2          ;to $D13E
         ADI     0x0A
-        JNZ     L_D13C        ;to $D13C
+        JNZ     NUM1          ;to $D13C
         ILD    -24(P2)
         LD      @1(P1)
-        JMP     L_D12D        ;to $D12D 55/
-L_D13C: JP      L_D148        ;to $D148
-L_D13E: LD      -24(P2)
+        JMP     NUM           ;to $D12D
+NUM1:   JP      NUM3          ;to $D148
+NUM2:   LD      -24(P2)
         JZ      L_D109        ;to $D109
         LD      @-1(P1)
         LDI     0x00
         ST      -24(P2)
-L_D148: XAE
+NUM3:   XAE
         LD      -3(P2)
         XPAL    P2
         LDI     0x96
@@ -372,23 +375,23 @@ L_D148: XAE
         ST      2(P2)
         LDE
         ST      3(P2)
-L_D159: SCL
+NUM4:   SCL
         LD      @1(P1)
         CAI     0x3A
-        JP      L_D164        ;to $D164
+        JP      NUM5          ;to $D164
         ADI     0x0A
-        JP      L_D190        ;to $D190
-L_D164: LD      @-1(P1)
-L_D166: LD      1(P2)
+        JP      NUM9          ;to $D190
+NUM5:   LD      @-1(P1)
+NUM6:   LD      1(P2)
         ADD     1(P2)
         XOR     1(P2)
-        JP      L_D175        ;to $D175
-L_D16E: LDI     0x80
+        JP      NUM8          ;to $D175
+NUM7:   LDI     0x80
         XPAL    P2
         ST      -3(P2)
         JMP     L_D127        ;to $D127
-L_D175: LD      (P2)
-        JZ      L_D16E        ;to $D16E
+NUM8:   LD      (P2)
+        JZ      NUM7          ;to $D16E
         DLD     (P2)
         CCL
         LD      3(P2)
@@ -400,8 +403,8 @@ L_D175: LD      (P2)
         LD      1(P2)
         ADD     1(P2)
         ST      1(P2)
-        JMP     L_D166        ;to $D166
-L_D190: XAE
+        JMP     NUM6          ;to $D166
+NUM9:   XAE
         CCL
         LD      3(P2)
         ADD     3(P2)
@@ -417,7 +420,7 @@ L_D190: XAE
         ST      -3(P2)
         LDI     0x04
         ST      -4(P2)
-L_D1AE: LD      3(P2)
+NUM10:  LD      3(P2)
         ADD     -1(P2)
         ST      3(P2)
         LD      2(P2)
@@ -427,7 +430,7 @@ L_D1AE: LD      3(P2)
         ADD     -3(P2)
         ST      1(P2)
         DLD     -4(P2)
-        JNZ     L_D1AE        ;to $D1AE
+        JNZ     NUM10         ;to $D1AE
         XAE
         ADD     3(P2)
         ST      3(P2)
@@ -437,9 +440,9 @@ L_D1AE: LD      3(P2)
         LDE
         ADD     1(P2)
         ST      1(P2)
-        JP      L_D159        ;to $D159
+        JP      NUM4          ;to $D159
         LDI     H(SPRVSR)
-        XPAH    P0
+        XPAH    P0            ;SET PC TO VALERR
 L_D1D8: LD      @-1(P1)
         XRI     0x2E          ;'.'
         JZ      L_D1D8        ;to $D1D8
@@ -477,9 +480,9 @@ L_D400: LDI    0x01
         DB     255,255
         DB     255,255
 
-; LOOKS LIKE A "TAPE" ROUTINE.
+; TAPE ROUTINES SC/MP II 2 MHz
         ORG    BASE+0x45B
-L_D45B: ST     -96(P2)
+BYTOUT: ST     -96(P2)
         LDI    0x0B
         ST     -21(P2)
         LDI    0x00
@@ -489,53 +492,53 @@ L_D45B: ST     -96(P2)
         DLD    -95(P2)
         LD     -96(P2)
         XAE
-L_D46B: LDI    0x17
+BYTE1:  LDI    0x17
         DLY    1
         LD     -94(P2)
         ST     -95(P2)
-L_D473: DLD    -95(P2)
-        JNZ    L_D473         ;to $D473
+BYTE2:  DLD    -95(P2)
+        JNZ    BYTE2          ;to $D473
         SIO
         LDE
         ORI    0x80
         XAE
         DLD    -21(P2)
-        JNZ    L_D46B         ;to $D46B
+        JNZ    BYTE1          ;to $D46B
         XPPC   P3
-        JMP    L_D45B         ;to $D45B
-L_D483: LDI    0xFF
+        JMP    BYTOUT         ;to $D45B
+LDBYTE: LDI    0xFF
         XAE
         SIO
         LDE
-        JP     L_D48C         ;to $D48C
-        JMP    L_D483         ;to $D483
-L_D48C: LDI    0x78
+        JP     LD1            ;to $D48C
+        JMP    LDBYTE         ;to $D483
+LD1:    LDI    0x78
         DLY    0
         LDI    0xFF
         XAE
         LD     -94(P2)
         SR
         ST     -95(P2)
-L_D498: DLD    -95(P2)
-        JNZ    L_D498         ;to $D498
+LD2:    DLD    -95(P2)
+        JNZ    LD2            ;to $D498
         LDI    0x08
         ST     -21(P2)
-L_D4A0: LD     -94(P2)
+LD3:    LD     -94(P2)
         ST     -95(P2)
         LDI    0x24
         DLY    1
-L_D4A8: DLD    -95(P2)
-        JNZ    L_D4A8         ;to $D4A8
+LD4:    DLD    -95(P2)
+        JNZ    LD4            ;to $D4A8
         SIO
         DLD    -21(P2)
-        JNZ    L_D4A0         ;to $D4A0
+        JNZ    LD3            ;to $D4A0
         LD     -94(P2)
         ST     -95(P2)
-L_D4B5: DLD    -95(P2)
-        JNZ    L_D4B5         ;to $D4B5
+LD5:    DLD    -95(P2)
+        JNZ    LD5            ;to $D4B5
         LDE
         XPPC   P3
-        JMP    L_D483         ;to $D483
+        JMP    LDBYTE
 
 ; LOOKS LIKE A "TAPE" ROUTINE.
         ORG    BASE+0x4C0
@@ -862,7 +865,7 @@ START:  DO      NEXT
         DO      BYE
         DO      CLEAR
         DO      CLOAD
-        GOTO    L_DA56
+        GOTO    CSAVE
         GOTO    EDIT
         GOTO    LIST
         GOTO    NEW
@@ -1130,7 +1133,7 @@ DIM:    TSTVAR  SYNTAX
 NEG:    DO      STACK
         DO      FNEG
         DO      STBCK
-L_DA56: DO      BOTTOM
+CSAVE:  DO      BOTTOM
         DO      TOP
         DO      SAVE
         DO      ADDOUT
@@ -1690,7 +1693,7 @@ GETLIN: LD      127(P2)
 GETL:   LDI     0xB6
         XPAL    P1
         ST      -15(P2)
-        LD      -122(P3)
+        LD      STKPHI(P3)
         ORI     0x03
         XPAH    P1
         ST      -16(P2)
@@ -2088,7 +2091,7 @@ L_E2DE: LDI     0x80
         JZ      -42(P3)
         LDI     0x1F          ;'AREA'
         JMP     -98(P3)       ;JMP ERRTYP(P3)
-FNDVAR: LD      -122(P3)
+FNDVAR: LD      STKPHI(P3)
         ORI     0x01
         XPAH    P3
         LDI     0x00
@@ -2517,7 +2520,7 @@ SPRNUM: LD      @1(P1)
 PRNUM:  LD      -3(P2)
         XPAL    P1
         ST      -15(P2)
-        LD      -122(P3)
+        LD      STKPHI(P3)
         XPAH    P1
         ST      -16(P2)
         LDI     0x20
@@ -2607,7 +2610,7 @@ CMP:    ST      -21(P2)
         LD      -3(P2)
         XPAL    P1
         ST      -15(P2)
-        LD      -122(P3)
+        LD      STKPHI(P3)
         XPAH    P1
         ST      -16(P2)
         LD      5(P1)
@@ -2786,7 +2789,7 @@ SAVFOR: LD      -6(P2)
         LDE
         XRI     0xB1
         JZ      31(P3)
-        LD      -122(P3)
+        LD      STKPHI(P3)
         XPAH    P3
         LD      -3(P2)
         XPAL    P2
@@ -2879,7 +2882,7 @@ VAR2:   ILD     -3(P2)
         ILD     -3(P2)
         XPAL    P1
         ST      -15(P2)
-        LD      -122(P3)
+        LD      STKPHI(P3)
         XPAH    P1
         ST      -16(P2)
 VAR3:   LD      -6(P2)
@@ -2955,7 +2958,7 @@ NXTV:   LD      -06(P2)
         ST      4(P2)
         LDI     0x80
         XPAL    P2
-        LD      -122(P3)
+        LD      STKPHI(P3)
         XPAH    P2
         LD      -22(P2)
         JP      NXTV2
@@ -3213,7 +3216,7 @@ EDIT9:  LDI     0x08
         JNZ     EDIT9
         LDI     0xB6
         XPAL    P1
-        LD      -122(P3)
+        LD      STKPHI(P3)
         ORI     0x03
         XPAH    P1
         LD      (P2)
@@ -3368,7 +3371,7 @@ AUTON:  LD      -25(P2)
         JZ      -42(P3)
         LD      -3(P2)
         XPAL    P1
-        LD      -122(P3)
+        LD      STKPHI(P3)
         XPAH    P1
         CCL
         LD      -8(P2)
@@ -4336,14 +4339,14 @@ ALG2:   ILD     (P1)
 STACK:  LD      -3(P2)
         XPAL    P1
         ST      -13(P2)
-        LD      -122(P3)
+        LD      STKPHI(P3)
         XPAH    P1
         ST      -14(P2)
         JMP     -42(P3)
 FNUM:   LD      -3(P2)
         XPAL    P1
         ST      -13(P2)
-        LD      -122(P3)
+        LD      STKPHI(P3)
         XPAH    P1
         ST      -14(P2)
         LDI     0x00
@@ -6191,7 +6194,7 @@ L_FF98: SCL
         LD      -17(P2)
         CAD     -21(P2)
         JP      L_FFAA
-L_FF9F: LDI     0x2A
+L_FF9F: LDI     0x2A          ;FILL WITH '*' IF FORMAT TOO SMALL
 
         CALL    P3,PUTASC
         DLD     -18(P2)
@@ -6199,7 +6202,7 @@ L_FF9F: LDI     0x2A
         JMP     -42(P3)
 L_FFAA: JZ      L_FFB7
         ST      -22(P2)
-L_FFAE: LDI     0x20
+L_FFAE: LDI     0x20          ;FILL WITH SPACES
 
         CALL    P3,PUTASC
         DLD     -22(P2)
@@ -6207,13 +6210,13 @@ L_FFAE: LDI     0x20
 L_FFB7: LD      -25(P2)
         JP      L_FFCF
         LD      -1(P1)
-        XRI     0x2D
+        XRI     0x2D          ;'-'
         JNZ     L_FFC8
         DLD     -21(P2)
         LD      @-1(P1)
 
         CALL    P3,PUTASC
-L_FFC8: LDI     0x30
+L_FFC8: LDI     0x30          ;'0'
 
         CALL    P3,PUTASC
         JMP     L_FFD2
