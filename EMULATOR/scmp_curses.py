@@ -118,7 +118,7 @@ def emulate(stdscr, debug):
         else:
             result = s.Decode()
             if s.m_stop:
-                stdscr.addstr(height - 2, 2, "FINISHED, PRESS KEY")
+                stdscr.addstr(height - 2, 2, "HALTED, PRESS KEY")
                 k = stdscr.getch()
                 break
             elif result != "OK":
@@ -136,7 +136,7 @@ def emulate(stdscr, debug):
                     debug = True
                 else:
                     debug = False
-                    stdscr.addstr(height - 3, 2, f"                ")
+                stdscr.addstr(height - 3, 2, f"                ")
         if not turbo:
             RenderStatus(stdscr, opcode, s)
         stdscr.move(cursor_y, cursor_x)
@@ -277,7 +277,7 @@ while not inp_len:
 # define breakpoint list
 brkpnt_lst = []
 # add break points as list when desired
-brkpnt_lst.extend([0])
+brkpnt_lst.extend([0x1C3])
 # use curses
 curses.wrapper(emulate, debug)
 

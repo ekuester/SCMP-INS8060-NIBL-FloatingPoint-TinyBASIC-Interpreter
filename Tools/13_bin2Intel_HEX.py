@@ -11,9 +11,8 @@ def usage():
     print("so one can read it in e.g. into an emulator")
     print("usage: ./bin2Intel_HEX.py [binary file] [hex start address] [bytes pro line]")
     print("give binary without .bin extension")
-    print("example: bin2Intel_HEX kalenda 1000 32 > kalenda.hex")
-    print("check last line in file by hand!")
-    print("Erich Küster August 2023")
+    print("example: bin2Intel_HEX kalenda 1000 32")
+    print("Erich Küster, Krefeld/Germany August 2023")
     quit()
 
 argc = len(sys.argv)
@@ -57,10 +56,10 @@ for line in hex_lines:
     checksum = (hex_bytes_sum + 1) % 256
     line_bytes.append(f":{check}{checksum:02X}")
 
-chkfile = base + ".hex"
-print(f"Checked file: {chkfile}")
-with open(chkfile, "w") as chk_f:
+hexfile = base + ".hex"
+print(f"Generated file: {hexfile}")
+with open(hexfile, "w") as hex_f:
     for line in line_bytes:
-        print(line, end='\n', file=chk_f)
+        print(line, end='\n', file=hex_f)
 print("Done!")
 
