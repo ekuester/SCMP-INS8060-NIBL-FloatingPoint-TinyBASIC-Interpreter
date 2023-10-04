@@ -22,7 +22,7 @@ Commands:
 `TSTR    high byte of address 0010 xxxx `
  -   The line buffer is tested for a string matching the string following the TSTR command. The following string is terminated with set bit 7 of last byte.
 
-JUMP    high byte address 0100 xxxx`
+`JUMP    high byte address 0100 xxxx`
 -    The I.L. commands are processed from address with high byte 0001 xxxx onwards.
 
 `CALL    high byte of address 1000 xxxx `
