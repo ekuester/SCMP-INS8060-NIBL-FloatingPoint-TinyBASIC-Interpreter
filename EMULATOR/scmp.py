@@ -14,21 +14,23 @@ class CScmp:
         self.m_disp = 0
         # scmp pointers
         self.ptr = [start, 0, 0, 0]
+        self.pc = start
         # give memory
         self.memory = memory
 
     def FetchCode(self):
-        pc = self.ptr[0] + 1
-        pc = (pc & 0x0fff) + (self.ptr[0] & 0xf000)
-        self.m_instr = self.memory[pc]
+        self.pc = self.ptr[0]
+        p_c = self.pc + 1
+        p_c = (p_c & 0x0fff) + (self.pc & 0xf000)
+        self.pc = p_c
+        self.m_instr = self.memory[p_c]
         opcode = f'{self.m_instr:02X}'
-        self.ptr[0] = pc
         if (self.m_instr & 0x80):
-            pc = pc + 1
-            pc = (pc & 0x0fff) + (self.ptr[0] & 0xf000)
-            self.m_disp = self.memory[pc]
-            self.ptr[0] = pc
+            p_c = p_c + 1
+            p_c = (p_c & 0x0fff) + (self.pc & 0xf000)
+            self.m_disp = self.memory[p_c]
             opcode += f'{self.m_disp:02X}'
+        self.ptr[0] = p_c
         return opcode
 
     def Decode(self):

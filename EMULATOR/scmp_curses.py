@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # curses example: <https://gist.github.com/claymcleod/b670285f334acd56ad1c>
-# NOTICE: add breakpoints at line 265
+# NOTICE: add breakpoints at line 279
 
 import curses, binascii, os, re, sys
 from scmp import CScmp
@@ -23,8 +23,8 @@ def RenderStatus(stdscr, opcode, s):
     # Render status bar
     stdscr.attron(curses.color_pair(3))
     statusbarstr = \
-f" STATUS: pc:{s.ptr[0]:04X} op: {opcode} \
-acc:{s.m_acc:02X} ext:{s.m_ext:02X} stat:{s.m_stat:02X} \
+f" STATUS: pc:{s.pc:04X} op: {opcode} \
+acc:{s.m_acc:02X} ext:{s.m_ext:02X} stat:{s.m_stat:02X} p0:{s.ptr[0]:04X} \
 p1:{s.ptr[1]:04X} p2:{s.ptr[2]:04X} p3:{s.ptr[3]:04X} ea:{s.m_ea:04X}"
     stdscr.addstr(height-1, 0, statusbarstr)
     stdscr.addstr(height-1, len(statusbarstr), " " * (width - len(statusbarstr) - 1))
@@ -125,11 +125,10 @@ def emulate(stdscr, debug):
                 stdscr.addstr(height - 2, 2, f"{result} {opcode} PREMATURE END")
                 k = stdscr.getch()
         stdscr.addstr(height - 3, 2, "        ")
-        pc = s.ptr[0]
         # loook for breakpoint
         if brkpnt_lst:
-            if pc in brkpnt_lst:
-                stdscr.addstr(height - 3, 2, f"BREAKPOINT: {pc:04X}")
+            if s.pc in brkpnt_lst:
+                stdscr.addstr(height - 3, 2, f"BREAKPOINT: {s.pc:04X}")
                 k = stdscr.getch()
                 # set to True for single step after breakpoint
                 if k == ord('t'):
@@ -277,7 +276,7 @@ while not inp_len:
 # define breakpoint list
 brkpnt_lst = []
 # add break points as list when desired
-brkpnt_lst.extend([0x1C3])
+brkpnt_lst.extend([0x2E9])
 # use curses
 curses.wrapper(emulate, debug)
 
