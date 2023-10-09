@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # concatenate label lists to a big one
-# default file name for big label file is 'big_labels.json'
+# default file name for big label file is 'names_merged.json'
 
 import json, re, sys
  

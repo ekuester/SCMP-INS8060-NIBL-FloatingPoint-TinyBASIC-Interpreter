@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # show table of keywords
-# keyword is string terminated by byte with bit 8 set
+# keyword is string terminated by byte with bit 7 set
 # terminated by several '0' chars
 # usage: ./4_view_keywords.py basefilename startaddress
 

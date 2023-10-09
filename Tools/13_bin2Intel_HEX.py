@@ -11,8 +11,10 @@ def usage():
     print("so one can read it in e.g. into an emulator")
     print("usage: ./bin2Intel_HEX.py [binary file] [hex start address] [bytes pro line]")
     print("give binary without .bin extension")
-    print("example: bin2Intel_HEX kalenda 1000 32")
-    print("Erich Küster, Krefeld/Germany August 2023")
+    print("example: bin2Intel_HEX kalenda 1000 32 > kalenda.hex")
+    print("check last line in file at web address")
+    print("https://www.fischl.de/hex_checksum_calculator/")
+    print("Erich Küster August 2023")
     quit()
 
 argc = len(sys.argv)
@@ -32,7 +34,6 @@ file_stats = os.stat(bin_file)
 file_size = file_stats.st_size
 print(f'Will read file {bin_file} with {file_size} Bytes')
 # read binary into bytearray
-# read binary into bytearray
 with open(bin_file, "rb") as bin_f:
     b_bytes = bytes(bin_f.read())
 # split into chunks of byte_count length
@@ -40,14 +41,15 @@ chunks = [b_bytes[i:i + byte_count] for i in range(0, len(b_bytes))]
 hex_lines = []
 for a, chunk in enumerate(chunks):
     address = start + a
-    if  not (a % byte_count):
-        hex_bytes = binascii.hexlify(chunk).decode('ASCII')
-        hex_line = f":{byte_count:02X}{address:04X}00{hex_bytes}00"
+    if not (a % byte_count):
+        hex_bytes = binascii.hexlify(chunk).decode('ASCII').upper()
+        hex_len = len(hex_bytes) // 2
+        hex_line = f":{hex_len:02X}{address:04X}00{hex_bytes}00"
         hex_lines.append(hex_line)
 line_bytes = []
 for line in hex_lines:
     # there is no line feed
-    check = line[1:-2]
+    check = line[1:-2].upper()
     hex_bytes = binascii.unhexlify(check)
     hex_bytes_sum = sum(hex_bytes)
     # one's complement
@@ -55,11 +57,10 @@ for line in hex_lines:
     # add one for two's complement
     checksum = (hex_bytes_sum + 1) % 256
     line_bytes.append(f":{check}{checksum:02X}")
-
-hexfile = base + ".hex"
-print(f"Generated file: {hexfile}")
-with open(hexfile, "w") as hex_f:
+chkfile = base + ".hex"
+print(f"Checked file: {chkfile}")
+with open(chkfile, "w") as chk_f:
     for line in line_bytes:
-        print(line, end='\n', file=hex_f)
+        print(line, end='\n', file=chk_f)
 print("Done!")
 

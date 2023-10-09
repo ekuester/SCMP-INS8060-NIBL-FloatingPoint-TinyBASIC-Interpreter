@@ -4,22 +4,30 @@
 ; some labels are fallen into oblivion and substituted by L_[hex address]
 ; rewritten 2023 for macro assembler asl
 ; the macro-assembler used here is a free tool by Alfred Arnold:
-;	    http://john.ccac.rwth-aachen.de:8000/as/
+;	http://john.ccac.rwth-aachen.de:8000/as/
 ;
-;   .TITLE  NIBLFP,'05/08/2023'
-;   .LIST   1
+; GitHub repository:
+;  https://github.com/ekuester/SCMP-INS8060-NIBL-FloatingPoint-TinyBASIC-Interpreter
 ;
 ; Krefeld / Germany May 8, 2023
 ;
+;	.TITLE  NIBLFP,'05/08/2023'
+;	.LIST   1
+;
+; 2023/08/08	ekuester
+;		rewritten so that the program can start now at hex D000.
+;		 stopps now and waits for carriage return to continue
+;
+; 2023/08/08	ekuester
+;		tranfered input/output routines to $50 and $A0,
+;		 transfered token table (change address in EDIT, LIST, SCAN)
 
+; Last update: 2023/10/09, ekuester
+;
+
+; Macros
 L FUNCTION VAL16, (VAL16 & 0xFF)
 H FUNCTION VAL16, ((VAL16 >> 8) & 0xFF)
-
-; ILLEGAL OPCODES (DEFINE EMULA FOR EMULATION)
-	IFDEF EMULA
-WRITECH = 0x20
-READCHR = 0x21
-	ENDIF
 
 JS    MACRO  P,VAL		; JUMP TO SUBROUTINE
 	LDI  H(VAL-1)
@@ -56,9 +64,17 @@ RTRN  MACRO  P,VAL		; RETURN FROM SUBROUTINE
 ;*		       - ERICH KUESTER		      *
 ;******************************************************
 
+; ILLEGAL OPCODES (DEFINE EMULA FOR EMULATION)
+	IFDEF EMULA
+WRITECH = 0x20
+READCHR = 0x21
+	MESSAGE "will generate emulation code"
+	ENDIF
+
 ; SELECT DESIRED BAUD RATE OR 0 FOR ORIGINAL DEFAULT
 	IFNDEF	BAUD
 BAUD	= 1200
+	MESSAGE "Baudrate set to 1200"
 	ENDIF
 
 ; SET THE DESIRED LOAD (3 x 4096 BYTES) ADDRESS
@@ -156,9 +172,9 @@ ENTRY:	DINT
 	XPAL	P2
 	LD	STKPHI(P3)	; SET STACKPOINTER HI
 	XPAH	P2		; LOAD P2 WITH STACKP+0x1E
-	LDI	0x00
+	LDI	0
 	ST	1(P2)
-	LDI	0x00
+	LDI	0
 	ST	(P2)
 	LDI	0x80
 	XPAL	P2
@@ -181,11 +197,136 @@ MARKP:	LDI	0xFF		; MARK PAGE AS EMPTY
 	ST	2(P1)
 ISCR:	XPAH	P1
 	SCL
-	CAI	0x10		; SET PAGE-1
-	JNZ	AGAIN
+	CAI	0x10		; DECREMENT PAGE BY 1
+	JNZ	AGAIN		; LOOP THROUGH PAGES 7 UNTIL 1
 	LDI	L(LETSGO)
 	XPAL	P0		; SET PC LOW
 
+
+;***************************
+;* MESSAGE AT LINE NUMBER  *
+;***************************
+	ORG    BASE+0x0E0
+LNUM:	LDI    0x01
+	XAE
+	SIO
+	ILD    127(P2)
+	JP     38(P3)
+	LDI    0x20		; ' '
+	CALL   P3,PUTASC
+	LDI    0x41		; 'A'
+	CALL   P3,PUTASC
+	LDI    0x54		; 'T'
+	CALL   P3,PUTASC
+	CALL   P3,PRNUM		; PRINT LINE NUMBER
+	JMP    38(P3)
+
+
+;***************************
+;*   PUT CHAR TO STDOUT	   *
+;***************************
+	ORG    BASE+0x0050
+PUTASC:
+       IFDEF WRITECH
+	DB     WRITECH
+       ELSE
+	ANI    0x7F		; MASK OFF PARITY BIT
+	XAE			; SAVE IN EXT
+	ST     -127(P2)		; STORE IN RAM
+	LDI    TTY_B6		; SET DELAY FOR START BIT
+	DLY    TTY_B7		;  (TTY_B6=30 AND TTY_B7=03)
+	CSA			; GET STATUS
+	ORI    1		; SET START BIT (INVERTED LOGIC)
+	CAS			; SET STATUS
+	LDI    9		; GET BIT COUNT
+	ST     -24(P2)		; STORE IN RAM
+PUTA1:	LDI    TTY_B8		; SET DELAY FOR 1 BIT TIME
+	DLY    TTY_B9		;  (TTY_B8=5C AND TTY_B9=01)
+	DLD    -24(P2)		; DECREMENT BIT COUNT
+	JZ     PUTA2
+	LDE			; PREPARE NEXT BIT
+	ANI    0x01
+	ST     -23(P2)
+	XAE			; SHIFT DATA RIGHT ONE BIT
+	RR
+	XAE
+	CSA			; SET UP OUTPUT BIT
+	ORI    1
+	XOR    -23(P2)
+	CAS			; PUT BIT TO TTY
+	JMP    PUTA1
+PUTA2:	CSA			; SET STOP BIT
+	ANI    0xFE
+	CAS
+	LD     -127(P2)
+	XAE
+	XRI    0x0C
+	JNZ    PUTA3
+	DLY    255
+	JMP    38(P3)		; JUMP RTRN
+PUTA3:	ANI    0x60
+	JNZ    38(P3)		; JUMP RTRN
+	DLY    0x10
+       ENDIF
+	JMP    38(P3)		; JUMP RTRN
+
+
+;***************************
+;*   GET CHAR FROM STDIN   *
+;***************************
+	ORG    BASE+0x00A0
+GETASC:				; read one character
+       IFDEF READCHR
+	DB     READCHR
+       ELSE
+	LDI    0x08		; SET COUNT
+	ST     -21(P2)
+L_WAIT: CSA			; WAIT FOR START BIT
+	ANI    0x20
+	JNZ    L_WAIT
+	LDI    TTY_B1		; DELAY 1/2 BIT TIME
+	DLY    TTY_B2		;  (TTY_B1=C2 AND TTY_B2=00)
+	CSA			; IS START BIT STILL THERE?
+	ANI    0x20
+	JNZ    L_WAIT		; NO
+; BEGIN FOR VARCEM
+;	 CSA			 ; SEND START BIT (NOTE THAT
+;	 ORI	0x01		 ;  (OUTPUT IS INVERTED)
+;	 CAS
+; END FOR VARCEM
+L_INP:	LDI    TTY_B3		; DELAY BIT TIME
+	DLY    TTY_B4		;  (TTY_B3=76 AND TTY_B4=01)
+	CSA			; GET BIT (SENSEB)
+	ANI    0x20
+	JZ     L_ZERO
+	LDI    0x01
+L_ZERO: RRL			; ROTATE INTO LINK
+	XAE
+	SRL			; SHIFT INTO CHARACTER
+	XAE			; RETURN CHAR TO E
+	DLD    -21(P2)		; DECREMENT BIT COUNT
+	JNZ    L_INP		; LOOP UNTIL 0
+	DLY    TTY_B5		; SET DELAY (TTY_B5=01)
+	LDE			; LOAD CHARACTER FROM E
+	ANI    0x7F		; MASK PARITY BIT
+	XAE
+	LDE
+	ANI    0x40		; TEST FOR UPPERCASE
+	JZ     UPPERC
+	LDE
+	ANI    0x5F		; CONVERT TO UPPERCASE
+	XAE
+UPPERC: LDE
+       ENDIF
+	XRI    3		; TEST FOR CONTROL-C
+	JNZ    38(P3)		; JUMP RTRN
+	LDI	0x7C		; 'BREAK'
+	JMP	-98(P3)		; JMP ERRTYP(P3)
+
+
+;***************************
+;*  START OF NIBLFP BASIC  *
+;***************************
 	ORG	BASE+0x0FF
 LETSGO: NOP
 	LDI	0x0C
@@ -195,7 +336,7 @@ SETSTK: LDI	H(STACKP)	; BASIC STACK
 	XPAH	P1
 	LDI	L(STACKP)
 	XPAL	P1		; SET P1 WITH STACKP+0x100
-	LDI	0x00
+	LDI	0
 	ST	(P1)
 	ST	127(P2)
 	LDI	0x1F
@@ -215,8 +356,8 @@ TXTOUT: LD	@1(P1)
 	LDI	0x81		; ADDRESS LOW 'ERROR'
 	XPAL	P1
 	JP	SPACE		; to $D023
-	CALL	P3,L_D400
-	NOP
+	CALL	P3,LNUM		; PRINT AT LINE NUMBER
+	NOP			; DO NOT DELETE, LABEL SPRVSR MUST BE FIX 
 	LDI	0x48
 	ST	(P2)
 	LDI	0x3E		; PROMPT >
@@ -229,7 +370,7 @@ TXTOUT: LD	@1(P1)
 	ST	-2(P2)
 	LDI	0x02
 	ST	-1(P2)
-	CALL	P3,LINE
+	CALL	P3,LINE		; PRINT A NEW LINE
 	LDI	0x1A
 	ST	-29(P2)
 L_D057: LD	-1(P2)
@@ -467,22 +608,6 @@ L_D1F5: LD	@-1(P1)
 	JNZ	L_D1D8		; to $D1D8
 	JMP	38(P3)
 
-	ORG    BASE+0x400
-L_D400: LDI    0x01
-	XAE
-	SIO
-	ILD    127(P2)
-	JP     38(P3)
-	LDI    0x20		; ' '
-	CALL   P3,PUTASC
-	LDI    0x41		; 'A'
-	CALL   P3,PUTASC
-	LDI    0x54		; 'T'
-	CALL   P3,PUTASC
-	CALL   P3,PRNUM		; PRINT LINE NUMBER
-	JMP    38(P3)
-	DB     255,255
-	DB     255,255
 
 ; TAPE ROUTINES SC/MP II 2 MHz
 	ORG    BASE+0x45B
@@ -544,7 +669,10 @@ LD5:	DLD    -95(P2)
 	XPPC   P3
 	JMP    LDBYTE
 
-; LOOKS LIKE A "TAPE" ROUTINE.
+
+;***************************
+;*   PRINT USING ROUTINE   *
+;***************************
 	ORG    BASE+0x4C0
 L_D4C0: LDI    0x00
 	ST     -95(P2)
@@ -579,144 +707,46 @@ L_D4F6: LDI    0x63		; 'SNTX'
 	DB     255,255
 	DB     255,255
 
-;***************************
-;*   PUT CHAR TO STDOUT	   *
-;***************************
-	ORG    BASE+0x0550
-PUTASC:
-       IFDEF WRITECH
-	DB     WRITECH
-       ELSE
-	ANI    0x7F		; MASK OFF PARITY BIT
-	XAE			; SAVE IN EXT
-	ST     -127(P2)		; STORE IN RAM
-	LDI    TTY_B6		; SET DELAY FOR START BIT
-	DLY    TTY_B7		;  (TTY_B6=30 AND TTY_B7=03)
-	CSA			; GET STATUS
-	ORI    1		; SET START BIT (INVERTED LOGIC)
-	CAS			; SET STATUS
-	LDI    9		; GET BIT COUNT
-	ST     -24(P2)		; STORE IN RAM
-PUTA1:	LDI    TTY_B8		; SET DELAY FOR 1 BIT TIME
-	DLY    TTY_B9		;  (TTY_B8=5C AND TTY_B9=01)
-	DLD    -24(P2)		; DECREMENT BIT COUNT
-	JZ     PUTA2
-	LDE			; PREPARE NEXT BIT
-	ANI    0x01
-	ST     -23(P2)
-	XAE			; SHIFT DATA RIGHT ONE BIT
-	RR
-	XAE
-	CSA			; SET UP OUTPUT BIT
-	ORI    1
-	XOR    -23(P2)
-	CAS			; PUT BIT TO TTY
-	JMP    PUTA1
-PUTA2:	CSA			; SET STOP BIT
-	ANI    0xFE
-	CAS
-	LD     -127(P2)
-	XAE
-	XRI    0x0C
-	JNZ    PUTA3
-	DLY    255
-	JMP    38(P3)		; JUMP RTRN
-PUTA3:	ANI    0x60
-	JNZ    38(P3)		; JUMP RTRN
-	DLY    0x10
-       ENDIF
-	JMP    38(P3)		; JUMP RTRN
-
-;***************************
-;*   GET CHAR FROM STDIN   *
-;***************************
-	ORG    BASE+0x05CE
-GETASC:				; read one character
-       IFDEF READCHR
-	DB     READCHR
-       ELSE
-	LDI    0x08		; SET COUNT
-	ST     -21(P2)
-L_WAIT: CSA			; WAIT FOR START BIT
-	ANI    0x20
-	JNZ    L_WAIT
-	LDI    TTY_B1		; DELAY 1/2 BIT TIME
-	DLY    TTY_B2		;  (TTY_B1=C2 AND TTY_B2=00)
-	CSA			; IS START BIT STILL THERE?
-	ANI    0x20
-	JNZ    L_WAIT		; NO
-; BEGIN FOR VARCEM
-;	 CSA			 ; SEND START BIT (NOTE THAT
-;	 ORI	0x01		 ;  (OUTPUT IS INVERTED)
-;	 CAS
-; END FOR VARCEM
-L_INP:	LDI    TTY_B3		; DELAY BIT TIME
-	DLY    TTY_B4		;  (TTY_B3=76 AND TTY_B4=01)
-	CSA			; GET BIT (SENSEB)
-	ANI    0x20
-	JZ     L_ZERO
-	LDI    0x01
-L_ZERO: RRL			; ROTATE INTO LINK
-	XAE
-	SRL			; SHIFT INTO CHARACTER
-	XAE			; RETURN CHAR TO E
-	DLD    -21(P2)		; DECREMENT BIT COUNT
-	JNZ    L_INP		; LOOP UNTIL 0
-	DLY    TTY_B5		; SET DELAY (TTY_B5=01)
-	LDE			; LOAD CHARACTER FROM E
-	ANI    0x7F		; MASK PARITY BIT
-	XAE
-	LDE
-	ANI    0x40		; TEST FOR UPPERCASE
-	JZ     UPPERC
-	LDE
-	ANI    0x5F		; CONVERT TO UPPERCASE
-	XAE
-UPPERC: LDE
-       ENDIF
-	XRI    3		; TEST FOR CONTROL-C
-	JNZ    38(P3)		; JUMP RTRN
-	LDI	0x7C		; 'BREAK'
-	JMP	-98(P3)		; JMP ERRTYP(P3)
 
 ;***************************
 ;*	 MESSAGES	   *
 ;***************************
 
-MESSAGE MACRO A,B
+MESG	MACRO A,B
 	   DB  A
 	   DB  B|0x80
 	ENDM
 
 	ORG	BASE+0x61C
-MESGS:	MESSAGE "DE",'F'	;  1
-	MESSAGE "ARE",'A'	;  2
-	MESSAGE "AR",'G'	;  3
-	MESSAGE "BL",'K'	;  4
-	MESSAGE "CAS",'S'	;  5
-	MESSAGE "CHA",'R'	;  6
-	MESSAGE "DI",'M'	;  7
-	MESSAGE "DAT",'A'	;  8
-	MESSAGE "DIV",'0'	;  9
-	MESSAGE "END",'"'	;  10
-	MESSAGE "FO",'R'	;  11
-	MESSAGE "HE",'X'	;  12
-	MESSAGE "NES",'T'	;  13
-	MESSAGE "NEX",'T'	;  14
-	MESSAGE "NOG",'O'	;  15
-	MESSAGE "OVRF",'L'	;  16
-	MESSAGE "RA",'M'	;  17
-	MESSAGE "REDI",'M'	;  18
-	MESSAGE "RTR",'N'	;  19
-	MESSAGE "SNT",'X'	;  20
-	MESSAGE "STM",'T'	;  21
-	MESSAGE "UNT",'L'	;  22
-	MESSAGE "VAL",'U'	;  23
-	MESSAGE "VA",'R'	;  24
-	MESSAGE "VARST",'K'	;  25
-	MESSAGE "BREA",'K'	;  26
-	MESSAGE "ERRO",'R'	;  27
-	MESSAGE "READ",'Y'	;  28
+MESGS:	MESG	"DE",'F'	;  1
+	MESG	"ARE",'A'	;  2
+	MESG	"AR",'G'	;  3
+	MESG	"BL",'K'	;  4
+	MESG	"CAS",'S'	;  5
+	MESG	"CHA",'R'	;  6
+	MESG	"DI",'M'	;  7
+	MESG	"DAT",'A'	;  8
+	MESG	"DIV",'0'	;  9
+	MESG	"END",'"'	;  10
+	MESG	"FO",'R'	;  11
+	MESG	"HE",'X'	;  12
+	MESG	"NES",'T'	;  13
+	MESG	"NEX",'T'	;  14
+	MESG	"NOG",'O'	;  15
+	MESG	"OVRF",'L'	;  16
+	MESG	"RA",'M'	;  17
+	MESG	"REDI",'M'	;  18
+	MESG	"RTR",'N'	;  19
+	MESG	"SNT",'X'	;  20
+	MESG	"STM",'T'	;  21
+	MESG	"UNT",'L'	;  22
+	MESG	"VAL",'U'	;  23
+	MESG	"VA",'R'	;  24
+	MESG	"VARST",'K'	;  25
+	MESG	"BREA",'K'	;  26
+	MESG	"ERRO",'R'	;  27
+	MESG	"READ",'Y'	;  28
+
 
 ;***************************
 ;*	TOKEN TABLE	   *
@@ -1805,10 +1835,8 @@ EX:	LDI	0x0D
 	XAE
 	ST	EREG(P1)
 LINE:	LDI	0x0D
-
 	CALL	P3,PUTASC
 	LDI	0x0A
-
 	CALL	P3,PUTASC
 	RTRN	P3
 RUBOUT: LD	@EREG(P1)
@@ -1877,9 +1905,9 @@ SCAN1:	LD	@1(P1)
 	LDI	0x3C		; 'END"'
 	JMP	-98(P3)		; JMP ERRTYP(P3)
 SCAN2:	LD	@-1(P1)
-SCAN3:	LDI	0xA0
+SCAN3:	LDI	L(TABLE)	; LOAD P3 WITH TOKEN TABLE
 	XPAL	P3
-	LDI	0xD6
+	LDI	H(TABLE)
 	XPAH	P3
 SCAN4:	LD	@1(P3)
 	JZ	SCAN
@@ -2711,10 +2739,10 @@ LST4:
 LST5:	LD	@1(P1)
 	JP	LST9
 	ST	-25(P2)
-	LDI	0xA0
+	LDI	L(TABLE)	; LOAD P1 WITH TOKEN TABLE
 	XPAL	P1
-	ST	-15(P2)
-	LDI	0xD6
+	ST	-15(P2)		; SAVE OLD P1
+	LDI	H(TABLE)
 	XPAH	P1
 	ST	-16(P2)
 LST6:	LD	-25(P2)
@@ -3186,10 +3214,10 @@ EDIT3:	XRI	0x01
 	JP	EDIT7
 	XRI	0x0D
 	XAE
-	LDI	0xA0
+	LDI	L(TABLE)	; LOAD P1 WITH TOKEN TABLE
 	XPAL	P1
-	ST	-15(P2)
-	LDI	0xD6
+	ST	-15(P2)		; SAVE OLD P1
+	LDI	H(TABLE)
 	XPAH	P1
 	ST	-16(P2)
 EDIT4:	LDE
@@ -3260,10 +3288,10 @@ EDIT12: LD	@1(P3)
 	XRI	0x0D
 	JP	EDIT16
 	ST	-22(P2)
-	LDI	0xA0
+	LDI	L(TABLE)	; LOAD P3 WITH TOKEN TABLE
 	XPAL	P3
-	ST	-15(P2)
-	LDI	0xD6
+	ST	-15(P2)		; SAVE OLD P3
+	LDI	H(TABLE)
 	XPAH	P3
 	ST	-16(P2)
 EDIT13: LD	-22(P2)
