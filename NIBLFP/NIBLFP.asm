@@ -15,13 +15,12 @@
 ;	.LIST   1
 ;
 ; 2023/08/08	ekuester
-;		rewritten so that the program can start now at hex D000.
-;		 stopps now and waits for carriage return to continue
+;		rewritten so that the program can start now at hex D0
 ;
 ; 2023/08/08	ekuester
 ;		tranfered input/output routines to $50 and $A0,
 ;		 transfered token table (change address in EDIT, LIST, SCAN)
-
+;
 ; Last update: 2023/10/09, ekuester
 ;
 
