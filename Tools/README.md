@@ -41,4 +41,5 @@ calculates new checksums for a file in Intel HEX format.
 converts binary into file into Intel HEX format, so that it can be read into an emulator, for instance.
 
 14 niblcvt.py<br>
+converts NIBL BASIC file into NIBL page memory
 

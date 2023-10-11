@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # curses example: <https://gist.github.com/claymcleod/b670285f334acd56ad1c>
 # NOTICE: add breakpoints at line 279
+# last update: Tue 10, October 2023
 
 import curses, binascii, os, re, sys
 from scmp import CScmp
@@ -170,18 +171,17 @@ def decode(hexlines):
         addresses.append(address)
         line = h_line[9:-3]
         lines.append(line)
+    gaps = []
+    a_range = range(1, len(addresses))
+    for i in a_range:
+        gap = addresses[i] - addresses[i-1] - (len(lines[i-1]) >> 1)
+        gaps.append(gap)
     h_bytes = bytearray()
-    next_address = addresses[0]
-    for i, address in enumerate(addresses):
-        if address > next_address:
-            # fill gaps with bytes
-            fill = address - next_address
-            fill_bytes = ([255]*fill)
-            h_bytes.extend(fill_bytes)
-            next_address += fill
+    for i, gap in enumerate(gaps):
         h_bytes.extend(binascii.unhexlify(lines[i]))
-        count = len(lines[i]) >> 1
-        next_address = address + count
+        if gap > 0:
+            fill_bytes = ([255]*gap)
+            h_bytes.extend(fill_bytes)
     # return load address and binary as byte array
     load = addresses[0]
     return load, h_bytes
@@ -227,15 +227,15 @@ while not inp_len:
                 h_lines.append(h_line)
         load, s_bytes = decode(h_lines)
         break
-
 # reserve 64 kByte memory as work space
 s_memory = bytearray(0x10000)
 
 print(f'into sc/mp memory with {len(s_memory)} Bytes at address hex {load:04X}')
 # now copy the program bytes into scmp memory beginning at load
+
 for i, byte in enumerate(s_bytes):
     s_memory[load + i] = byte
-print(f'{i} bytes copied')
+print(f'{i:4X} bytes copied')
 
 inp_len = 0
 debug = False
@@ -276,7 +276,7 @@ while not inp_len:
 # define breakpoint list
 brkpnt_lst = []
 # add break points as list when desired
-brkpnt_lst.extend([0x2E9])
+brkpnt_lst.extend([])
 # use curses
 curses.wrapper(emulate, debug)
 
