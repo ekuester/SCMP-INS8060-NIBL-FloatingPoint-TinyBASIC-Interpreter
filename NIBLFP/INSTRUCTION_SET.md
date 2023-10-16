@@ -47,8 +47,8 @@ Declaration Statements
 DEF FN must be followed by a character A-Z, so 26 user defined functions are possible. An expression between brackets can be added to transfer a parameter.  
 e.g.:
 ```
-    DEF FNA (SQROOT) = SQR(SQROOT): INPUT A: PRINT FNA(A): REM prints square root of A
-    DEF FNB = SIN(X)+1: INPUT X: PRINT FNB
+ > DEF FNA (SQROOT) = SQR(SQROOT): INPUT A: PRINT FNA(A): REM prints square root of A
+ > DEF FNB = SIN(X)+1: INPUT X: PRINT FNB
 ```
 
 Program Flow Control
@@ -117,9 +117,12 @@ String Functions
 String Concatenation with & (ampersand)
 e.g.
 ```
-    VAR = TOP: VAR1 = TOP + 72: VAR1$ = "123456"
-    VAR$ = RIGHT$(VAR1$,2)&CHR$(65)&"LT"&MID$(VAR1$,2,3)
-    PRINT VAR$
+ > 10 VAR = TOP: VAR1 = TOP + 72: VAR1$ = "123456" 
+ > 20 VAR$ = RIGHT$(VAR1$,2)&CHR$(65)&"LT"&MID$(VAR1$,2,3) 
+ > 30 PRINT VAR$
+ > RUN 
+ 56ALT234
+
 ```
 
 String Comparison
@@ -145,6 +148,10 @@ Input/Output
     VERT(-x)
     PEEK
     POKE
-    #DFC1 (hexadecimal number)
+    #DFC1 (# marks hexadecimal number)
+```
+ > POKE #1001,13: REM write 13 to storage address
+ > PR PEEK(#1001): REM read storage address
+```
 
 **Attention:** The PRINT USING statement uses as separator the decimal comma (standard in continental Europe)
