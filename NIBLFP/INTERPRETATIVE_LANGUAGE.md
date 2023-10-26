@@ -28,7 +28,7 @@ Commands:
 `ILCALL  high byte of address 0001 xxxx `
 -    Will call a subroutines in I.L. Such subroutines are terminated with a zero byte 00.
 
-`END     one-byte command 000 0000 `
+`END     one-byte command 0000 0000 `
 -    see ILCALL
 
 Furthermore, subprograms are called within machine programs by the command 'XPPC P3' followed by the address to be jumped to (order is high byte - low byte). So the command sequence '3F D500' would be understood as CALL P3,PUTASC (that's the routine that transmits an ASCII character to the screen). These subprograms are exited with '9326' or '3F00' (mnemonic RTRN,P3).
