@@ -1,15 +1,15 @@
 ; NIBLFP.ASM originally written by Erich Küster, late seventies of last century
 ; some additions 40 years later by Fred N. van Kempen, Fort Wayne, Indiana / USA
-; assembler listing
-; some labels are fallen into oblivion and substituted by L_[hex address]
+;  assembler listing
+;  some labels are fallen into oblivion and substituted by L_[hex address]
+;  rewritten 2023 for macro assembler asl
+; the macro-assembler used here is a free tool by Alfred Arnold, Aachen / Germany
+; found at <http://john.ccac.rwth-aachen.de:8000/as/>
 ; GitHub repositories:
-; original resurrected and slightly modified version of NIBLFP at
+; original resurrected and slightly modified version of NIBLFP by Erich Küster at
 ;  <https://github.com/ekuester/SCMP-INS8060-NIBL-FloatingPoint-TinyBASIC-Interpreter>
-; a completely rewritten, modernized and commented version will be found soon at 
-;  <https://github.com/waltje/SCMP>
-; rewritten 2023 for macro assembler asl
-; the macro-assembler used here is a free tool by Alfred Arnold:
-;		http://john.ccac.rwth-aachen.de:8000/as/
+; a completely rewritten, modernized and commented version by Fred N. van Kempen
+;  will be found soon at <https://github.com/VARCem8>
 ;
 ; AUTHORS:	National Semiconductor, NIBL, 1975
 ;		Erich Küster (ekuester), rewrite, add floating point, late 1970/early 1980's
@@ -21,7 +21,7 @@
 ;		changes start address to X'D000, supervisor is now at X'D180,
 ;		 replaced spaces by tab stopps at positions 9, 17, 33 if possible
 ;
-; Last update: 2023/10/26, ekuester
+; Last update: 2023/10/27, ekuester
 
 L FUNCTION VAL16, (VAL16 & 0xFF)
 H FUNCTION VAL16, ((VAL16 >> 8) & 0xFF)
@@ -97,6 +97,7 @@ EREG	=  -128			; THE EXTENSION REGISTER
 ; SELECT DESIRED BAUD RATE OR 0 FOR ORIGINAL DEFAULT
 	IFNDEF	BAUD
 BAUD	= 1200
+	MESSAGE "Baud rate set to 1200 symbols/sec"
 	ENDIF
 	IF BAUD == 0
 TTY_B1 = 0xC2
@@ -336,13 +337,13 @@ L_D1DC: LD	@1(P1)
 	JZ	L_D1DC
 	LD	-2(P2)
 	ANI	0x60		; ONLY BIT6,BIT5
-	JNZ	L_D1F2		; to X'D1F2
+	JNZ	TESTB6		; to X'D1F2
 	LD	-1(P1)
 	XOR	@1(P3)
-	JZ	L_D1D6		; to X'D1D6
+	JZ	L_D1D6		; to X'D1D6 -> SPTEST
 	LD	@-1(P1)
 	JMP	L_D1C6		; to X'D1C6 -> SPLOAD
-L_D1F2: XRI	0x40		; IS TSTBIT (BIT6) = 0?
+TESTB6: XRI	0x40		; IS TSTBIT (BIT6) = 0?
 	JZ	TESTN		; TEST IF NUMBER
 	LD	-1(P1)
 	XAE
@@ -3709,20 +3710,20 @@ FSTRNG: LD	-3(P2)
 	LD	4(P1)
 	XPAH	P3
 	XAE
-	LD	@-5(P1)
-FSTR1:	ST	@1(P3)
-	LD	@-1(P1)
-	JP	FSTR1
-	LDI	0x0D
+	LD	@-5(P1)		; GET BYTE FROM SOURCE STRING
+FSTR1:	ST	@1(P3)		; STORE BYTE INTO DESTINATION STRING
+	LD	@-1(P1)		; GET NEXT BYTE FROM SOURCE STRING
+	JP	FSTR1		; CONTINUE IF HIGH-BIT CLEAR
+	LDI	13		; TERMINATE STRING WITH A CR
 	ST	(P3)
-	LDI	0x5E
+	LDI	0X5E		; RESTORE P1 POINTER LOW
 	XPAL	P1
-	LDI	0x80
+	LDI	L(SPRVSR)	; RESTORE P3 POINTER TO SUPERVISOR
 	XPAL	P3
-	ST	1(P1)
+	ST	1(P1)		; STORE LOW ADDRESS OF NEW STRING IN P1
 	LDE
 	XPAH	P3
-	ST	(P1)
+	ST	(P1)		; STORE HIGH ADDRESS
 	JMP	SV_SPLOAD(P3)
 POPSTR: ILD	-3(P2)
 	ILD	-3(P2)

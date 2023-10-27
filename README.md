@@ -32,11 +32,11 @@ The first NIBL was published in Dr. Dobb's Journal [7]. An excerpt is found in t
 NIBLE is practically identical to NIBL except that the program runs in page 1 of the SC/MP memory space. Due to this several things had to be changed. I adapted the source for the mentioned macro assembler.
 
 #### NIBLFP
-This program was written by me in the years 1976 - 1986 as floating point extension for the above mentioned NIBL and NIBLE, it covers the address range from hex D000 to FFFF. The resurrected version starte with a program entry point at hex DFC1. Due to existence of the mentioned macro assembler the code was rewritten so that the program can start now at hex D000.
+This program was written by me in the years 1976 - 1986 as floating point extension for the above mentioned NIBL and NIBLE, it covers the address range from hex D000 to FFFF. The resurrected version starte with a program entry point at hex DFC1. Due to existence of the mentioned macro assembler the code was rewritten, so that the program can start now at hex D000, but beside that, was intended from historical reasons to be left largely unchanged.
 
 The floating-point routines were originally an adapted 1-to-1 translation from source code for the 6502, released in 1976 [8] and written by Roy Rankin and Steve Wozniak. I leave some information extracted from the original article in the belonging subdirectory, especially an assembled listing and the binary code.
 
-On his website [9] Ronald Dekker preserved my NIBLFP over the time, his listings, however, are for the 7.8 version. Kindly he translated my original German description into English. The version published in this repository is 7.9 and is my latest attempt in SC/MP programming dated from the eighties of the last century. The instruction set is found in the belonging subdirectory.
+On his website [9] Ronald Dekker preserved my NIBLFP over the time, his listings, however, are for the 7.8 version. Kindly he translated my original German description into English. The version published in this repository is 7.9 and is my latest attempt in SC/MP programming dated from the eighties of the last century. The instruction set is found in the belonging subdirectory. 
 
 ### MONITOR
 This program originates from around 1982 and was written for the Elektor-System, it resides on page C and is started at address $C000. More details are found in the associated directory.
@@ -64,6 +64,8 @@ With the default preferences the program generates source code that can be put i
 
 ### Acknowledgements
 Special thanks go as usual to the people in the developer community at StackOverflow. Without their help and answered questions at <https://stackoverflow.com/> and affiliate sites this work would not be possible.
+
+A very special thank you also goes to Fred N. van Kempen <https://github.com/waltje>, who expertly analyzed the NIBLFP assembly and gave crucial advice to reduce inconsistencies in the disassembled code. A completely rewritten, modernized and commented version will be available soon at his github repository for virtual archaeological computing <https://github.com/VARCem8>.
 
 ### Literature
 
