@@ -6,14 +6,17 @@ Instruction set
 
 Constant
 --------
+```
     PI (3.14159)
+```
 Variables
 ---------
-    Variable names have to start with A-Z and range between 1E-39 and 1E38.
-    String variable names end with a $ e.g. TEXT$. The user has to supply the starting address of the string in the coresponding variable TEXT.
-    Only one dimensional arrays are possible. The number of elements in the array must be specified in a DIM statement. The user has to supply the starting address of the array in the memory in the coresponding variable.
-    e.g. 'FELD = #4100: DIM FELD(20): FELD(9) = 128: PR FELD(0), FELD(9)'
-
+    Variable names have to start with A-Z and range between 1E-39 and 1E38. When entering or in statements the numbers can be written in normal (e.g. 12.34) or in exponential representation (e.g. 1234.56E-12). Numbers that are larger than 8,388,607 (2 to the power of 23 -1), however, must *always* be written in exponential representation. In general calculations are done calculated with an accuracy of at most 6 significant digits,
+    String variable names end with a $ e.g. `TEXT$`. The user has to supply the starting address of the string in the coresponding variable TEXT.
+    Only one dimensional arrays are possible. The number of elements in the array must be specified in a DIM statement. The user has to supply the starting address of the array in the memory in the coresponding variable. An array occupies 6 bytes for organization and 4 bytes per element. So for an array with 12 elements a space of 54 bytes must be allocateded.
+```
+   10 FELD = #4100: DIM FELD(12): FELD(9) = 128: PR FELD(1), FELD(9)
+```
 Expressions
 -----------
     FREE returns the number of bytes left in the page
@@ -105,15 +108,16 @@ Relational Operators
 
 String Functions
 ----------------
+```
     ASC
     LEN
     VAL
     CHR$
-    LEFT$
-    MID$
-    RIGHT$
+    LEFT$$
+    MID$$
+    RIGHT$$
     STR$ 
-
+```
 String Concatenation with & (ampersand)
 e.g.
 ```
