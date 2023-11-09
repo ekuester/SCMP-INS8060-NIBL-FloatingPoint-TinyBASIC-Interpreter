@@ -11,9 +11,10 @@ Constant
 ```
 Variables
 ---------
-    Variable names have to start with A-Z and range between 1E-39 and 1E38. When entering or in statements the numbers can be written in normal (e.g. 12.34) or in exponential representation (e.g. 1234.56E-12). Numbers that are larger than 8,388,607 (2 to the power of 23 -1), however, must *always* be written in exponential representation. In general calculations are done calculated with an accuracy of at most 6 significant digits,
-    String variable names end with a $ e.g. `TEXT$`. The user has to supply the starting address of the string in the coresponding variable TEXT.
-    Only one dimensional arrays are possible. The number of elements in the array must be specified in a DIM statement. The user has to supply the starting address of the array in the memory in the coresponding variable. An array occupies 6 bytes for organization and 4 bytes per element. So for an array with 12 elements a space of 54 bytes must be allocateded.
+
+ Variable names have to start with A-Z and range between 1E-39 and 1E38. When entering or in statements the numbers can be written in normal (e.g. 12.34) or in exponential representation (e.g. 1234.56E-12). Numbers that are larger than 8,388,607 (2 to the power of 23 -1), however, must *always* be written in exponential representation. In general calculations are done with an accuracy of at most 6 significant digits.<br>
+ String variable names end with a $ e.g. `TEXT$`. The user has to supply the starting address of the string in the coresponding variable TEXT.<br>
+ Only one dimensional arrays are possible. The number of elements in the array must be specified in a DIM statement. The user has to supply the starting address of the array within memory in the coresponding variable. An array occupies 6 bytes for organization and 4 bytes per element. So for an array with 12 elements a space of 54 bytes must be allocated.
 ```
    10 FELD = #4100: DIM FELD(12): FELD(9) = 128: PR FELD(1), FELD(9)
 ```
@@ -28,10 +29,13 @@ Expressions
 Program entry
 -------------
     AUTO n generates line numbers starting at number n (ctrl c to quit)
-    AUTO n,m generates line numbers starting at n with increment m (ctrl c to quit)
+    AUTO n,m
+      generates line numbers starting at n with increment m (ctrl c to quit)
     BYE quit floating point basic
     EDIT n
-    allows editing of line n. Characters may be inserted with ctrl Q and deleted with ctrl X, ctrl C will exit
+      allows editing of line n. Characters may be inserted with ctrl Q and<br>
+      deleted with ctrl X, ctrl C will exit
+
     LINK #C000 (link to user routine at hex C000)
     LIST
     LIST n
@@ -47,11 +51,23 @@ Declaration Statements
     DIM
     LET 
 
-DEF FN must be followed by a character A-Z, so 26 user defined functions are possible. An expression between brackets can be added to transfer a parameter.  
+DEF FN must be followed by a character A-Z, so 26 user defined functions are possible. An expression between brackets can be added to transfer a parameter.<br>
 e.g.:
 ```
- > DEF FNA (SQROOT) = SQR(SQROOT): INPUT A: PRINT FNA(A): REM prints square root of A
- > DEF FNB = SIN(X)+1: INPUT X: PRINT FNB
+ >LIST
+  2 PRINT"SQUARE ROOT OF A"
+  10 DEF FNA (ROOT) = SQR(ROOT): INPUT A: PRINT FNA(A)
+  18 PRINT"SINUS CALCULATION"
+  20 DEF FNB(X) = SIN(X)+1: INPUT"ANGLE IN RADIANS" S: PRINT FNB(S)
+  READY
+ >RUN
+ SQUARE ROOT OF A
+ A? 2
+  1.41421
+ SINUS CALCULATION
+ ANGLE IN RADIANS? 0.78539
+  1.7071
+  READY AT 20
 ```
 
 Program Flow Control
@@ -72,7 +88,8 @@ Program Flow Control
 
 Numeric functions
 -----------------
-Floating point numbers have to be between 10E-39 and 10E38, maximal nesting of 5 brackets, numbers larger than 8.388.607 have to be entered in exponential form and normal accuracy for calculation is 6 digits (a floating point number is stored in 32 bits).
+As mentioned above floating point numbers have to be between 10E-39 and 10E38, maximal nesting of 5 brackets is allowed and numbers larger than 8.388.607 have to be entered in exponential form. Normal accuracy for calculation is 6 digits (a floating point number is stored in 32 bits, 8 bits for exponent and 24 bits for mantissa, so overall 4 bytes are occupied per number).<br>
+CAVEAT: Annoying rounding errors are possible, especially when using calculations in string functions.
 
     + - / * **
     DIV
@@ -99,12 +116,14 @@ Logical Operators
 
 Relational Operators
 --------------------
+```
     =
     <>
     >=
     <=
     >
     < 
+```
 
 String Functions
 ----------------
