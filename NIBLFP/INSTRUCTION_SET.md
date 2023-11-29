@@ -132,9 +132,9 @@ String Functions
     LEN
     VAL
     CHR$
-    LEFT$$
-    MID$$
-    RIGHT$$
+    LEFT$
+    MID$
+    RIGHT$
     STR$ 
 ```
 String Concatenation with & (ampersand)

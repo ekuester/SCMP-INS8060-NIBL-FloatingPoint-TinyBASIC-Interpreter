@@ -52,7 +52,7 @@ $ ./scmp_curses.py NIBLFP D000
 ```
 To load an existing BASIC program from ancient times open the file in an editor, choose 'Edit' 'Select All' and 'Copy' to get the whole program into the clipboard. Start the desired BASIC and paste the content of the clipboard with Ctrl-Shift-V (console under Linux). The code will be accepted.</br>
 Since the emulator can generate snapshot files (s option), read that into page 1 (r option). At start NIBLFP will detect that there is still a program from earlier sessions. This will be a method to exchange BASIC programs from one computer to another.</br>
-For NIBL respective NIBLE a calendar program is included. NIBLFP enthusiasts use KALENDA.BAS for the same purpose.
+For NIBL respective NIBLE a calendar program in BASIC is included. NIBLFP enthusiasts use KALENDA.BAS (german) or CALENDA.BAS (english) for the same purpose.
 
 ### Tools
 The hardware built-in a 19" rack was lost but the program survived several moves as a hexdump listing in paper form. So own tools had to be written for the resurrection of the original, they are gathered in this folder.
@@ -65,7 +65,7 @@ With the default preferences the program generates source code that can be put i
 ### Acknowledgements
 Special thanks go as usual to the people in the developer community at StackOverflow. Without their help and answered questions at <https://stackoverflow.com/> and affiliate sites this work would not be possible.
 
-A very special thank you also goes to Fred N. van Kempen <https://github.com/waltje>, who expertly analyzed the NIBLFP assembly and gave crucial advice to reduce inconsistencies in the disassembled code. A completely rewritten, modernized and commented version will be available soon at his github repository for virtual archaeological computing <https://github.com/VARCem8>.
+A very special thank you also goes to Fred N. van Kempen <https://github.com/waltje>, who expertly analyzed the NIBLFP assembly and gave crucial advice to reduce inconsistencies in the disassembled code. A completely rewritten, modernized and commented version will be available soon at his github repository for virtual archaeological computing <https://github.com/VARCem/VARCem8>.
 
 ### Literature
 
