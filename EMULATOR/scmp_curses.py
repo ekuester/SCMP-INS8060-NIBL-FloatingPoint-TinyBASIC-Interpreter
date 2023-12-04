@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # curses example: <https://gist.github.com/claymcleod/b670285f334acd56ad1c>
-# NOTICE: add breakpoints at line 279
-# last update: Tue 10, October 2023
+# give breakpoints as argument in JSON format on command line
+# last update: Mon 4, December 2023
 
-import curses, binascii, os, re, sys
+import curses, binascii, json, os, re, sys
 from scmp import CScmp
 
 def greeting():
@@ -13,9 +13,10 @@ def greeting():
     print("by Erich Küster, Krefeld / Germany")
 
 def usage():
-    print("Usage: ./scmp_curses.py filename [hex load_address] [hex program_start]")
-    print("Example: ./scmp_curses.py NIBLE 1000 1000")
-    print("file can be in Intel HEX or binary format")
+    print("Usage: ./scmp_curses.py filename [hex load_address] [hex program_start] [breakpoints]")
+    print("put optional breakpoints into '[]', use hexadecimal numbers")
+    print("Example: ./scmp_curses.py NIBLFP D000 '[\"E4BE\",\"E4C2\"]'")
+    print("file can be in Intel HEX or binary format.")
     quit()
 
 def RenderStatus(stdscr, opcode, s):
@@ -127,8 +128,8 @@ def emulate(stdscr, debug):
                 k = stdscr.getch()
         stdscr.addstr(height - 3, 2, "        ")
         # loook for breakpoint
-        if brkpnt_lst:
-            if s.pc in brkpnt_lst:
+        if breaks:
+            if s.pc in breaks:
                 stdscr.addstr(height - 3, 2, f"BREAKPOINT: {s.pc:04X}")
                 k = stdscr.getch()
                 # set to True for single step after breakpoint
@@ -188,20 +189,29 @@ def decode(hexlines):
 
 greeting()
 argc = len(sys.argv)
-if (argc != 2 and argc != 3 and argc != 4):
+if (argc != 2 and argc != 3 and argc != 4 and argc != 5):
     usage()
 base = sys.argv[1]
 # address to load into memory
 load = 0
 # program start address
 start = 0
+# breakpoint list
+breaks = []
 if (argc > 2):
     addr = sys.argv[2]
+    # define load and start address
     load = start = int(addr,16)
 if (argc == 4):
+    brk_arg = sys.argv[3]
+    if re.match(r"\[(.*)\]", brk_arg):
+        # breakpoint(s) ?
+        brks = json.loads(brk_arg)
+        if brks:
+            breaks = [int(brk, 16) for brk in brks]
+else:
     addr = sys.argv[3]
     start = int(addr,16)
-
 inp_len = 0
 s_bytes = bytearray()
 h_lines = []
@@ -273,10 +283,6 @@ while not inp_len:
         # accelerate, no status bar
         turbo = True
         break
-# define breakpoint list
-brkpnt_lst = []
-# add break points as list when desired
-brkpnt_lst.extend([])
 # use curses
 curses.wrapper(emulate, debug)
 

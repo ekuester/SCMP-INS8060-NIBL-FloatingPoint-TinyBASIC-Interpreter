@@ -47,9 +47,10 @@ To start an emulator session with the provided files, use either
 ```
 $ ./scmp_curses.py MONITOR C000
 $ ./scmp_curses.py NIBL 0000
-$ ./scmp_curses.py NIBLE 1000
+$ ./scmp_curses.py NIBLFP D000 '["E4BE","E4C2"]'
 $ ./scmp_curses.py NIBLFP D000
 ```
+Values in brackets are optional breakpoints as hexadecimal numbers.</br>
 To load an existing BASIC program from ancient times open the file in an editor, choose 'Edit' 'Select All' and 'Copy' to get the whole program into the clipboard. Start the desired BASIC and paste the content of the clipboard with Ctrl-Shift-V (console under Linux). The code will be accepted.</br>
 Since the emulator can generate snapshot files (s option), read that into page 1 (r option). At start NIBLFP will detect that there is still a program from earlier sessions. This will be a method to exchange BASIC programs from one computer to another.</br>
 For NIBL respective NIBLE a calendar program in BASIC is included. NIBLFP enthusiasts use KALENDA.BAS (german) or CALENDA.BAS (english) for the same purpose.
