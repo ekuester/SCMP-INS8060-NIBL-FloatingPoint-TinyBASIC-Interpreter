@@ -47,7 +47,7 @@ To start an emulator session with the provided files, use either
 ```
 $ ./scmp_curses.py MONITOR C000
 $ ./scmp_curses.py NIBL 0000
-$ ./scmp_curses.py NIBLFP D000 '["E4BE","E4C2"]'
+$ ./scmp_curses.py NIBLFP D000 '["E4C0","E42F"]'
 $ ./scmp_curses.py NIBLFP D000
 ```
 Values in brackets are optional breakpoints as hexadecimal numbers.</br>

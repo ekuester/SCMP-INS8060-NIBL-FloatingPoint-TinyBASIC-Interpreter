@@ -15,7 +15,7 @@ def greeting():
 def usage():
     print("Usage: ./scmp_curses.py filename [hex load_address] [hex program_start] [breakpoints]")
     print("put optional breakpoints into '[]', use hexadecimal numbers")
-    print("Example: ./scmp_curses.py NIBLFP D000 '[\"E4BE\",\"E4C2\"]'")
+    print("Example: ./scmp_curses.py NIBLFP D000 DFC0 '[\"D01F\",\"D500\"]'")
     print("file can be in Intel HEX or binary format.")
     quit()
 
@@ -202,16 +202,28 @@ if (argc > 2):
     addr = sys.argv[2]
     # define load and start address
     load = start = int(addr,16)
-if (argc == 4):
-    brk_arg = sys.argv[3]
-    if re.match(r"\[(.*)\]", brk_arg):
+four_args = argc == 5
+must_break = False
+if (argc > 3):
+    if re.match(r"^([0-9a-fA-F]){4}$", sys.argv[3]):
+        addr = sys.argv[3]
+        start = int(addr,16)
+    elif four_args:
+        # four arguments, thus third must be start address
+        usage()
+    else:
+        # must be breakpoint(s) argument
+        must_break = True
+if must_break or four_args:
+    # three or four arguments with breakoint(s)
+    if re.match(r"^\[(.*)\]$", sys.argv[argc-1]):
         # breakpoint(s) ?
-        brks = json.loads(brk_arg)
+        brks = json.loads(sys.argv[argc-1])
         if brks:
             breaks = [int(brk, 16) for brk in brks]
-else:
-    addr = sys.argv[3]
-    start = int(addr,16)
+            print("breaks", breaks)
+    else:
+        usage()
 inp_len = 0
 s_bytes = bytearray()
 h_lines = []
