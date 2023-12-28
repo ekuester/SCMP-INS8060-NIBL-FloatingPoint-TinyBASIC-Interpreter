@@ -1,0 +1,639 @@
+<http://www.easy68k.com/paulrsm/6502/WOZFPIA.TXT>
+Interface Age, November 1976, pages 103-111.
+
+Floating Point Routines for the 6502*
+
+    by Roy Rankin
+Department of Mechanical Engineering, Stanford University
+
+    and Steve Wozniak
+Apple Computer Company
+
+*First appeared in Dr. DOBB's Journal of Computer Calisthenics &
+Orthodontia, Box 310, Menlo Park, CA 94025
+
+The following floating point routines represent a joint
+effort between Steve Wozniak who wrote the basic float-
+ing point routines of FADD, FSUB, FMUL, FDIV and
+their support routines and myself, Roy Rankin, who
+added FIX, FLOAT, LOG, LOG10, and EXP.  The basic
+floating point routines are failry Machine dependent, but
+the transcendental programs should be very easy to
+transport from one machine to another.  The routines
+consist of the following math functions
+
+     * LOG         Natural log
+     * LOG10       Base 10 log
+     * EXP         Exponential
+     * FADD        Floating add
+     * FSUB        Floating subtraction
+     * FMUL        Floating multiplication
+     * FDIV        Floating division
+     * FIX         Convert floating to fixed
+     * FLOAT       Convert fixed to floating
+
+Two additional routines exchange the contents of
+exp/mant1 with exp/mant2 and complements exp/
+mant1.  These routines are
+
+SWAP          Exchange the contents of exp/mant 1 with
+              exp/mant 2
+FCOMPL        Complement exp/mant 1
+
+Floating point numbers are represented by 4 bytes as
+shown in the following
+
+ +- SIGN BIT     +- SIGN BIT
+ |  0 = +        |  0 = +
+ |  1 = -        |  1 = -
+ v               v
+|S|             |S| +- PRESUMED DECIMAL POINT
+|B|             |B| v
+|_|_ _ _ _ _ _ _|_|_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+|7 6 5 4 3 2 1 0|7 6.5 4 3 2 1 0|7 6 5 4 3 2 1 0|7 6 5 4 3 2 1 0|
+|               |               |               |               |
+|    BYTE N     |   BYTE N+1    |  BYTE N+2     |   BYTE N+3    |
+|               |               |               |               |
+|               | MOST SIG BYTE |               | LEAST SIG BYTE|
+|               | MANTISSA      |               | MANTISSA      |
+|               |               |               |               |
+|<- EXPONENT  ->|<---          THREE BYTE MANTISSA          --->|
+|                       (TWOS COMPLEMENT REPRESENTATION)        |
+|<----            FOUR-BYTE FLOATING POINT OPERAND         ---->|
+
+The exponent byte is a binary scaling factor for the
+Mantissa.  The exponent is a standard two's comple-
+ment representation except that the sign bit is comple-
+mented and runs from +128 to +127.  For example:
+
+     $00 is -128
+     $01 is -127
+         *
+         *
+     $7F is -1
+     $80 is 0
+     $81 is +1
+         *
+         *
+     $FF is +127
+
+The mantissa is standard two's complement repre-
+sentation with the sign bit in the most significant bit of
+the high order byte.  The assumed decimal point is be-
+tween bits 6 and 7 of the most significant byte.  Thus the
+normalized mantissa ranges in absolute value from 1 to
+2.  Except when the exponent has a value of +128 the
+mantissa is normalized to retain maximum precision.
+The mantissa is normalized if the upper two bits of the
+high-order mantissa byte are unequal.  Thus a normal-
+ized mantissa is of the following form:
+
+     01.xxxxxx  positive mantissa (high byte)
+     10.xxxxxx  negative mantissa (high byte)
+        Assumed binary point
+
+Some sample floating point numbers in hex
+
+     83 50 00 00     10.
+     80 40 00 00     1.
+     7C 66 66 66     .1
+     00 00 00 00     0.
+     7C 99 99 9A     -.1
+     7F 80 00 00     -1.
+     83 B0 00 00     -10.
+
+The routines are all entered using a JSR instruction.
+Base page locations $004-$007 are referred to as
+exp/mant2 while $0008-000b are referred to as exp/
+mant1 and act as floating point registers.  On entry to
+the subroutines these registers contain the numbers to
+be operated upon and contain the result on return,  The
+function of the registers is given before each entry point
+in the source listing.  There are three error traps which
+will cause a software interrupts.  ERROT (1D06) is
+encountered if the argument in the log routine is less
+than or equal to zero.  OVFLW (1E3B) will be executed if
+the argument of EXP is too large.  Overflow detected by
+the basic floating point routines will cause OVFL (1FE4)
+to be executed.  The routines do not give underflow
+errors, but set the number to zero if underflow occurs.
+
+Readers of Dr. Dobbs's journal should note that when
+these routines were published in that journal the math
+function LOG contained an error which prevented the
+correct result from being given if the argument was less
+than 1.  This error has been corrected in the present list-
+ing and marked with "MOD 9/76."
+
+
+   1                   *           SEPTEMBER 11, 1976
+   2                   *     BASIC FLOATING POINT ROUTINES
+   3                   *       FOR 6502 MICROPROCESSOR
+   4                   *       BY R. RANKIN AND S. WOZNIAK
+   5                   *
+   6                   *     CONSISTING OF:
+   7                   *        NATURAL LOG
+   8                   *        COMMON LOG
+   9                   *        EXPONENTIAL (E**X)
+  10                   *        FLOAT      FIX
+  11                   *        FADD       FSUB
+  12                   *        FMUL       FDIV
+  13                   *
+  14                   *
+  15                   *     FLOATING POINT REPRESENTATION (4-BYTES)
+  16                   *                    EXPONENT BYTE 1
+  17                   *                    MANTISSA BYTES 2-4
+  18                   *
+  19                   *     MANTISSA:    TWO'S COMPLIMENT REPRESENTATION WITH SIGN IN
+  20                   *       MSB OF HIGH-ORDER BYTE.  MANTISSA IS NORMALIZED WITH AN
+  21                   *       ASSUMED DECIMAL POINT BETWEEN BITS 5 AND 6 OF THE HIGH-ORDER
+  22                   *       BYTE.  THUS THE MANTISSA IS IN THE RANGE 1. TO 2. EXCEPT
+  23                   *       WHEN THE NUMBER IS LESS THAN 2**(-128).
+  24                   *
+  25                   *     EXPONENT:    THE EXPONENT REPRESENTS POWERS OF TWO.  THE
+  26                   *       REPRESENTATION IS 2'S COMPLIMENT EXCEPT THAT THE SIGN
+  27                   *       BIT (BIT 7) IS COMPLIMENTED.  THIS ALLOWS DIRECT COMPARISON
+  28                   *       OF EXPONENTS FOR SIZE SINCE THEY ARE STORED IN INCREASING
+  29                   *       NUMERICAL SEQUENCE RANGING FROM $00 (-128) TO $FF (+127)
+  30                   *       ($ MEANS NUMBER IS HEXADECIMAL).
+  31                   *
+  32                   *     REPRESENTATION OF DECIMAL NUMBERS:    THE PRESENT FLOATING
+  33                   *       POINT REPRESENTATION ALLOWS DECIMAL NUMBERS IN THE APPROXIMATE
+  34                   *       RANGE OF 10**(-38) THROUGH 10**(38) WITH 6 TO 7 SIGNIFICANT
+  35                   *       DIGITS.
+  36                   *
+  37                   *
+  38  0003                    ORG 3        SET BASE PAGE ADRESSES
+  39  0003  EA         SIGN   NOP
+  40  0004  EA         X2     NOP          EXPONENT 2
+  41  0005  00 00 00   M2     BSS 3        MANTISSA 2
+  42  0008  EA         X1     NOP          EXPONENT 1
+  43  0009  00 00 00   M1     BSS 3        MANTISSA 1
+  44  000C             E      BSS 4        SCRATCH
+  45  0010             Z      BSS 4
+  46  0014             T      BSS 4
+  47  0018             SEXP   BSS 4
+  48  001C  00         INT    BSS 1
+  49                   *
+  50  1D00                    ORG $1D00    STARTING LOCATION FOR LOG
+  51                   *
+  52                   *     NATURAL LOG OF MANT/EXP1 WITH RESULT IN MANT/EXP1
+  53                   *
+  54  1D00  A5 09      LOG    LDA M1
+  55  1D02  F0 02             BEQ ERROR
+  56  1D04  10 01             BPL CONT     IF ARG>0 OK
+  57  1D06  00         ERROR  BRK          ERROR ARG<=0
+  58                   *
+  59  1D07  20 1C 1F   CONT   JSR SWAP     MOVE ARG TO EXP/MANT2
+  60  1D0A  A2 00             LDX =0       MOD 9/76: LOAD X FOR LATER
+  61  1D0C  A5 04             LDA X2       HOLD EXPONENT
+  62  1D0E  A0 80             LDY =$80
+  63  1D10  84 04             STY X2       SET EXPONENT 2 TO 0 ($80)
+  64  1D12  49 80             EOR =$80     COMPLIMENT SIGN BIT OF ORIGINAL EXPONENT
+  65  1D14  85 0A             STA M1+1     SET EXPONENT INTO MANTISSA 1 FOR FLOAT
+  66  1D16  10 01             BPL *+3      MOD 9/76: IS EXPONENT ZERO?
+  67  1D18  CA                DEX          MOD 9/76: YES SET X TO $FF
+  68  1D19  86 09             STX M1       MOD 9/76: SET UPPER BYTE OF EXPONENT
+  69  1D1B  20 2C 1F          JSR FLOAT    CONVERT TO FLOATING POINT
+  70  1D1E  A2 03             LDX =3       4 BYTE TRANSFERS
+  71  1D20  B5 04      SEXP1  LDA X2,X
+  72  1D22  95 10             STA Z,X      COPY MANTISSA TO Z
+  73  1D24  B5 08             LDA X1,X
+  74  1D26  95 18             STA SEXP,X   SAVE EXPONENT IN SEXP
+  75  1D28  BD D4 1D          LDA R22,X    LOAD EXP/MANT1 WITH SQRT(2)
+  76  1D2B  95 08             STA X1,X
+  77  1D2D  CA                DEX
+  78  1D2E  10 F0             BPL SEXP1
+  79  1D30  20 4A 1F          JSR FSUB     Z-SQRT(2)
+  80  1D33  A2 03             LDX =3       4 BYTE TRANSFER
+  81  1D35  B5 08      SAVET  LDA X1,X     SAVE EXP/MANT1 AS T
+  82  1D37  95 14             STA T,X
+  83  1D39  B5 10             LDA Z,X      LOAD EXP/MANT1 WITH Z
+  84  1D3B  95 08             STA X1,X
+  85  1D3D  BD D4 1D          LDA R22,X    LOAD EXP/MANT2 WITH SQRT(2)
+  86  1D40  95 04             STA X2,X
+  87  1D42  CA                DEX
+  88  1D43  10 F0             BPL SAVET
+  89  1D45  20 50 1F          JSR FADD     Z+SQRT(2)
+  90  1D48  A2 03             LDX =3       4 BYTE TRANSFER
+  91  1D4A  B5 14      TM2    LDA T,X
+  92  1D4C  95 04             STA X2,X     LOAD T INTO EXP/MANT2
+  93  1D4E  CA                DEX
+  94  1D4F  10 F9             BPL TM2
+  95  1D51  20 9D 1F          JSR FDIV     T=(Z-SQRT(2))/(Z+SQRT(2))
+  96  1D54  A2 03             LDX =3       4 BYTE TRANSFER
+  97  1D56  B5 08      MIT    LDA X1,X
+  98  1D58  95 14             STA T,X      COPY EXP/MANT1 TO T AND
+  99  1D5A  95 04             STA X2,X     LOAD EXP/MANT2 WITH T
+ 100  1D5C  CA                DEX
+ 101  1D5D  10 F7             BPL MIT
+ 102  1D5F  20 77 1F          JSR FMUL     T*T
+ 103  1D62  20 1C 1F          JSR SWAP     MOVE T*T TO EXP/MANT2
+ 104  1D65  A2 03             LDX =3       4 BYTE TRANSFER
+ 105  1D67  BD E4 1D   MIC    LDA C,X
+ 106  1D6A  95 08             STA X1,X     LOAD EXP/MANT1 WITH C
+ 107  1D6C  CA                DEX
+ 108  1D6D  10 F8             BPL MIC
+ 109  1D6F  20 4A 1F          JSR FSUB     T*T-C
+ 110  1D72  A2 03             LDX =3       4 BYTE TRANSFER
+ 111  1D74  BD E0 1D   M2MB   LDA MB,X
+ 112  1D77  95 04             STA X2,X     LOAD EXP/MANT2 WITH MB
+ 113  1D79  CA                DEX
+ 114  1D7A  10 F8             BPL M2MB
+ 115  1D7C  20 9D 1F          JSR FDIV     MB/(T*T-C)
+ 116  1D7F  A2 03             LDX =3
+ 117  1D81  BD DC 1D   M2A1   LDA A1,X
+ 118  1D84  95 04             STA X2,X     LOAD EXP/MANT2 WITH A1
+ 119  1D86  CA                DEX
+ 120  1D87  10 F8             BPL M2A1
+ 121  1D89  20 50 1F          JSR FADD     MB/(T*T-C)+A1
+ 122  1D8C  A2 03             LDX =3       4 BYTE TRANSFER
+ 123  1D8E  B5 14      M2T    LDA T,X
+ 124  1D90  95 04             STA X2,X     LOAD EXP/MANT2 WITH T
+ 125  1D92  CA                DEX
+ 126  1D93  10 F9             BPL M2T
+ 127  1D95  20 77 1F          JSR FMUL     (MB/(T*T-C)+A1)*T
+ 128  1D98  A2 03             LDX =3       4 BYTE TRANSFER
+ 129  1D9A  BD E8 1D   M2MHL  LDA MHLF,X
+ 130  1D9D  95 04             STA X2,X     LOAD EXP/MANT2 WITH MHLF (.5)
+ 131  1D9F  CA                DEX
+ 132  1DA0  10 F8             BPL M2MHL
+ 133  1DA2  20 50 1F          JSR FADD     +.5
+ 134  1DA5  A2 03             LDX =3       4 BYTE TRANSFER
+ 135  1DA7  B5 18      LDEXP  LDA SEXP,X
+ 136  1DA9  95 04             STA X2,X     LOAD EXP/MANT2 WITH ORIGINAL EXPONENT
+ 137  1DAB  CA                DEX
+ 138  1DAC  10 F9             BPL LDEXP
+ 139  1DAE  20 50 1F          JSR FADD     +EXPN
+ 140  1DB1  A2 03             LDX =3       4 BYTE TRANSFER
+ 141  1DB3  BD D8 1D   MLE2   LDA LE2,X
+ 142  1DB6  95 04             STA X2,X     LOAD EXP/MANT2 WITH LN(2)
+ 143  1DB8  CA                DEX
+ 144  1DB9  10 F8             BPL MLE2
+ 145  1DBB  20 77 1F          JSR FMUL     *LN(2)
+ 146  1DBE  60                RTS          RETURN RESULT IN MANT/EXP1
+ 147                   *
+ 148                   *     COMMON LOG OF MANT/EXP1 RESULT IN MANT/EXP1
+ 149                   *
+ 150  1DBF  20 00 1D   LOG10  JSR LOG      COMPUTE NATURAL LOG
+ 151  1DC2  A2 03             LDX =3
+ 152  1DC4  BD D0 1D   L10    LDA LN10,X
+ 153  1DC7  95 04             STA X2,X     LOAD EXP/MANT2 WITH 1/LN(10)
+ 154  1DC9  CA                DEX
+ 155  1DCA  10 F8             BPL L10
+ 156  1DCC  20 77 1F          JSR FMUL     LOG10(X)=LN(X)/LN(10)
+ 157  1DCF  60                RTS
+ 158                   *
+ 159  1DD0  7E 6F      LN10   DCM  0.4342945
+            2D ED
+ 160  1DD4  80 5A      R22    DCM  1.4142136   SQRT(2)
+            82 7A
+ 161  1DD8  7F 58      LE2    DCM  0.69314718  LOG BASE E OF 2
+            B9 0C
+ 162  1DDC  80 52      A1     DCM  1.2920074
+            B0 40
+ 163  1DE0  81 AB      MB     DCM  -2.6398577
+            86 49
+ 164  1DE4  80 6A      C      DCM  1.6567626
+            08 66
+ 165  1DE8  7F 40      MHLF   DCM  0.5
+            00 00
+ 166                   *
+ 167  1E00                    ORG $1E00    STARTING LOCATION FOR EXP
+ 168                   *
+ 169                   *     EXP OF MANT/EXP1 RESULT IN MANT/EXP1
+ 170                   *
+ 171  1E00  A2 03      EXP    LDX =3       4 BYTE TRANSFER
+ 172  1E02  BD D8 1E          LDA L2E,X
+ 173  1E05  95 04             STA X2,X     LOAD EXP/MANT2 WITH LOG BASE 2 OF E
+ 174  1E07  CA                DEX
+ 175  1E08  10 F8             BPL EXP+2
+ 176  1E0A  20 77 1F          JSR FMUL     LOG2(3)*X
+ 177  1E0D  A2 03             LDX =3       4 BYTE TRANSFER
+ 178  1E0F  B5 08      FSA    LDA X1,X
+ 179  1E11  95 10             STA Z,X      STORE EXP/MANT1 IN Z
+ 180  1E13  CA                DEX
+ 181  1E14  10 F9             BPL FSA      SAVE Z=LN(2)*X
+ 182  1E16  20 E8 1F          JSR FIX      CONVERT CONTENTS OF EXP/MANT1 TO AN INTEGER
+ 183  1E19  A5 0A             LDA M1+1
+ 184  1E1B  85 1C             STA INT      SAVE RESULT AS INT
+ 185  1E1D  38                SEC          SET CARRY FOR SUBTRACTION
+ 186  1E1E  E9 7C             SBC =124     INT-124
+ 187  1E20  A5 09             LDA M1
+ 188  1E22  E9 00             SBC =0
+ 189  1E24  10 15             BPL OVFLW    OVERFLOW INT>=124
+ 190  1E26  18                CLC          CLEAR CARRY FOR ADD
+ 191  1E27  A5 0A             LDA M1+1
+ 192  1E29  69 78             ADC =120     ADD 120 TO INT
+ 193  1E2B  A5 09             LDA M1
+ 194  1E2D  69 00             ADC =0
+ 195  1E2F  10 0B             BPL CONTIN   IF RESULT POSITIVE CONTINUE
+ 196  1E31  A9 00             LDA =0       INT<-120 SET RESULT TO ZERO AND RETURN
+ 197  1E33  A2 03             LDX =3       4 BYTE MOVE
+ 198  1E35  95 08      ZERO   STA X1,X     SET EXP/MANT1 TO ZERO
+ 199  1E37  CA                DEX
+ 200  1E38  10 FB             BPL ZERO
+ 201  1E3A  60                RTS          RETURN
+ 202                   *
+ 203  1E3B  00         OVFLW  BRK          OVERFLOW
+ 204                   *
+ 205  1E3C  20 2C 1F   CONTIN JSR FLOAT    FLOAT INT
+ 206  1E3F  A2 03             LDX =3
+ 207  1E41  B5 10      ENTD   LDA Z,X
+ 208  1E43  95 04             STA X2,X     LOAD EXP/MANT2 WITH Z
+ 209  1E45  CA                DEX
+ 210  1E46  10 F9             BPL ENTD
+ 211  1E48  20 4A 1F          JSR FSUB     Z*Z-FLOAT(INT)
+ 212  1E4B  A2 03             LDX =3       4 BYTE MOVE
+ 213  1E4D  B5 08      ZSAV   LDA X1,X
+ 214  1E4F  95 10             STA Z,X      SAVE EXP/MANT1 IN Z
+ 215  1E51  95 04             STA X2,X     COPY EXP/MANT1 TO EXP/MANT2
+ 216  1E53  CA                DEX
+ 217  1E54  10 F7             BPL ZSAV
+ 218  1E56  20 77 1F          JSR FMUL     Z*Z
+ 219  1E59  A2 03             LDX =3       4 BYTE MOVE
+ 220  1E5B  BD DC 1E   LA2    LDA A2,X
+ 221  1E5E  95 04             STA X2,X     LOAD EXP/MANT2 WITH A2
+ 222  1E60  B5 08             LDA X1,X
+ 223  1E62  95 18             STA SEXP,X   SAVE EXP/MANT1 AS SEXP
+ 224  1E64  CA                DEX
+ 225  1E65  10 F4             BPL LA2
+ 226  1E67  20 50 1F          JSR FADD     Z*Z+A2
+ 227  1E6A  A2 03             LDX =3       4 BYTE MOVE
+ 228  1E6C  BD E0 1E   LB2    LDA B2,X
+ 229  1E6F  95 04             STA X2,X     LOAD EXP/MANT2 WITH B2
+ 230  1E71  CA                DEX
+ 231  1E72  10 F8             BPL LB2
+ 232  1E74  20 9D 1F          JSR FDIV     T=B/(Z*Z+A2)
+ 233  1E77  A2 03             LDX =3       4 BYTE MOVE
+ 234  1E79  B5 08      DLOAD  LDA X1,X
+ 235  1E7B  95 14             STA T,X      SAVE EXP/MANT1 AS T
+ 236  1E7D  BD E4 1E          LDA C2,X
+ 237  1E80  95 08             STA X1,X     LOAD EXP/MANT1 WITH C2
+ 238  1E82  B5 18             LDA SEXP,X
+ 239  1E84  95 04             STA X2,X     LOAD EXP/MANT2 WITH SEXP
+ 240  1E86  CA                DEX
+ 241  1E87  10 F0             BPL DLOAD
+ 242  1E89  20 77 1F          JSR FMUL     Z*Z*C2
+ 243  1E8C  20 1C 1F          JSR SWAP     MOVE EXP/MANT1 TO EXP/MANT2
+ 244  1E8F  A2 03             LDX =3       4 BYTE TRANSFER
+ 245  1E91  B5 14      LTMP   LDA T,X
+ 246  1E93  95 08             STA X1,X     LOAD EXP/MANT1 WITH T
+ 247  1E95  CA                DEX
+ 248  1E96  10 F9             BPL LTMP
+ 249  1E98  20 4A 1F          JSR FSUB     C2*Z*Z-B2/(Z*Z+A2)
+ 250  1E9B  A2 03             LDX =3       4 BYTE TRANSFER
+ 251  1E9D  BD E8 1E   LDD    LDA D,X
+ 252  1EA0  95 04             STA X2,X     LOAD EXP/MANT2 WITH D
+ 253  1EA2  CA                DEX
+ 254  1EA3  10 F8             BPL LDD
+ 255  1EA5  20 50 1F          JSR FADD     D+C2*Z*Z-B2/(Z*Z+A2)
+ 256  1EA8  20 1C 1F          JSR SWAP     MOVE EXP/MANT1 TO EXP/MANT2
+ 257  1EAB  A2 03             LDX =3       4 BYTE TRANSFER
+ 258  1EAD  B5 10      LFA    LDA Z,X
+ 259  1EAF  95 08             STA X1,X     LOAD EXP/MANT1 WITH Z
+ 260  1EB1  CA                DEX
+ 261  1EB2  10 F9             BPL LFA
+ 262  1EB4  20 4A 1F          JSR FSUB     -Z+D+C2*Z*Z-B2/(Z*Z+A2)
+ 263  1EB7  A2 03             LDX =3       4 BYTE TRANSFER
+ 264  1EB9  B5 10      LF3    LDA Z,X
+ 265  1EBB  95 04             STA X2,X     LOAD EXP/MANT2 WITH Z
+ 266  1EBD  CA                DEX
+ 267  1EBE  10 F9             BPL LF3
+ 268  1EC0  20 9D 1F          JSR FDIV     Z/(**** )
+ 269  1EC3  A2 03             LDX =3       4 BYTE TRANSFER
+ 270  1EC5  BD E8 1D   LD12   LDA MHLF,X
+ 271  1EC8  95 04             STA X2,X     LOAD EXP/MANT2 WITH .5
+ 272  1ECA  CA                DEX
+ 273  1ECB  10 F8             BPL LD12
+ 274  1ECD  20 50 1F          JSR FADD     +Z/(***)+.5
+ 275  1ED0  38                SEC          ADD INT TO EXPONENT WITH CARRY SET
+ 276  1ED1  A5 1C             LDA INT      TO MULTIPLY BY
+ 277  1ED3  65 08             ADC X1       2**(INT+1)
+ 278  1ED5  85 08             STA X1       RETURN RESULT TO EXPONENT
+ 279  1ED7  60                RTS          RETURN ANS=(.5+Z/(-Z+D+C2*Z*Z-B2/(Z*Z+A2))*2**(INT+1)
+ 280  1ED8  80 5C      L2E    DCM  1.4426950409   LOG BASE 2 OF E
+            55 1E
+ 281  1EDC  86 57      A2     DCM  87.417497202
+            6A E1
+ 282  1EE0  89 4D      B2     DCM  617.9722695
+            3F 1D
+ 283  1EE4  7B 46      C2     DCM  .03465735903
+            4A 70
+ 284  1EE8  83 4F      D      DCM  9.9545957821
+            A3 03
+ 285                   *
+ 286                   *
+ 287                   *     BASIC FLOATING POINT ROUTINES
+ 288                   *
+ 289  1F00                    ORG $1F00    START OF BASIC FLOATING POINT ROUTINES
+ 290  1F00  18         ADD    CLC          CLEAR CARRY
+ 291  1F01  A2 02             LDX =$02     INDEX FOR 3-BYTE ADD
+ 292  1F03  B5 09      ADD1   LDA M1,X
+ 293  1F05  75 05             ADC M2,X     ADD A BYTE OF MANT2 TO MANT1
+ 294  1F07  95 09             STA M1,X
+ 295  1F09  CA                DEX          ADVANCE INDEX TO NEXT MORE SIGNIF.BYTE
+ 296  1F0A  10 F7             BPL ADD1     LOOP UNTIL DONE.
+ 297  1F0C  60                RTS          RETURN
+ 298  1F0D  06 03      MD1    ASL SIGN     CLEAR LSB OF SIGN
+ 299  1F0F  20 12 1F          JSR ABSWAP   ABS VAL OF MANT1, THEN SWAP MANT2
+ 300  1F12  24 09      ABSWAP BIT M1       MANT1 NEG?
+ 301  1F14  10 05             BPL ABSWP1   NO,SWAP WITH MANT2 AND RETURN
+ 302  1F16  20 8F 1F          JSR FCOMPL   YES, COMPLEMENT IT.
+ 303  1F19  E6 03             INC SIGN     INCR SIGN, COMPLEMENTING LSB
+ 304  1F1B  38         ABSWP1 SEC          SET CARRY FOR RETURN TO MUL/DIV
+ 305                   *
+ 306                   *     SWAP EXP/MANT1 WITH EXP/MANT2
+ 307                   *
+ 308  1F1C  A2 04      SWAP   LDX =$04     INDEX FOR 4-BYTE SWAP.
+ 309  1F1E  94 0B      SWAP1  STY E-1,X
+ 310  1F20  B5 07             LDA X1-1,X   SWAP A BYTE OF EXP/MANT1 WITH
+ 311  1F22  B4 03             LDY X2-1,X   EXP/MANT2 AND LEAVEA COPY OF
+ 312  1F24  94 07             STY X1-1,X   MANT1 IN E(3BYTES). E+3 USED.
+ 313  1F26  95 03             STA X2-1,X
+ 314  1F28  CA                DEX          ADVANCE INDEX TO NEXT BYTE
+ 315  1F29  D0 F3             BNE SWAP1    LOOP UNTIL DONE.
+ 316  1F2B  60                RTS
+ 317                   *
+ 318                   *
+ 319                   *
+ 320                   *     CONVERT 16 BIT INTEGER IN M1(HIGH) AND M1+1(LOW) TO F.P.
+ 321                   *     RESULT IN EXP/MANT1.  EXP/MANT2 UNEFFECTED
+ 322                   *
+ 323                   *
+ 324  1F2C  A9 8E      FLOAT  LDA =$8E
+ 325  1F2E  85 08             STA X1       SET EXPN TO 14 DEC
+ 326  1F30  A9 00             LDA =0       CLEAR LOW ORDER BYTE
+ 327  1F32  85 0B             STA M1+2
+ 328  1F34  F0 08             BEQ NORM     NORMALIZE RESULT
+ 329  1F36  C6 08      NORM1  DEC X1       DECREMENT EXP1
+ 330  1F38  06 0B             ASL M1+2
+ 331  1F3A  26 0A             ROL M1+1     SHIFT MANT1 (3 BYTES) LEFT
+ 332  1F3C  26 09             ROL M1
+ 333  1F3E  A5 09      NORM   LDA M1       HIGH ORDER MANT1 BYTE
+ 334  1F40  0A                ASL          UPPER TWO BITS UNEQUAL?
+ 335  1F41  45 09             EOR M1
+ 336  1F43  30 04             BMI RTS1     YES,RETURN WITH MANT1 NORMALIZED
+ 337  1F45  A5 08             LDA X1       EXP1 ZERO?
+ 338  1F47  D0 ED             BNE NORM1    NO, CONTINUE NORMALIZING
+ 339  1F49  60         RTS1   RTS          RETURN
+ 340                   *
+ 341                   *
+ 342                   *     EXP/MANT2-EXP/MANT1 RESULT IN EXP/MANT1
+ 343                   *
+ 344  1F4A  20 8F 1F   FSUB   JSR FCOMPL   CMPL MANT1 CLEARS CARRY UNLESS ZERO
+ 345  1F4D  20 5D 1F   SWPALG JSR ALGNSW   RIGHT SHIFT MANT1 OR SWAP WITH MANT2 ON CARRY
+ 346                   *
+ 347                   *     ADD EXP/MANT1 AND EXP/MANT2 RESULT IN EXP/MANT1
+ 348                   *
+ 349  1F50  A5 04      FADD   LDA X2
+ 350  1F52  C5 08             CMP X1       COMPARE EXP1 WITH EXP2
+ 351  1F54  D0 F7             BNE SWPALG   IF UNEQUAL, SWAP ADDENDS OR ALIGN MANTISSAS
+ 352  1F56  20 00 1F          JSR ADD      ADD ALIGNED MANTISSAS
+ 353  1F59  50 E3      ADDEND BVC NORM     NO OVERFLOW, NORMALIZE RESULTS
+ 354  1F5B  70 05             BVS RTLOG    OV: SHIFT MANT1 RIGHT. NOTE CARRY IS CORRECT SIGN
+ 355  1F5D  90 BD      ALGNSW BCC SWAP     SWAP IF CARRY CLEAR, ELSE SHIFT RIGHT ARITH.
+ 356  1F5F  A5 09      RTAR   LDA M1       SIGN OF MANT1 INTO CARRY FOR
+ 357  1F61  0A                ASL          RIGHT ARITH SHIFT
+ 358  1F62  E6 08      RTLOG  INC X1       INCR EXP1 TO COMPENSATE FOR RT SHIFT
+ 359  1F64  F0 7E             BEQ OVFL     EXP1 OUT OF RANGE.
+ 360  1F66  A2 FA      RTLOG1 LDX =$FA     INDEX FOR 6 BYTE RIGHT SHIFT
+ 361  1F68  A9 80      ROR1   LDA =$80
+ 362  1F6A  B0 01             BCS ROR2
+ 363  1F6C  0A                ASL
+ 364  1F6D  56 0F      ROR2   LSR E+3,X    SIMULATE ROR E+3,X
+ 365  1F6F  15 0F             ORA E+3,X
+ 366  1F71  95 0F             STA E+3,X
+ 367  1F73  E8                INX          NEXT BYTE OF SHIFT
+ 368  1F74  D0 F2             BNE ROR1     LOOP UNTIL DONE
+ 369  1F76  60                RTS          RETURN
+ 370                   *
+ 371                   *
+ 372                   *     EXP/MANT1 X EXP/MANT2 RESULT IN EXP/MANT1
+ 373                   *
+ 374  1F77  20 0D 1F   FMUL   JSR MD1      ABS. VAL OF MANT1, MANT2
+ 375  1F7A  65 08             ADC X1       ADD EXP1 TO EXP2 FOR PRODUCT EXPONENT
+ 376  1F7C  20 CD 1F          JSR MD2      CHECK PRODUCT EXP AND PREPARE FOR MUL
+ 377  1F7F  18                CLC          CLEAR CARRY
+ 378  1F80  20 66 1F   MUL1   JSR RTLOG1   MANT1 AND E RIGHT.(PRODUCT AND MPLIER)
+ 379  1F83  90 03             BCC MUL2     IF CARRY CLEAR, SKIP PARTIAL PRODUCT
+ 380  1F85  20 00 1F          JSR ADD      ADD MULTIPLICAN TO PRODUCT
+ 381  1F88  88         MUL2   DEY          NEXT MUL ITERATION
+ 382  1F89  10 F5             BPL MUL1     LOOP UNTIL DONE
+ 383  1F8B  46 03      MDEND  LSR SIGN     TEST SIGN (EVEN/ODD)
+ 384  1F8D  90 AF      NORMX  BCC NORM     IF EXEN, NORMALIZE PRODUCT, ELSE COMPLEMENT
+ 385  1F8F  38         FCOMPL SEC          SET CARRY FOR SUBTRACT
+ 386  1F90  A2 03             LDX =$03     INDEX FOR 3 BYTE SUBTRACTION
+ 387  1F92  A9 00      COMPL1 LDA =$00     CLEAR A
+ 388  1F94  F5 08             SBC X1,X     SUBTRACT BYTE OF EXP1
+ 389  1F96  95 08             STA X1,X     RESTORE IT
+ 390  1F98  CA                DEX          NEXT MORE SIGNIFICANT BYTE
+ 391  1F99  D0 F7             BNE COMPL1   LOOP UNTIL DONE
+ 392  1F9B  F0 BC             BEQ ADDEND   NORMALIZE (OR SHIFT RIGHT IF OVERFLOW)
+ 393                   *
+ 394                   *
+ 395                   *     EXP/MANT2 / EXP/MANT1 RESULT IN EXP/MANT1
+ 396                   *
+ 397  1F9D  20 0D 1F   FDIV   JSR MD1      TAKE ABS VAL OF MANT1, MANT2
+ 398  1FA0  E5 08             SBC X1       SUBTRACT EXP1 FROM EXP2
+ 399  1FA2  20 CD 1F          JSR MD2      SAVE AS QUOTIENT EXP
+ 400  1FA5  38         DIV1   SEC          SET CARRY FOR SUBTRACT
+ 401  1FA6  A2 02             LDX =$02     INDEX FOR 3-BYTE INSTRUCTION
+ 402  1FA8  B5 05      DIV2   LDA M2,X
+ 403  1FAA  F5 0C             SBC E,X      SUBTRACT A BYTE OF E FROM MANT2
+ 404  1FAC  48                PHA          SAVE ON STACK
+ 405  1FAD  CA                DEX          NEXT MORE SIGNIF BYTE
+ 406  1FAE  10 F8             BPL DIV2     LOOP UNTIL DONE
+ 407  1FB0  A2 FD             LDX =$FD     INDEX FOR 3-BYTE CONDITIONAL MOVE
+ 408  1FB2  68         DIV3   PLA          PULL A BYTE OF DIFFERENCE OFF STACK
+ 409  1FB3  90 02             BCC DIV4     IF MANT2<E THEN DONT RESTORE MANT2
+ 410  1FB5  95 08             STA M2+3,X
+ 411  1FB7  E8         DIV4   INX          NEXT LESS SIGNIF BYTE
+ 412  1FB8  D0 F8             BNE DIV3     LOOP UNTIL DONE
+ 413  1FBA  26 0B             ROL M1+2
+ 414  1FBC  26 0A             ROL M1+1     ROLL QUOTIENT LEFT, CARRY INTO LSB
+ 415  1FBE  26 09             ROL M1
+ 416  1FC0  06 07             ASL M2+2
+ 417  1FC2  26 06             ROL M2+1     SHIFT DIVIDEND LEFT
+ 418  1FC4  26 05             ROL M2
+ 419  1FC6  B0 1C             BCS OVFL     OVERFLOW IS DUE TO UNNORMALIZED DIVISOR
+ 420  1FC8  88                DEY          NEXT DIVIDE ITERATION
+ 421  1FC9  D0 DA             BNE DIV1     LOOP UNTIL DONE 23 ITERATIONS
+ 422  1FCB  F0 BE             BEQ MDEND    NORMALIZE QUOTIENT AND CORRECT SIGN
+ 423  1FCD  86 0B      MD2    STX M1+2
+ 424  1FCF  86 0A             STX M1+1     CLR MANT1 (3 BYTES) FOR MUL/DIV
+ 425  1FD1  86 09             STX M1
+ 426  1FD3  B0 0D             BCS OVCHK    IF EXP CALC SET CARRY, CHECK FOR OVFL
+ 427  1FD5  30 04             BMI MD3      IF NEG NO UNDERFLOW
+ 428  1FD7  68                PLA          POP ONE
+ 429  1FD8  68                PLA          RETURN LEVEL
+ 430  1FD9  90 B2             BCC NORMX    CLEAR X1 AND RETURN
+ 431  1FDB  49 80      MD3    EOR =$80     COMPLIMENT SIGN BIT OF EXP
+ 432  1FDD  85 08             STA X1       STORE IT
+ 433  1FDF  A0 17             LDY =$17     COUNT FOR 24 MUL OR 23 DIV ITERATIONS
+ 434  1FE1  60                RTS          RETURN
+ 435  1FE2  10 F7      OVCHK  BPL MD3      IF POS EXP THEN NO OVERFLOW
+ 436  1FE4  00         OVFL   BRK
+ 437                   *
+ 438                   *
+ 439                   *     CONVERT EXP/MANT1 TO INTEGER IN M1 (HIGH) AND M1+1(LOW)
+ 440                   *      EXP/MANT2 UNEFFECTED
+ 441                   *
+ 442  1FE5  20 5F 1F          JSR RTAR     SHIFT MANT1 RT AND INCREMENT EXPNT
+ 443  1FE8  A5 08      FIX    LDA X1       CHECK EXPONENT
+ 444  1FEA  C9 8E             CMP =$8E     IS EXPONENT 14?
+ 445  1FEC  D0 F7             BNE FIX-3    NO, SHIFT
+ 446  1FEE  60         RTRN   RTS          RETURN
+ 447                          END
+
+OBJECT CODE DUMP
+
+1D00  A5 09 F0 02 10 01 00 20 1C 1F A2 00 A5 04 A0 80
+1D10  84 04 49 80 85 0A 10 01 CA 86 09 20 2C 1F A2 03
+1D20  B5 04 95 10 B5 08 95 18 BD D4 1D 95 08 CA 10 F0
+1D30  20 4A 1F A2 03 B5 08 95 14 B5 10 95 08 BD D4 1D
+1D40  95 04 CA 10 F0 20 50 1F A2 03 B5 14 95 04 CA 10
+1D50  F9 20 9D 1F A2 03 B5 08 95 14 95 04 CA 10 F7 20
+1D60  77 1F 20 1C 1F A2 03 BD E4 1D 95 08 CA 10 F8 20
+1D70  4A 1F A2 03 BD E0 1D 95 04 CA 10 F8 20 9D 1F A2
+1D80  03 BD DC 1D 95 04 CA 10 F8 20 50 1F A2 03 B5 14
+1D90  95 04 CA 10 F9 20 77 1F A2 03 BD E8 1D 95 04 CA
+1DA0  10 F8 20 50 1F A2 03 B5 18 95 04 CA 10 F9 20 50
+1DB0  1F A2 03 BD D8 1D 95 04 CA 10 F8 20 77 1F 60 20
+1DC0  00 1D A2 03 BD D0 1D 95 04 CA 10 F8 20 77 1F 60
+1DD0  73 6F 2D ED 80 5A 82 7A 7F 58 B9 0C 80 52 B0 40
+1DE0  81 AB 86 49 80 6A 08 66 7F 40 00 00
+
+1E00  A2 03 BD D8 1E 95 04 CA 10 F8 20 77 1F A2 03 B5
+1E10  08 95 10 CA 10 F9 20 E8 1F A5 0A 85 1C 38 E9 7C
+1E20  A5 09 E9 00 10 15 18 A5 0A 69 78 A5 09 69 00 10
+1E30  0B A9 00 A2 03 95 08 CA 10 FB 60 00 20 2C 1F A2
+1E40  03 B5 10 95 04 CA 10 F9 20 4A 1F A2 03 B5 08 95
+1E50  10 95 04 CA 10 F7 20 77 1F A2 03 BD DC 1E 95 04
+1E60  B5 08 95 18 CA 10 F4 20 50 1F A2 03 BD E0 1E 95
+1E70  04 CA 10 F8 20 9D 1F A2 03 B5 08 95 14 BD E4 1E
+1E80  95 08 B5 18 95 04 CA 10 F0 20 77 1F 20 1C 1F A2
+1E90  03 B5 14 95 08 CA 10 F9 20 4A 1F A2 03 BD E8 1E
+1EA0  95 04 CA 10 F8 20 50 1F 20 1C 1F A2 03 B5 10 95
+1EB0  08 CA 10 F9 20 4A 1F A2 03 B5 10 95 04 CA 10 F9
+1EC0  20 9D 1F A2 03 BD E8 1D 95 04 CA 10 F8 20 50 1F
+1ED0  38 A5 1C 65 08 85 08 60 80 5C 55 1E 86 57 6A E1
+1EE0  89 4D 3F 1D 7B 46 FA 70 83 4F A3 03
+
+1F00  18 A2 02 B5 09 75 05 95 09 CA 10 F7 60 06 03 20
+1F10  12 1F 24 09 10 05 20 8F 1F E6 03 38 A2 04 94 0B
+1F20  B5 07 B4 03 94 07 95 03 CA D0 F3 60 A9 8E 85 08
+1F30  A9 00 85 0B F0 08 C6 08 06 0B 26 0A 26 09 A5 09
+1F40  0A 45 09 30 04 A5 08 D0 ED 60 20 8F 1F 20 5D 1F
+1F50  A5 04 C5 08 D0 F7 20 00 1F 50 E3 70 05 90 BD A5
+1F60  09 0A E6 08 F0 7E A2 FA A9 80 B0 01 0A 56 0F 15
+1F70  0F 95 0F E8 D0 F2 60 20 0D 1F 65 08 20 CD 1F 18
+1F80  20 66 1F 90 03 20 00 1F 88 10 F5 46 03 90 AF 38
+1F90  A2 03 A9 00 F5 08 95 08 CA D0 F7 F0 BC 20 0D 1F
+1FA0  E5 08 20 CD 1F 38 A2 02 B5 05 F5 0C 48 CA 10 F8
+1FB0  A2 FD 68 90 02 95 08 E8 D0 F8 26 0B 26 0A 26 09
+1FC0  06 07 26 06 26 05 B0 1C 88 D0 DA F0 BE 86 0B 86
+1FD0  0A 86 09 B0 0D 30 04 68 68 90 B2 49 80 85 08 A0
+1FE0  17 60 10 F7 00 20 5F 1F A5 08 C9 8E D0 F7 60
+

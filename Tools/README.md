@@ -43,3 +43,7 @@ converts binary into file into Intel HEX format, so that it can be read into an 
 14 niblcvt.py<br>
 converts NIBL BASIC file into NIBL page memory
 
+15 dcm_6502.py<br>
+converts a floating point decimal number into a 4 byte floating point representation to be used in NIBLFP
+
+

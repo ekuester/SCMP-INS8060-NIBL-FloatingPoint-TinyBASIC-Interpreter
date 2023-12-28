@@ -61,7 +61,8 @@ The hardware built-in a 19" rack was lost but the program survived several moves
 Particularly worth mentioning here is the rewritten disassembler `2_disass4scmp.py` with a syntax that takes some getting used to. There are two logical variables within the code that control the behavior of the program:</br>
   `tabbed`: set to False [default: True] to get a normal listing with addresses and opcodes</br>
   `xppc3_call`: set to False [default: True] to get normal behavior of XPPC P3</br>
-With the default preferences the program generates source code that can be put in directly into the mentioned macro assembler.
+With the default preferences the program generates source code that can be put in directly into the mentioned macro assembler.</br>
+The program `15_dcm_6502.py` converts a floating point decimal number into a 4 byte floating point representation to be used in NIBLFP. The encoding is totally equivalent to the method used by Apple for the 6502 (see above).
 
 ### Acknowledgements
 Special thanks go as usual to the people in the developer community at StackOverflow. Without their help and answered questions at <https://stackoverflow.com/> and affiliate sites this work would not be possible.
