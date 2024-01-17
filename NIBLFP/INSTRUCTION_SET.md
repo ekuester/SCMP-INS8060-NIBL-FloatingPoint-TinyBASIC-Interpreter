@@ -1,5 +1,5 @@
-NIBLFP
-------
+NIBLFP (Floating Point NIBL)
+----------------------------
 
 Instruction set
 ---------------
@@ -24,28 +24,28 @@ Expressions
     PAGE returns the current page number
     RND returns a random number between 0 and 1
     STAT returns the value of the INS8060 Status Register
-    TOP returns the highest address of the NIBL program in the current page 
+    TOP returns the highest address of the BASIC program in the current page 
 
 Program entry
 -------------
-    AUTO n generates line numbers starting at number n (ctrl c to quit)
+    AUTO n generate line numbers starting at number n (ctrl c to quit)
     AUTO n,m
-      generates line numbers starting at n with increment m (ctrl c to quit)
-    BYE quit floating point basic
+      generate line numbers starting at n with increment m (ctrl c to quit)
+    BYE (quit floating point basic, return to calling program)
     EDIT n
-      allows editing of line n. Characters may be inserted with ctrl Q and<br>
+      allows editing of line n. Characters may be inserted with ctrl Q,<br>
       deleted with ctrl X, ctrl C will exit
 
     LINK #C000 (link to user routine at hex C000)
     LIST
-    LIST n
-    LIST n-m
-    NEW
-    NEW x
- 
+    LIST n (show line n)
+    LIST n-m (show line from n until m)
+    NEW (clear BASIC program, set PAGE to 1)
+    NEW n (clear BASIC program, set PAGE to n)
+
 Declaration Statements
 ----------------------
-    CLEAR clears all variables and stacks
+    CLEAR (clears all stacks)
     DATA
     DEF FN
     DIM
@@ -89,9 +89,9 @@ Program Flow Control
 Numeric functions
 -----------------
 As mentioned above floating point numbers have to be between 10E-39 and 10E38, maximal nesting of 5 brackets is allowed and numbers larger than 8.388.607 have to be entered in exponential form. Normal accuracy for calculation is 6 digits (a floating point number is stored in 32 bits, 8 bits for exponent and 24 bits for mantissa, so overall 4 bytes are occupied per number).<br>
-CAVEAT: Annoying rounding errors are possible, especially when using calculations in string functions.
+**CAVEAT:** Annoying rounding errors are possible, especially when using calculations in string functions.
 
-    + - / * **
+    + - / * ** ^
     DIV
     MOD
     ABS

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # curses example: <https://gist.github.com/claymcleod/b670285f334acd56ad1c>
 # give breakpoints as argument in JSON format on command line
-# last update: Mon 4, December 2023
+# last update: Wed 10, January 2024
 
 import curses, binascii, json, os, re, sys
 from scmp import CScmp
@@ -226,7 +226,6 @@ if must_break or four_args:
         usage()
 inp_len = 0
 s_bytes = bytearray()
-h_lines = []
 while not inp_len:
     prompt = 'read from [b]inary or [h]ex file? '
     choice = input(prompt).lower()
@@ -244,6 +243,7 @@ while not inp_len:
         file_hex = base + ".hex"
         file_stats = os.stat(file_hex)
         print(f'Will read file {file_hex} with {file_stats.st_size} Bytes')
+        h_lines = []
         with open(file_hex, "r") as hex_f:
             for h_line in hex_f:
                 h_lines.append(h_line)
@@ -257,40 +257,57 @@ print(f'into sc/mp memory with {len(s_memory)} Bytes at address hex {load:04X}')
 
 for i, byte in enumerate(s_bytes):
     s_memory[load + i] = byte
-print(f'{i:4X} bytes copied')
+print(f'{i+1} bytes copied')
 
 inp_len = 0
 debug = False
 snapshot = False
 turbo = False
 while not inp_len:
-    prompt = '[d]ebug, [g]o, [q]uit, [r]ead, [s]napshot, [t]urbo: '
+    prompt = '[d]ebug, [g]o, [q]uit, [l]oad, [r]ead, [s]napshot, [t]urbo: '
     choice = input(prompt).lower()
-    if not re.match(r"^[dgqrst]+$", choice):
+    if not re.match(r"^[dglqrst]+$", choice):
         continue
     inp_len = len(choice)
     if choice[0] == "q":
         quit()
-    if choice[0] == "r":
+    if choice[0] == "l":
+        # load NIBLFP as Intel HEX file into storage
+        # (useful, if monitor program is loaded first)
+        file_hex = "program.hex"
+        file_stats = os.stat(file_hex)
+        print(f'Will load file {file_hex} with {file_stats.st_size} Bytes')
+        h_lines = []
+        with open(file_hex, "r") as hex_f:
+            for h_line in hex_f:
+                h_lines.append(h_line)
+        load, s_bytes = decode(h_lines)
+        for i, byte in enumerate(s_bytes):
+            s_memory[load + i] = byte
+        print(f'{len(s_bytes):4x} {i:4X} bytes copied to address hex {load:4X}')
+        inp_len = 0
+    elif choice[0] == "r":
         # read BASIC program into page 1
         file_snap = base + ".snap"
         file_stats = os.stat(file_snap)
         print(f'Will read file {file_snap} with {file_stats.st_size} Bytes')
         with open(file_snap, "rb") as snap_f:
             snap_bytes = bytearray(snap_f.read())
-            # read in page 1
-            s_bytes = snap_bytes[4096:8192]
+            # read in bytes from snap file
+            # offsets: page 0 is 0, page 1 is 4096, actually read 8192 bytes from 0 on
+            offset = 0
+            s_bytes = snap_bytes[offset:8192]
             for i, byte in enumerate(s_bytes):
-                s_memory[4096 + i] = byte
-            print(f'{i} bytes copied')
+                s_memory[offset + i] = byte
+            print(f'{i+1} bytes copied')
         inp_len = 0
-    elif choice[0] == "d":
-        debug = True
-        break
     elif choice[0] == "s":
         snapshot = True
         print("will make a snapshot at exit")
         inp_len = 0
+    elif choice[0] == "d":
+        debug = True
+        break
     elif choice[0] == "t":
         # accelerate, no status bar
         turbo = True

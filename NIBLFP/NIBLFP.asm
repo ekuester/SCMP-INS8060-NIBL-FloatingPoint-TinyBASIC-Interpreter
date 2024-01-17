@@ -4685,6 +4685,26 @@ STBACK: LD	-13(P2)
 	LD	-14(P2)
 	XPAH	P1
 	JMP	SV_SPLOAD(P3)
+
+; Characteristic has bias 128, so subtract 128 for exponent
+; 00 = -128 ... 7F = -1, 80 = 0, 81 = +1 ... FF = +127
+; e is Euler's number
+; 80 5C 55 1E	L2E	 1.4426950409	; log base 2 of e ( lb e )
+; 86 57 6A E1	A2	DCM 87.417497202
+; 89 4D 3F 1D	B2	DCM 617.9722695
+; 7B 46 FA 70	C2	DCM 0.034657359		; (ln 2) / 20
+; 83 4F A3 03	D	DCM 9.9545957821
+; 7E 6F 2D ED	L10E	DCM 0.4342945		; log base 10 of e ( log e )
+; 7E 4D 10 4D	L102	DCM 0.301029996		; log base 10 of 2 ( log 2 )
+; 80 5A 82 7A	R22	DCM 1.414213562		; sqrt(2)
+; 7F 58 B9 0C	LE2	DCM 0.69314718		; log base e of 2 ( ln 2 )
+; 80 52 B0 40	A1	DCM 1.2920074
+; 81 AB 86 49	MB	DCM -2.6398577
+; 80 6A 08 66	C	DCM 1.6567626
+; 7F 40 00 00	MHLF	DCM 0.5
+; 80 40 00 00	ONE	DCM 1.0
+; 81 64 87 ED	PI	DCM 3.14159265		; circle number
+
 LG2:	LDI	0x4D
 	ST	@-1(P1)
 	ST	@-2(P1)
