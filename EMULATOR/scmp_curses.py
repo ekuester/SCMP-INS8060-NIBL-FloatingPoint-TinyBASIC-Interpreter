@@ -45,7 +45,7 @@ def emulate(stdscr, debug):
     stdscr.scrollok(True)
     # set scrolling region
     stdscr.setscrreg(1, height - 3)
-    stdscr.addstr(0, 1, "SC/MP EMULATOR 2000 - 2023")
+    stdscr.addstr(0, 1, "SC/MP EMULATOR 2000 - 2024")
     stdscr.refresh()
 
     # define 3 color pairs, 1- header/footer , 2 - dynamic text, 3 - background
@@ -101,6 +101,12 @@ def emulate(stdscr, debug):
             elif c > 31:
                 stdscr.addch(cursor_y, cursor_x, chr(c))
                 cursor_x += 1
+                if cursor_x == width:
+                    cursor_x = 1
+                    cursor_y +=1
+                    if cursor_y == height-3:
+                        stdscr.scroll()
+                        cursor_y -=1
         elif opcode == "21":
             stdscr.attron(curses.color_pair(2))
             stdscr.addstr(height-2, 0, " READCHAR ")

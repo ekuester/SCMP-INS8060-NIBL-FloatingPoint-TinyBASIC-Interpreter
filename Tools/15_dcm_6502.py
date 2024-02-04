@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Calculate the binary floating point equivalent to a decimal floating point number.
+# The binary consists out of an signed exponent byte and a 3-byte signed mantissa.
+# The format was use by Apple for 6502 processor, it is a predecessor of IEEE754.
 
 import re
 
@@ -17,49 +20,60 @@ def float_bin(number, places = 6):
 		# split again at decimal point
 		n_whole, n_dec = temp.split(".")
 		b_str += n_whole
-	print(f"binary: {b_str}")
+	#print(f"binary: {b_str}")
 	return b_str
 
 def niblfp(n):
 	bias = 128
-	sign = 0
+	sign = 1
 	if n < 0 :
-		sign = 1
+		sign = -1
 		# take absolute value
 		n = n * (-1)
-	p = 40
-	dec = float_bin(n, places = p)
-	dotPlace = dec.find('.')
-	onePlace = dec.find('1')
-	print("dot:", dotPlace, "one:", onePlace)
+	# 32 Bit
+	p = 32
+	bin_str = float_bin(n, places = p)
+	# find fractional point
+	dotPlace = bin_str.find('.')
+	# find first 'one'
+	onePlace = bin_str.find('1')
 	# ignore leading zeros
 	start = onePlace
-	#if onePlace > dotPlace:
-		# zero before comma, number less than 1
-		#dec = dec.replace(".", "")
-		#onePlace -= 1
-		#dotPlace -= 1
 	if onePlace < dotPlace:
-		# ones before fractional point
-		dec = dec.replace(".", "")
+		# 'one's before fractional point
+		bin_str = bin_str.replace(".", "")
 		dotPlace -= 1
 		start = 0
-	# slice from first one until end
-	mantStr = dec[start:]
-	# add sign to binary representation, justify to the left, add zeros if required
-	mantissa = '0' + mantStr.ljust(23, '0')
-	if sign:
-		# build two's complement
-		mantissa = ''.join('1' if c == '0' else '0' for c in mantissa)
-		mant = int(mantissa,2) + 1
-		mant &= 0xFFFFFF
-		mantissa = str(bin(mant)).replace('0b','')
+	# calculate preliminary exponent
 	exponent = dotPlace - onePlace
-	exponent_bits = exponent + bias
-	chara = f"{exponent_bits:08b}"
+	if onePlace < 0:
+		# no 'one' found, number is zero
+		sign = 0
+		exponent = -bias
+	# slice mantissa string from first 'one' until end
+	mantStr = bin_str[start:]
+	# justify to the left, add zeros if required and limit to 23 bits
+	mantStrJust = mantStr.ljust(23, '0')
+	mantStr23 = mantStrJust[:23]
+	if sign >= 0:
+		mantissa = '0' + mantStr23
+	else:
+		print("so negative")
+		# build two's complement
+		mant = int(mantStr23, 2)
+		mant ^= 0xFFFFFF
+		mant += 1
+		if (mant & 0x400000) != 0:
+			mant *= 2
+			exponent -= 1
+		mant &= 0xFFFFFF
+		mantissa = f"{mant:024b}"
+	#print(f"mantissa: {mantissa}")
+	exp_bits = exponent + bias
+	chara = f"{exp_bits:08b}"
 	binary_str = chara + mantissa
 	num = int(binary_str, 2)
-	hex_str = f"{num:8X}"
+	hex_str = f"{num:08X}"
 	return (hex_str, binary_str)
 
 if __name__ == "__main__" :
