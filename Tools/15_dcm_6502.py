@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 # Calculate the binary floating point equivalent to a decimal floating point number.
 # The binary consists out of an signed exponent byte and a 3-byte signed mantissa.
-# The format was use by Apple for 6502 processor, it is a predecessor of IEEE754.
+# The format was used by Apple for the 6502 processor, and shortly later adapted for
+# use in the NIBLFP interpreter for the SC/MP.
+# This is a predecessor of the well-known IEEE754 format.
+# Conversion program in python > 3.9 by Erich Küster, Krefeld/Germany
+# February 2024
 
 import re
 

@@ -38,7 +38,7 @@ converts binary into include file for c program, so one can compile it into an e
 calculates new checksums for a file in Intel HEX format.
 
 13 bin2Intel_HEX.py<br>
-converts binary into file into Intel HEX format, so that it can be read into an emulator, for instance.
+converts binary content of a file into Intel HEX format, so that it can be read into an emulator, for instance.
 
 14 niblcvt.py<br>
 converts NIBL BASIC file into NIBL page memory
