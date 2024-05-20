@@ -38,6 +38,9 @@ The floating-point routines were originally an adapted 1-to-1 translation from s
 
 On his website [9] Ronald Dekker preserved my NIBLFP over the time, his listings, however, are for the 7.8 version. Kindly he translated my original German description into English. The version published in this repository is 7.9 and is my latest attempt in SC/MP programming dated from the eighties of the last century. The instruction set is found in the belonging subdirectory. 
 
+#### NIBLFP_2024
+Here is presented a completely rewritten, modernized and commented version. The code is published forty years too late but in the hope that it may be helfül in any way in the future. The presence of a powerful macroassembler opened up completely new possibilities for efficient programming. The publication will take place at this point until the intended location in waltje's repository (see acknowledgments) is ready.
+
 ### MONITOR
 This program originates from around 1982 and was written for the Elektor-System, it resides on page C and is started at address $C000. More details are found in the associated directory.
 
